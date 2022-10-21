@@ -23,7 +23,6 @@ FROM node:16-slim
 
     COPY --from=runtime-dependencies /app/node_modules /app/node_modules
     COPY --from=build /app/package.json /app/package.json
-    COPY --from=build /app/assets /app/assets
     COPY --from=build /app/built /app/built
 
     ENTRYPOINT ["npm", "run", "start"]
