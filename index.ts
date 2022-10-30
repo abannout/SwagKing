@@ -6,7 +6,7 @@ import * as client from "./client";
 
 const playerName = "hackschnitzel";
 const playerEmail = "hack@schnitzel.org";
-const rabbitMQHost = "localhost";
+const rabbitMQHost = process.env.RABBITMQ_HOST;
 const rabbitMQPort = 5672;
 const rabbitMQUser = "admin";
 const rabbitMQPassword = "admin";
