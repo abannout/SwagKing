@@ -1,7 +1,11 @@
 import { fetchOrUpdatePlayer, getGames, registerForGame } from "./client";
 import { untilAsync } from "./utils";
 import * as amqplib from "amqplib";
-import { BuyRobotCommand, EventRoundStatusPayload, ResGetGame } from "./types";
+import type {
+  BuyRobotCommand,
+  EventRoundStatusPayload,
+  ResGetGame,
+} from "./types";
 import * as client from "./client";
 
 const playerName = "hackschnitzel";

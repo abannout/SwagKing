@@ -1,8 +1,6 @@
 import axios, { AxiosError } from "axios";
-import {
-  BaseCommand,
+import type {
   GameCommand,
-  ReqCreatePlayer,
   ResCreatePlayer,
   ResGetGame,
   ResRegisterGame,
