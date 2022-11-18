@@ -1,12 +1,13 @@
 import axios, { AxiosError } from "axios";
 import type {
   GameCommand,
+  ResCreateGame,
   ResCreatePlayer,
   ResGetGame,
   ResRegisterGame,
 } from "./types";
 
-const gameUrl = process.env.GAME_URL;
+const gameUrl = process.env.GAME_URL || "http://localhost:8080";
 axios.defaults.baseURL = gameUrl;
 axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.headers.common["Accept"] = "application/json";
@@ -62,6 +63,41 @@ export async function fetchOrUpdatePlayer(
     }
     throw error;
   }
+}
+
+export async function createGame(
+  maxRounds: number,
+  maxPlayers: number
+): Promise<ResCreateGame> {
+  return axios
+    .post<ResCreateGame>("/games", {
+      maxRounds,
+      maxPlayers,
+    })
+    .then((res) => res.data);
+}
+
+export async function setRoundDuration(
+  gameId: string,
+  duration: number
+): Promise<any> {
+  return axios
+    .patch<any>(`/games/${gameId}/duration`, {
+      duration,
+    })
+    .then((res) => res.data);
+}
+
+export async function startGame(gameId: string): Promise<any> {
+  return axios
+    .post<any>(`/games/${gameId}/gameCommands/start`)
+    .then((res) => res.data);
+}
+
+export async function endGame(gameId: string): Promise<any> {
+  return axios
+    .post<any>(`/games/${gameId}/gameCommands/end`)
+    .then((res) => res.data);
 }
 
 export async function getGames(): Promise<ResGetGame[]> {

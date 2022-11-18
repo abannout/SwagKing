@@ -30,6 +30,23 @@ export type ResRegisterGame = {
   playerQueue: string;
 };
 
+export type ReqCreateGame = {
+  maxRounds: number;
+  maxPlayers: number;
+};
+
+export type ResCreateGame = {
+  gameId: string;
+};
+
+export type ReqUpdateMaxRounds = {
+  maxRounds: number;
+};
+
+export type ReqUpdateRoundDuration = {
+  duration: number;
+};
+
 export type EventHeaders = {
   eventId: string;
   type: string;

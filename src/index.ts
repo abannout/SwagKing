@@ -8,16 +8,25 @@ import type {
 } from "./types";
 import * as client from "./client";
 import logger from "./logger";
+import { initializeGame } from "./dev/initializer";
 
 const playerName = "hackschnitzel";
 const playerEmail = "hack@schnitzel.org";
-const rabbitMQHost = process.env.RABBITMQ_HOST;
+const rabbitMQHost = process.env.RABBITMQ_HOST || "localhost";
 const rabbitMQPort = 5672;
 const rabbitMQUser = "admin";
 const rabbitMQPassword = "admin";
 
+const isInDevMode = process.env.NODE_ENV !== "production";
+
 const player = await fetchOrUpdatePlayer(playerName, playerEmail);
 client.defaults.player = player.playerId;
+
+if (isInDevMode) {
+  logger.debug("Running in development mode...");
+  logger.debug("Intializing game...");
+  await initializeGame(true);
+}
 
 const isParticipating = (game: ResGetGame) =>
   game.participatingPlayers.includes(playerName);
@@ -44,6 +53,11 @@ let playerQueue = `player-${player.playerId}`;
 if (!isParticipating(game)) {
   const gameRegistration = await registerForGame(game.gameId, player.playerId);
   playerQueue = gameRegistration.playerQueue;
+}
+
+if (isInDevMode) {
+  logger.debug("Starting game");
+  await client.startGame(game.gameId);
 }
 
 const conn = await amqplib.connect(

@@ -1,7 +1,12 @@
 import * as util from "util";
 
 const formatObj = (obj: unknown) =>
-  util.inspect(obj, { showHidden: false, depth: null, colors: true });
+  util.inspect(obj, {
+    showHidden: false,
+    depth: null,
+    showProxy: false,
+    colors: true,
+  });
 
 const logger = {
   info: (message: unknown) => console.log(formatObj(message)),

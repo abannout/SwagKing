@@ -10,9 +10,9 @@
     "start": "node --es-module-specifier-resolution=node dist/index.js",
     "compile": "tsc --sourceMap false --removeComments true",
     "dev": "npm run watch",
-    "watch-node": "nodemon --es-module-specifier-resolution=node dist/index.js",
+    "watch-node": "nodemon --on-change-only --es-module-specifier-resolution=node dist/index.js",
     "watch-ts": "tsc -w",
-    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\""
+    "watch": "concurrently --kill-others -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\""
   },
   "author": "",
   "license": "ISC",
