@@ -7,6 +7,7 @@ import type {
   ResGetGame,
 } from "./types";
 import * as client from "./client";
+import logger from "./logger";
 
 const playerName = "hackschnitzel";
 const playerEmail = "hack@schnitzel.org";
@@ -36,7 +37,7 @@ if (!game) {
   throw new Error("No game found");
 }
 
-console.log(`Playing in game: ${game.gameId}`);
+logger.info(`Playing in game: ${game.gameId}`);
 client.defaults.game = game.gameId;
 
 let playerQueue = `player-${player.playerId}`;
@@ -58,7 +59,7 @@ channel.consume(playerQueue, async (msg) => {
     const headers: any = Object.entries(msg.properties.headers)
       .map(([key, value]) => ({ key, value: value.toString() }))
       .reduce((acc, { key, value }) => ({ ...acc, [key]: value }), {});
-    console.log({
+    logger.debug({
       headers,
       event,
     });
@@ -79,6 +80,6 @@ channel.consume(playerQueue, async (msg) => {
 
     channel.ack(msg);
   } else {
-    console.log("Consumer cancelled by server");
+    logger.info("Consumer cancelled by server");
   }
 });
