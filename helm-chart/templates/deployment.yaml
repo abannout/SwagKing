@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: player-hackschnitzel-deployment
+  namespace: player-hackschnitzel
+  labels:
+    app: player-hackschnitzel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: player-hackschnitzel
+  template:
+    metadata:
+      labels:
+        app: player-hackschnitzel
+    spec:
+      containers:
+      - name: player-hackschnitzel
+        image: registry.gitlab.com/the-microservice-dungeon/player-hackschnitzel:latest
+        imagePullPolicy: IfNotPresent
+        env:
+        - name: GAME_URL
+          value: http://game-service.game:8080
+        - name: RABBITMQ_HOST
+          value: rabbitmq-service.rabbitmq
