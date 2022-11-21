@@ -3,12 +3,16 @@ import { untilAsync } from "./utils";
 import * as amqplib from "amqplib";
 import type {
   BuyRobotCommand,
+  EventHeaders,
+  EventRobotSpawned,
   EventRoundStatusPayload,
+  EventType,
   ResGetGame,
 } from "./types";
 import * as client from "./client";
 import logger from "./logger";
 import { initializeGame } from "./dev/initializer";
+import fleet from "./fleet";
 
 const playerName = "hackschnitzel";
 const playerEmail = "hack@schnitzel.org";
@@ -67,29 +71,29 @@ const conn = await amqplib.connect(
 const channel = await conn.createChannel();
 await channel.assertQueue(playerQueue);
 
+type HandlerFn = (event: any) => Promise<void>;
+
+// prettier-ignore
+const handlers: Record<EventType, HandlerFn> = {
+  "round-status": handleRoundStatusEvent,
+  "RobotSpawned": handleRobotSpawnedEvent,
+};
+
 channel.consume(playerQueue, async (msg) => {
   if (msg !== null) {
     const event = JSON.parse(msg.content.toString());
-    const headers: any = Object.entries(msg.properties.headers)
+    const headers: EventHeaders = Object.entries(msg.properties.headers)
       .map(([key, value]) => ({ key, value: value.toString() }))
-      .reduce((acc, { key, value }) => ({ ...acc, [key]: value }), {});
+      .reduce((acc, { key, value }) => ({ ...acc, [key]: value }), {}) as any;
+
     logger.debug({
       headers,
       event,
     });
 
-    if (headers.type === "round-status") {
-      const roundStatusEvent = event as EventRoundStatusPayload;
-      if (roundStatusEvent.roundStatus === "started") {
-        await client.sendCommand<BuyRobotCommand>({
-          commandType: "buying",
-          commandObject: {
-            commandType: "buying",
-            itemName: "robot",
-            itemQuantity: 1,
-          },
-        });
-      }
+    const handler = handlers[headers.type];
+    if (handler !== undefined) {
+      await handler(event);
     }
 
     channel.ack(msg);
@@ -97,3 +101,23 @@ channel.consume(playerQueue, async (msg) => {
     logger.info("Consumer cancelled by server");
   }
 });
+
+async function handleRobotSpawnedEvent(event: EventRobotSpawned) {
+  logger.info("Robot spawned!");
+  fleet.add(event.robot);
+}
+
+async function handleRoundStatusEvent<T extends EventRoundStatusPayload>(
+  event: T
+) {
+  if (event.roundStatus === "started") {
+    client.sendCommand<BuyRobotCommand>({
+      commandType: "buying",
+      commandObject: {
+        commandType: "buying",
+        itemName: "robot",
+        itemQuantity: 1,
+      },
+    });
+  }
+}

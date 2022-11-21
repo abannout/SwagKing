@@ -47,9 +47,11 @@ export type ReqUpdateRoundDuration = {
   duration: number;
 };
 
+export type EventType = "round-status" | "RobotSpawned";
+
 export type EventHeaders = {
   eventId: string;
-  type: string;
+  type: EventType;
   timestamp: string;
 };
 
@@ -58,7 +60,7 @@ export type EventRoundStatusPayload = {
   roundStatus: RoundStatus;
 };
 
-type Robot = {
+export type Robot = {
   id: string;
   alive: boolean;
   player: string;
