@@ -21,12 +21,6 @@ import context from "./context";
 
 const isInDevMode = context.env.mode === "development";
 
-const player = await fetchOrUpdatePlayer(
-  context.player.name,
-  context.player.email
-);
-client.defaults.player = player.playerId;
-
 if (isInDevMode) {
   logger.debug("Running in development mode...");
   logger.debug("Intializing game...");
@@ -54,9 +48,9 @@ if (!game) {
 logger.info(`Playing in game: ${game.gameId}`);
 client.defaults.game = game.gameId;
 
-let playerQueue = `player-${player.playerId}`;
+let playerQueue = `player-${context.player.id}`;
 if (!isParticipating(game)) {
-  const gameRegistration = await registerForGame(game.gameId, player.playerId);
+  const gameRegistration = await registerForGame(game.gameId);
   playerQueue = gameRegistration.playerQueue;
 }
 

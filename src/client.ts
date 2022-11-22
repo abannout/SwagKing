@@ -1,5 +1,4 @@
 import axios, { AxiosError } from "axios";
-import context from "./context";
 import type {
   GameCommand,
   ResCreateGame,
@@ -8,14 +7,14 @@ import type {
   ResRegisterGame,
 } from "./types";
 
-axios.defaults.baseURL = context.net.game.url;
-axios.defaults.headers.common["Content-Type"] = "application/json";
-axios.defaults.headers.common["Accept"] = "application/json";
-
 type ClientDefaults = {
   player: string | null;
   game: string | null;
 };
+
+axios.defaults.baseURL = process.env.GAME_URL || "http://localhost:8080";
+axios.defaults.headers.common["Content-Type"] = "application/json";
+axios.defaults.headers.common["Accept"] = "application/json";
 
 export const defaults: ClientDefaults = {
   player: null,
@@ -104,12 +103,9 @@ export async function getGames(): Promise<ResGetGame[]> {
   return axios.get<ResGetGame[]>("/games").then((res) => res.data);
 }
 
-export async function registerForGame(
-  gameId: string,
-  playerId: string
-): Promise<ResRegisterGame> {
+export async function registerForGame(gameId: string): Promise<ResRegisterGame> {
   return axios
-    .put<ResRegisterGame>(`/games/${gameId}/players/${playerId}`)
+    .put<ResRegisterGame>(`/games/${gameId}/players/${defaults.player}`)
     .then((res) => res.data);
 }
 
