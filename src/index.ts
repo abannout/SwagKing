@@ -126,7 +126,13 @@ async function handlePlanetDiscoveredEvent(event: PlanetDiscovered) {
 async function handleRoundStatusEvent<T extends EventRoundStatusPayload>(
   event: T
 ) {
-  if (event.roundStatus === "started") {
+  if (fleet.size() === 0 && event.roundStatus === "started") {
     await buyRobots(1);
+  }
+
+  const robot = fleet.first();
+
+  if (robot) {
+    await moveToRandomNeighbour(robot);
   }
 }

@@ -23,9 +23,14 @@ function first(): Robot | undefined {
   return fleet[0];
 }
 
+function size(): number {
+  return fleet.length;
+}
+
 export default {
   add,
   get,
   remove,
   first,
+  size,
 };
