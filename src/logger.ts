@@ -14,14 +14,6 @@ const streams: StreamEntry[] = [
   },
 ];
 
-const formatObj = (obj: unknown) =>
-  util.inspect(obj, {
-    showHidden: false,
-    depth: null,
-    showProxy: false,
-    colors: true,
-  });
-
 const logger = pino(
   {
     level: context.env.mode === "development" ? "debug" : "info",
