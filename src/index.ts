@@ -73,6 +73,7 @@ const handlers: Record<EventType, HandlerFn> = {
   "round-status": handleRoundStatusEvent,
   RobotSpawned: handleRobotSpawnedEvent,
   "planet-discovered": handlePlanetDiscoveredEvent,
+  error: handleErrorEvent,
 };
 
 channel.consume(playerQueue, async (msg) => {
@@ -135,4 +136,8 @@ async function handleRoundStatusEvent<T extends EventRoundStatusPayload>(
   if (robot) {
     await moveToRandomNeighbour(robot);
   }
+}
+
+async function handleErrorEvent(event: any) {
+  logger.error(event, "Error event received");
 }

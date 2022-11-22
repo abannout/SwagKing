@@ -47,12 +47,17 @@ export type ReqUpdateRoundDuration = {
   duration: number;
 };
 
-export type EventType = "round-status" | "RobotSpawned" | "planet-discovered";
+export type EventType =
+  | "round-status"
+  | "RobotSpawned"
+  | "planet-discovered"
+  | "error";
 
 export type EventHeaders = {
   eventId: string;
   type: EventType;
   timestamp: string;
+  "kafka-topic": string;
 };
 
 export type EventRoundStatusPayload = {
