@@ -1,29 +1,30 @@
 import { fetchOrUpdatePlayer, getGames, registerForGame } from "./client";
 import { untilAsync } from "./utils";
 import * as amqplib from "amqplib";
-import type {
+import {
   BuyRobotCommand,
   EventHeaders,
   EventRobotSpawned,
   EventRoundStatusPayload,
   EventType,
+  MineCommand,
+  PlanetDiscovered,
   ResGetGame,
 } from "./types";
 import * as client from "./client";
 import logger from "./logger";
 import { initializeGame } from "./dev/initializer";
 import fleet from "./fleet";
+import map from "./map";
+import { buyRobots, mine, moveToRandomNeighbour } from "./commands";
+import context from "./context";
 
-const playerName = "hackschnitzel";
-const playerEmail = "hack@schnitzel.org";
-const rabbitMQHost = process.env.RABBITMQ_HOST || "localhost";
-const rabbitMQPort = 5672;
-const rabbitMQUser = "admin";
-const rabbitMQPassword = "admin";
+const isInDevMode = context.env.mode === "development";
 
-const isInDevMode = process.env.NODE_ENV !== "production";
-
-const player = await fetchOrUpdatePlayer(playerName, playerEmail);
+const player = await fetchOrUpdatePlayer(
+  context.player.name,
+  context.player.email
+);
 client.defaults.player = player.playerId;
 
 if (isInDevMode) {
@@ -33,7 +34,7 @@ if (isInDevMode) {
 }
 
 const isParticipating = (game: ResGetGame) =>
-  game.participatingPlayers.includes(playerName);
+  game.participatingPlayers.includes(context.player.name);
 const canRegister = (game: ResGetGame) =>
   game.gameStatus === "created" && !isParticipating(game);
 
@@ -64,8 +65,9 @@ if (isInDevMode) {
   await client.startGame(game.gameId);
 }
 
+const { rabbitMQ } = context.net;
 const conn = await amqplib.connect(
-  `amqp://${rabbitMQUser}:${rabbitMQPassword}@${rabbitMQHost}:${rabbitMQPort}`
+  `amqp://${rabbitMQ.user}:${rabbitMQ.password}@${rabbitMQ.host}:${rabbitMQ.port}`
 );
 
 const channel = await conn.createChannel();
@@ -73,10 +75,10 @@ await channel.assertQueue(playerQueue);
 
 type HandlerFn = (event: any) => Promise<void>;
 
-// prettier-ignore
 const handlers: Record<EventType, HandlerFn> = {
   "round-status": handleRoundStatusEvent,
-  "RobotSpawned": handleRobotSpawnedEvent,
+  RobotSpawned: handleRobotSpawnedEvent,
+  "planet-discovered": handlePlanetDiscoveredEvent,
 };
 
 channel.consume(playerQueue, async (msg) => {
@@ -102,22 +104,35 @@ channel.consume(playerQueue, async (msg) => {
   }
 });
 
+// -----------------------------
+// Handlers
+// -----------------------------
 async function handleRobotSpawnedEvent(event: EventRobotSpawned) {
   logger.info("Robot spawned!");
   fleet.add(event.robot);
+}
+
+async function handlePlanetDiscoveredEvent(event: PlanetDiscovered) {
+  logger.info("Planet Discovered!");
+  map.set(event);
+
+  const robot = fleet.first();
+
+  if (!robot) {
+    throw new Error("No Robot in fleet. Perhaps it has been killed?");
+  }
+
+  if (!event.resource) {
+    await moveToRandomNeighbour(robot);
+  } else {
+    await mine(robot);
+  }
 }
 
 async function handleRoundStatusEvent<T extends EventRoundStatusPayload>(
   event: T
 ) {
   if (event.roundStatus === "started") {
-    client.sendCommand<BuyRobotCommand>({
-      commandType: "buying",
-      commandObject: {
-        commandType: "buying",
-        itemName: "robot",
-        itemQuantity: 1,
-      },
-    });
+    await buyRobots(1);
   }
 }

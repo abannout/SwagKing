@@ -1,4 +1,5 @@
 import axios, { AxiosError } from "axios";
+import context from "./context";
 import type {
   GameCommand,
   ResCreateGame,
@@ -7,8 +8,7 @@ import type {
   ResRegisterGame,
 } from "./types";
 
-const gameUrl = process.env.GAME_URL || "http://localhost:8080";
-axios.defaults.baseURL = gameUrl;
+axios.defaults.baseURL = context.net.game.url;
 axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.headers.common["Accept"] = "application/json";
 

@@ -1,4 +1,18 @@
+import pino, { StreamEntry } from "pino";
 import * as util from "util";
+import * as fs from "fs";
+import * as path from "node:path";
+import context from "./context";
+
+const streams: StreamEntry[] = [
+  { level: "info", stream: process.stdout },
+  {
+    level: "debug",
+    stream: fs.createWriteStream(path.resolve("logs/logs.log"), {
+      flags: "a",
+    }),
+  },
+];
 
 const formatObj = (obj: unknown) =>
   util.inspect(obj, {
@@ -8,10 +22,11 @@ const formatObj = (obj: unknown) =>
     colors: true,
   });
 
-const logger = {
-  info: (message: unknown) => console.log(formatObj(message)),
-  debug: (message: unknown) => console.debug(formatObj(message)),
-  error: (message: unknown) => console.error(formatObj(message)),
-};
+const logger = pino(
+  {
+    level: context.env.mode === "development" ? "debug" : "info",
+  },
+  pino.multistream(streams)
+);
 
 export default logger;

@@ -19,8 +19,13 @@ function clear(): void {
   fleet.splice(0, fleet.length);
 }
 
+function first(): Robot | undefined {
+  return fleet[0];
+}
+
 export default {
   add,
   get,
   remove,
+  first,
 };

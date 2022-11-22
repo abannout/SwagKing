@@ -47,7 +47,7 @@ export type ReqUpdateRoundDuration = {
   duration: number;
 };
 
-export type EventType = "round-status" | "RobotSpawned";
+export type EventType = "round-status" | "RobotSpawned" | "planet-discovered";
 
 export type EventHeaders = {
   eventId: string;
@@ -60,10 +60,16 @@ export type EventRoundStatusPayload = {
   roundStatus: RoundStatus;
 };
 
+export type RobotPlanet = {
+  planetId: string;
+  resourceType: string;
+};
+
 export type Robot = {
   id: string;
   alive: boolean;
   player: string;
+  planet: RobotPlanet;
   maxHealth: number;
   maxEnergy: number;
   energyRegen: number;
@@ -112,4 +118,46 @@ export type BuyRobotCommand = Omit<
   commandType: "buying";
 };
 
-export type GameCommand = BuyRobotCommand;
+export type MineCommandObject = Pick<BaseCommandObject, "commandType"> & {};
+
+export type MineCommand = Pick<
+  BaseCommand<MineCommandObject>,
+  "commandType" | "robotId" | "commandObject"
+> & {
+  commandType: "mining";
+};
+
+export type MoveCommandObject = Pick<
+  BaseCommandObject,
+  "commandType" | "planetId"
+>;
+
+export type MoveCOmmand = Pick<
+  BaseCommand<MoveCommandObject>,
+  "commandType" | "robotId" | "commandObject"
+> & {
+  commandType: "movement";
+};
+
+export type GameCommand = BuyRobotCommand | GameCommand;
+
+export type Direction = "north" | "south" | "east" | "west";
+export type Resource = "coal" | "iron" | "gem" | "gold" | "platin";
+export type PlanetNeighbour = {
+  direction: Direction;
+  id: string;
+};
+export type ResourceDefinition = {
+  resource_type: Resource;
+  max_amount: number;
+  current_amount: nunmber;
+};
+
+export type Planet = {
+  planet: string;
+  movement_difficulty: number;
+  neighbours: PlanetNeighbour[];
+  resource: ResourceDefinition | null | undefined;
+};
+
+export type PlanetDiscovered = Planet;
