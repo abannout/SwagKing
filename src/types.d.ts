@@ -123,6 +123,15 @@ export type BuyRobotCommand = Omit<
   commandType: "buying";
 };
 
+export type SellCommandObject = Pick<BaseCommandObject, "commandType"> & {};
+
+export type SellCommand = Pick<
+  BaseCommand<SellCommandObject>,
+  "robotId" | "commandType" | "commandObject"
+> & {
+  commandType: "selling";
+};
+
 export type MineCommandObject = Pick<BaseCommandObject, "commandType"> & {};
 
 export type MineCommand = Pick<
@@ -137,7 +146,7 @@ export type MoveCommandObject = Pick<
   "commandType" | "planetId"
 >;
 
-export type MoveCOmmand = Pick<
+export type MoveCommand = Pick<
   BaseCommand<MoveCommandObject>,
   "commandType" | "robotId" | "commandObject"
 > & {

@@ -1,9 +1,10 @@
 import {
   BuyRobotCommand,
   MineCommand,
-  MoveCOmmand,
+  MoveCommand,
   Planet,
   Robot,
+  SellCommand,
 } from "./types";
 import { sendCommand } from "./client";
 import map from "./map";
@@ -32,8 +33,18 @@ export async function mine(robot: Robot): Promise<void> {
   });
 }
 
+export async function sell(robot: Robot): Promise<void> {
+  await sendCommand<SellCommand>({
+    commandType: "selling",
+    robotId: robot.id,
+    commandObject: {
+      commandType: "selling",
+    },
+  });
+}
+
 export async function moveTo(robot: Robot, neighbourId: string): Promise<void> {
-  await sendCommand<MoveCOmmand>({
+  await sendCommand<MoveCommand>({
     commandType: "movement",
     robotId: robot.id,
     commandObject: {

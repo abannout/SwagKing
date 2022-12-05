@@ -16,7 +16,7 @@ import logger from "./logger";
 import { initializeGame } from "./dev/initializer";
 import fleet from "./fleet";
 import map from "./map";
-import { buyRobots, mine, moveToRandomNeighbour } from "./commands";
+import { buyRobots, mine, moveToRandomNeighbour, sell } from "./commands";
 import context from "./context";
 
 const isInDevMode = context.env.mode === "development";
@@ -120,7 +120,8 @@ async function handlePlanetDiscoveredEvent(event: PlanetDiscovered) {
   if (!event.resource) {
     await moveToRandomNeighbour(robot);
   } else {
-    await mine(robot);
+    await sell(robot);
+    // await mine(robot);
   }
 }
 
@@ -134,7 +135,8 @@ async function handleRoundStatusEvent<T extends EventRoundStatusPayload>(
   const robot = fleet.first();
 
   if (robot) {
-    await moveToRandomNeighbour(robot);
+    await sell(robot);
+    // await moveToRandomNeighbour(robot);
   }
 }
 
