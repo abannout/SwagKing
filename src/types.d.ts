@@ -51,6 +51,7 @@ export type EventType =
   | "round-status"
   | "RobotSpawned"
   | "planet-discovered"
+  | "RobotInventoryUpdated"
   | "error";
 
 export type EventHeaders = {
@@ -93,6 +94,15 @@ export type Robot = {
 
 export type EventRobotSpawned = {
   robot: Robot;
+};
+
+export type RobotInventoryUpdated = {
+  robot: string;
+  inventory: {
+    resources: {
+      [key: Resource]: number;
+    };
+  };
 };
 
 type BaseCommand<T extends BaseCommandObject> = {

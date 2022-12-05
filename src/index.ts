@@ -10,6 +10,7 @@ import {
   MineCommand,
   PlanetDiscovered,
   ResGetGame,
+  RobotInventoryUpdated,
 } from "./types";
 import * as client from "./client";
 import logger from "./logger";
@@ -72,6 +73,7 @@ type HandlerFn = (event: any) => Promise<void>;
 const handlers: Record<EventType, HandlerFn> = {
   "round-status": handleRoundStatusEvent,
   RobotSpawned: handleRobotSpawnedEvent,
+  RobotInventoryUpdated: handleRobotInventoryUpdatedEvent,
   "planet-discovered": handlePlanetDiscoveredEvent,
   error: handleErrorEvent,
 };
@@ -118,11 +120,24 @@ async function handlePlanetDiscoveredEvent(event: PlanetDiscovered) {
   }
 
   if (!event.resource) {
+    logger.info("No resource on planet. Moving to next planet");
     await moveToRandomNeighbour(robot);
   } else {
-    await sell(robot);
-    // await mine(robot);
+    await mine(robot);
   }
+}
+
+async function handleRobotInventoryUpdatedEvent(event: RobotInventoryUpdated) {
+  logger.info("Robot Inventory updated!");
+  logger.info(event);
+
+  const robot = fleet.first();
+
+  if (!robot) {
+    throw new Error("No Robot in fleet. Perhaps it has been killed?");
+  }
+
+  await sell(robot);
 }
 
 async function handleRoundStatusEvent<T extends EventRoundStatusPayload>(
@@ -135,7 +150,7 @@ async function handleRoundStatusEvent<T extends EventRoundStatusPayload>(
   const robot = fleet.first();
 
   if (robot) {
-    await sell(robot);
+    // await sell(robot);
     // await moveToRandomNeighbour(robot);
   }
 }

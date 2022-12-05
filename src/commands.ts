@@ -9,10 +9,12 @@ import {
 import { sendCommand } from "./client";
 import map from "./map";
 import { send } from "process";
+import logger from "./logger";
 
 // Command helper library
 
 export async function buyRobots(amount: number): Promise<void> {
+  logger.info(`Buying ${amount} robots`);
   await sendCommand<BuyRobotCommand>({
     commandType: "buying",
     commandObject: {
@@ -23,7 +25,8 @@ export async function buyRobots(amount: number): Promise<void> {
   });
 }
 
-export async function mine(robot: Robot): Promise<void> {
+export async function mine(robot: Pick<Robot, "id">): Promise<void> {
+  logger.info(`Mining with robot ${robot.id}`);
   await sendCommand<MineCommand>({
     commandType: "mining",
     robotId: robot.id,
@@ -33,7 +36,8 @@ export async function mine(robot: Robot): Promise<void> {
   });
 }
 
-export async function sell(robot: Robot): Promise<void> {
+export async function sell(robot: Pick<Robot, "id">): Promise<void> {
+  logger.info(`Selling resources of robot ${robot.id}`);
   await sendCommand<SellCommand>({
     commandType: "selling",
     robotId: robot.id,
@@ -43,7 +47,11 @@ export async function sell(robot: Robot): Promise<void> {
   });
 }
 
-export async function moveTo(robot: Robot, neighbourId: string): Promise<void> {
+export async function moveTo(
+  robot: Pick<Robot, "id">,
+  neighbourId: string
+): Promise<void> {
+  logger.info(`Moving robot robot ${robot.id} to planet ${neighbourId}`);
   await sendCommand<MoveCommand>({
     commandType: "movement",
     robotId: robot.id,
