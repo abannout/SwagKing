@@ -3,6 +3,7 @@ import { untilAsync } from "./utils";
 import * as amqplib from "amqplib";
 import {
   BuyRobotCommand,
+  EventGameStatusPayload,
   EventHeaders,
   EventRobotSpawned,
   EventRoundStatusPayload,
@@ -70,8 +71,12 @@ await channel.assertQueue(playerQueue);
 
 type HandlerFn = (event: any) => Promise<void>;
 
+// Oh Gosh this is hacky
+type CommandFunction = () => Promise<void>;
+const commands: Array<CommandFunction> = [];
 const handlers: Record<EventType, HandlerFn> = {
   "round-status": handleRoundStatusEvent,
+  status: handleGameStatusEvent,
   RobotSpawned: handleRobotSpawnedEvent,
   RobotInventoryUpdated: handleRobotInventoryUpdatedEvent,
   "planet-discovered": handlePlanetDiscoveredEvent,
@@ -121,9 +126,9 @@ async function handlePlanetDiscoveredEvent(event: PlanetDiscovered) {
 
   if (!event.resource) {
     logger.info("No resource on planet. Moving to next planet");
-    await moveToRandomNeighbour(robot);
+    commands.push(() => moveToRandomNeighbour(robot));
   } else {
-    await mine(robot);
+    commands.push(() => mine(robot));
   }
 }
 
@@ -137,14 +142,21 @@ async function handleRobotInventoryUpdatedEvent(event: RobotInventoryUpdated) {
     throw new Error("No Robot in fleet. Perhaps it has been killed?");
   }
 
-  await sell(robot);
+  commands.push(() => sell(robot));
 }
 
 async function handleRoundStatusEvent<T extends EventRoundStatusPayload>(
   event: T
 ) {
+  logger.info(
+    `Round ${event.roundNumber} switched to status: ${event.roundStatus}`
+  );
   if (fleet.size() === 0 && event.roundStatus === "started") {
-    await buyRobots(1);
+    commands.push(() => buyRobots(1));
+  }
+
+  if (event.roundStatus === "started") {
+    await Promise.all(commands.map((c) => c()));
   }
 
   const robot = fleet.first();
@@ -153,6 +165,12 @@ async function handleRoundStatusEvent<T extends EventRoundStatusPayload>(
     // await sell(robot);
     // await moveToRandomNeighbour(robot);
   }
+}
+
+async function handleGameStatusEvent<T extends EventGameStatusPayload>(
+  event: T
+) {
+  logger.info(`Game ${event.gameId} switched to status: ${event.status}`);
 }
 
 async function handleErrorEvent(event: any) {

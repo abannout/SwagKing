@@ -49,6 +49,7 @@ export type ReqUpdateRoundDuration = {
 
 export type EventType =
   | "round-status"
+  | "status"
   | "RobotSpawned"
   | "planet-discovered"
   | "RobotInventoryUpdated"
@@ -63,7 +64,13 @@ export type EventHeaders = {
 
 export type EventRoundStatusPayload = {
   gameId: string;
+  roundNumber: number;
   roundStatus: RoundStatus;
+};
+
+export type EventGameStatusPayload = {
+  gameId: string;
+  status: GameStatus;
 };
 
 export type RobotPlanet = {
