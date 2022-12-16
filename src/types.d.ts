@@ -53,7 +53,8 @@ export type EventType =
   | "RobotSpawned"
   | "planet-discovered"
   | "RobotInventoryUpdated"
-  | "error";
+  | "error"
+  | "RobotMoved";
 
 export type EventHeaders = {
   eventId: string;
@@ -101,6 +102,12 @@ export type Robot = {
 
 export type EventRobotSpawned = {
   robot: Robot;
+};
+
+export type EventRobotMoved = {
+  robot: string;
+  fromPlanet: string;
+  toPlanet: string;
 };
 
 export type RobotInventoryUpdated = {

@@ -5,6 +5,7 @@ import {
   BuyRobotCommand,
   EventGameStatusPayload,
   EventHeaders,
+  EventRobotMoved,
   EventRobotSpawned,
   EventRoundStatusPayload,
   EventType,
@@ -81,6 +82,7 @@ const handlers: Record<EventType, HandlerFn> = {
   RobotInventoryUpdated: handleRobotInventoryUpdatedEvent,
   "planet-discovered": handlePlanetDiscoveredEvent,
   error: handleErrorEvent,
+  RobotMoved: handleRobotMovedEvent,
 };
 
 channel.consume(playerQueue, async (msg) => {
@@ -166,6 +168,18 @@ async function handleRoundStatusEvent<T extends EventRoundStatusPayload>(
     // await sell(robot);
     // await moveToRandomNeighbour(robot);
   }
+}
+
+async function handleRobotMovedEvent<T extends EventRobotMoved>(event: T) {
+  logger.info(`Robot ${event.robot} moved to planet ${event.fromPlanet}`);
+  const robot = fleet.get(event.robot);
+  if (!robot) {
+    throw new Error("No Robot in fleet. Perhaps it has been killed?");
+  }
+  if (robot.planet.planetId !== event.fromPlanet) {
+    throw new Error("Inconsitent state");
+  }
+  robot.planet.planetId = event.toPlanet;
 }
 
 async function handleGameStatusEvent<T extends EventGameStatusPayload>(
