@@ -4,7 +4,7 @@ import { ResGetGame } from "../types";
 
 const cRounds = 10_000;
 const cPlayers = 10;
-const cRoundDuration = 15_000;
+const cRoundDuration = 4_000;
 
 export async function initializeGame(force: boolean = false) {
   const games: Pick<ResGetGame, "gameId" | "gameStatus">[] = await getGames();
