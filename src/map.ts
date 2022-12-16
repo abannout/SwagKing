@@ -1,13 +1,15 @@
 import { Planet } from "./types";
 
-const planets: Record<string, Planet | undefined> = {};
+const NODES: Record<string, Planet> = {};
+const EDGES: Record<string, string[]> = {};
 
 function set(planet: Planet): void {
-  planets[planet.planet] = planet;
+  NODES[planet.planet] = planet;
+  EDGES[planet.planet] = planet.neighbours.map((n) => n.id);
 }
 
 function get(id: string): Planet | undefined {
-  return planets[id];
+  return NODES[id];
 }
 
 export default {
