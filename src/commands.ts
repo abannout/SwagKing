@@ -7,9 +7,9 @@ import {
   SellCommand,
 } from "./types";
 import { sendCommand } from "./client";
-import map from "./map";
 import { send } from "process";
 import logger from "./logger";
+import map from "./map";
 
 // Command helper library
 
@@ -63,12 +63,9 @@ export async function moveTo(
 }
 
 export async function moveToRandomNeighbour(robot: Robot): Promise<void> {
-  const planet = map.get(robot.planet.planetId);
-  if (!planet) {
-    throw new Error("Planet not found");
+  const randomNeighbour = map.getRandomNeighbour(robot.planet.planetId);
+  if (!randomNeighbour) {
+    throw new Error("No neighbour found");
   }
-  const neighbours = planet.neighbours;
-  const randomNeighbour =
-    neighbours[Math.floor(Math.random() * neighbours.length)];
-  await moveTo(robot, randomNeighbour.id);
+  await moveTo(robot, randomNeighbour);
 }

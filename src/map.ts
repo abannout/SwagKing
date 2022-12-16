@@ -17,6 +17,11 @@ function get(id: string): Planet | undefined {
   return NODES[id];
 }
 
+function getRandomNeighbour(id: string): string | undefined {
+  const neighbours = EDGES[id];
+  return neighbours[Math.floor(Math.random() * neighbours.length)];
+}
+
 // TODO: Put that somewhere else
 async function draw() {
   const resourceIcon: Record<Resource, string> = {
@@ -81,5 +86,6 @@ async function draw() {
 export default {
   set,
   get,
+  getRandomNeighbour,
   draw,
 };
