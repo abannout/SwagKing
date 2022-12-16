@@ -143,7 +143,7 @@ async function handleRobotInventoryUpdatedEvent(event: RobotInventoryUpdated) {
     throw new Error("No Robot in fleet. Perhaps it has been killed?");
   }
 
-  commands.push(() => sell(robot));
+  // commands.push(() => sell(robot));
 }
 
 async function handleRoundStatusEvent<T extends EventRoundStatusPayload>(
