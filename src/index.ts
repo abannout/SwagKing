@@ -73,7 +73,7 @@ type HandlerFn = (event: any) => Promise<void>;
 
 // Oh Gosh this is hacky
 type CommandFunction = () => Promise<void>;
-const commands: Array<CommandFunction> = [];
+const commands: Record<string, CommandFunction> = {};
 const handlers: Record<EventType, HandlerFn> = {
   "round-status": handleRoundStatusEvent,
   status: handleGameStatusEvent,
@@ -127,9 +127,9 @@ async function handlePlanetDiscoveredEvent(event: PlanetDiscovered) {
 
   if (!event.resource) {
     logger.info("No resource on planet. Moving to next planet");
-    commands.push(() => moveToRandomNeighbour(robot));
+    commands[robot.id] = () => moveToRandomNeighbour(robot);
   } else {
-    commands.push(() => mine(robot));
+    // commands.push(() => mine(robot));
   }
 }
 
@@ -153,11 +153,11 @@ async function handleRoundStatusEvent<T extends EventRoundStatusPayload>(
     `Round ${event.roundNumber} switched to status: ${event.roundStatus}`
   );
   if (fleet.size() === 0 && event.roundStatus === "started") {
-    commands.push(() => buyRobots(1));
+    commands[""] = () => buyRobots(1);
   }
 
   if (event.roundStatus === "started") {
-    await Promise.all(commands.map((c) => c()));
+    await Promise.all(Object.values(commands).map((c) => c()));
   }
 
   const robot = fleet.first();
