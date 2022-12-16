@@ -117,6 +117,7 @@ async function handleRobotSpawnedEvent(event: EventRobotSpawned) {
 async function handlePlanetDiscoveredEvent(event: PlanetDiscovered) {
   logger.info("Planet Discovered!");
   map.set(event);
+  await map.draw();
 
   const robot = fleet.first();
 
