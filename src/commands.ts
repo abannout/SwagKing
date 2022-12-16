@@ -61,11 +61,3 @@ export async function moveTo(
     },
   });
 }
-
-export async function moveToRandomNeighbour(robot: Robot): Promise<void> {
-  const randomNeighbour = map.getRandomNeighbour(robot.planet.planetId);
-  if (!randomNeighbour) {
-    throw new Error("No neighbour found");
-  }
-  await moveTo(robot, randomNeighbour);
-}

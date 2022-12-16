@@ -1,15 +1,13 @@
-import { fetchOrUpdatePlayer, getGames, registerForGame } from "./client";
+import { getGames, registerForGame } from "./client";
 import { untilAsync } from "./utils";
 import * as amqplib from "amqplib";
 import {
-  BuyRobotCommand,
   EventGameStatusPayload,
   EventHeaders,
   EventRobotMoved,
   EventRobotSpawned,
   EventRoundStatusPayload,
   EventType,
-  MineCommand,
   PlanetDiscovered,
   ResGetGame,
   RobotInventoryUpdated,
@@ -19,7 +17,7 @@ import logger from "./logger";
 import { initializeGame } from "./dev/initializer";
 import fleet from "./fleet";
 import map from "./map";
-import { buyRobots, mine, moveToRandomNeighbour, sell } from "./commands";
+import { buyRobots, moveTo } from "./commands";
 import context from "./context";
 
 const isInDevMode = context.env.mode === "development";
@@ -74,7 +72,7 @@ type HandlerFn = (event: any) => Promise<void>;
 
 // Oh Gosh this is hacky
 type CommandFunction = () => Promise<void>;
-const commands: Record<string, CommandFunction> = {};
+let commands: Record<string, CommandFunction> = {};
 const handlers: Record<EventType, HandlerFn> = {
   "round-status": handleRoundStatusEvent,
   status: handleGameStatusEvent,
@@ -114,22 +112,22 @@ channel.consume(playerQueue, async (msg) => {
 async function handleRobotSpawnedEvent(event: EventRobotSpawned) {
   logger.info("Robot spawned!");
   fleet.add(event.robot);
+  map.setRobot(event.robot.id, event.robot.planet.planetId);
 }
 
 async function handlePlanetDiscoveredEvent(event: PlanetDiscovered) {
   logger.info("Planet Discovered!");
-  map.set(event);
+  map.setPlanet(event);
   await map.draw();
 
   const robot = fleet.first();
-
   if (!robot) {
     throw new Error("No Robot in fleet. Perhaps it has been killed?");
   }
 
-  if (!event.resource) {
-    logger.info("No resource on planet. Moving to next planet");
-    commands[robot.id] = () => moveToRandomNeighbour(robot);
+  if (!event.planet) {
+    const randomNeighbour = map.getRandomNeighbour(event.planet)!;
+    commands[robot.id] = () => moveTo(robot, randomNeighbour);
   } else {
     // commands.push(() => mine(robot));
   }
@@ -154,12 +152,14 @@ async function handleRoundStatusEvent<T extends EventRoundStatusPayload>(
   logger.info(
     `Round ${event.roundNumber} switched to status: ${event.roundStatus}`
   );
+
   if (fleet.size() === 0 && event.roundStatus === "started") {
     commands[""] = () => buyRobots(1);
   }
 
   if (event.roundStatus === "started") {
     await Promise.all(Object.values(commands).map((c) => c()));
+    commands = {};
   }
 
   const robot = fleet.first();
@@ -167,19 +167,14 @@ async function handleRoundStatusEvent<T extends EventRoundStatusPayload>(
   if (robot) {
     // await sell(robot);
     // await moveToRandomNeighbour(robot);
+    // const randomNeighbour = map.getRandomNeighbour(robot.planet.planetId)!;
+    // commands[robot.id] = () => moveTo(robot, randomNeighbour);
   }
 }
 
 async function handleRobotMovedEvent<T extends EventRobotMoved>(event: T) {
   logger.info(`Robot ${event.robot} moved to planet ${event.fromPlanet}`);
-  const robot = fleet.get(event.robot);
-  if (!robot) {
-    throw new Error("No Robot in fleet. Perhaps it has been killed?");
-  }
-  if (robot.planet.planetId !== event.fromPlanet) {
-    throw new Error("Inconsitent state");
-  }
-  robot.planet.planetId = event.toPlanet;
+  map.moveRobot(event.robot, event.fromPlanet, event.toPlanet);
 }
 
 async function handleGameStatusEvent<T extends EventGameStatusPayload>(

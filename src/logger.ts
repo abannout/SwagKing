@@ -5,7 +5,10 @@ import * as path from "node:path";
 import context from "./context";
 
 const streams: StreamEntry[] = [
-  { level: "info", stream: process.stdout },
+  {
+    level: "info",
+    stream: process.stdout,
+  },
   {
     level: "debug",
     stream: fs.createWriteStream(path.resolve("logs/logs.log"), {

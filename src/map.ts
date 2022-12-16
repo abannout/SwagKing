@@ -5,19 +5,39 @@ import * as path from "node:path";
 
 await graphviz.loadWASM();
 
-const NODES: Record<string, Planet> = {};
-const EDGES: Record<string, string[]> = {};
+// For readability
+type PlanetId = string;
+type RobotId = string;
 
-function set(planet: Planet): void {
+// This is our basic graph structure
+const NODES: Record<PlanetId, Planet> = {};
+const EDGES: Record<PlanetId, PlanetId[]> = {};
+
+// We also need to keep track of our robots
+const ROBOTS: Record<PlanetId, RobotId[]> = {};
+
+function setPlanet(planet: Planet): void {
   NODES[planet.planet] = planet;
   EDGES[planet.planet] = planet.neighbours.map((n) => n.id);
 }
 
-function get(id: string): Planet | undefined {
+function setRobot(robotId: RobotId, planetId: PlanetId): void {
+  console.log("Setting robot", robotId, "on planet", planetId);
+  ROBOTS[planetId] = ROBOTS[planetId] || [];
+  ROBOTS[planetId].push(robotId);
+}
+
+function moveRobot(robotId: RobotId, from: PlanetId, to: PlanetId): void {
+  console.log("Moving robot", robotId, "from", from, "to", to);
+  ROBOTS[from] = ROBOTS[from].filter((id) => id !== robotId);
+  setRobot(robotId, to);
+}
+
+function getPlanet(id: PlanetId): Planet | undefined {
   return NODES[id];
 }
 
-function getRandomNeighbour(id: string): string | undefined {
+function getRandomNeighbour(id: PlanetId): PlanetId | undefined {
   const neighbours = EDGES[id];
   return neighbours[Math.floor(Math.random() * neighbours.length)];
 }
@@ -84,8 +104,10 @@ async function draw() {
 }
 
 export default {
-  set,
-  get,
+  setPlanet,
+  getPlanet,
   getRandomNeighbour,
+  setRobot,
+  moveRobot,
   draw,
 };
