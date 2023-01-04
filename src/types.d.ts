@@ -1,6 +1,29 @@
+// -------------------------------
+// Utils
+// -------------------------------
+export type Awaitable<T> = T | PromiseLike<T>
+
+
+// -------------------------------
+// Game HTTP Definitions
+// -------------------------------
+
 export type ReqCreatePlayer = {
   name: string;
   email: string;
+};
+
+export type ReqCreateGame = {
+  maxRounds: number;
+  maxPlayers: number;
+};
+
+export type ReqUpdateMaxRounds = {
+  maxRounds: number;
+};
+
+export type ReqUpdateRoundDuration = {
+  duration: number;
 };
 
 export type ResCreatePlayer = {
@@ -8,16 +31,6 @@ export type ResCreatePlayer = {
   name: string;
   email: string;
 };
-
-export type GameStatus = "created" | "started" | "ended";
-export type RoundStatus = "started" | "command input ended" | "ended";
-export type CommandType =
-  | "mining"
-  | "movement"
-  | "battle"
-  | "buying"
-  | "selling"
-  | "regenerate";
 
 export type ResGetGame = {
   gameId: string;
@@ -30,31 +43,55 @@ export type ResRegisterGame = {
   playerQueue: string;
 };
 
-export type ReqCreateGame = {
-  maxRounds: number;
-  maxPlayers: number;
-};
-
 export type ResCreateGame = {
   gameId: string;
 };
 
-export type ReqUpdateMaxRounds = {
-  maxRounds: number;
-};
+// -------------------------------
+// Game Constants
+// -------------------------------
 
-export type ReqUpdateRoundDuration = {
-  duration: number;
-};
+export type GameStatus = "created" | "started" | "ended";
+export type RoundStatus = "started" | "command input ended" | "ended";
+export type CommandType =
+  | "mining"
+  | "movement"
+  | "battle"
+  | "buying"
+  | "selling"
+  | "regenerate";
 
-export type EventType =
-  | "round-status"
-  | "status"
-  | "RobotSpawned"
-  | "planet-discovered"
-  | "RobotInventoryUpdated"
-  | "error"
-  | "RobotMoved";
+// -------------------------------
+// Eventing
+// -------------------------------
+
+export type RobotIntegrationEventType =
+  | "RobotAttackedIntegrationEvent"
+  | "RobotMovedIntegrationEvent"
+  | "RobotRegeneratedIntegrationEvent"
+  | "RobotResourceMinedIntegrationEvent"
+  | "RobotResourceRemovedIntegrationEvent"
+  | "RobotRestoredAttributesIntegrationEvent"
+  | "RobotSpawnedIntegrationEvent"
+  | "RobotUpgradedIntegrationEvent";
+
+export type RobotEventType = "RobotSpawned" | "RobotInventoryUpdated" | "RobotMoved";
+
+export type GameEventType = "round-status" | "status";
+
+export type ErrorEventType = "error";
+
+export type MapEventType = "planet-discovered";
+
+export type TradingEventType = "BankAccountTransactionBooked"
+  | "BankAccountTransactionBooked"
+  | "BankAccountInitialized"
+  | "TradableBought"
+  | "TradableSold"
+  | "TradablePrices";
+
+// export type EventType = RobotEventType | RobotIntegrationEventType | GameEventType | MapEventType | ErrorEventType | TradingEventType;
+export type EventType = keyof ClientEvents;
 
 export type EventHeaders = {
   eventId: string;
@@ -62,6 +99,23 @@ export type EventHeaders = {
   timestamp: string;
   "kafka-topic": string;
 };
+
+export type GameEvent<T> = {
+  headers: EventHeaders,
+  payload: T
+};
+
+export interface ClientEvents {
+  "planet-discovered": PlanetDiscovered;
+  "RobotMoved": EventRobotMoved;
+  "RobotInventoryUpdated": RobotInventoryUpdated;
+  "RobotSpawned": EventRobotSpawned;
+  "game-status": EventGameStatusPayload;
+  "round-status": EventRoundStatusPayload;
+  "error": any;
+};
+
+export type GameEventMapping = Record<EventHeaders, GameEvent<infer T>>;
 
 export type EventRoundStatusPayload = {
   gameId: string;
@@ -118,6 +172,10 @@ export type RobotInventoryUpdated = {
     };
   };
 };
+
+// -------------------------------
+// Commands
+// -------------------------------
 
 type BaseCommand<T extends BaseCommandObject> = {
   gameId: string;

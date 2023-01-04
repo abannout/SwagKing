@@ -1,32 +1,17 @@
 import EventEmitter from "events";
-import { EventType, GameEvent } from "../types";
+import { Awaitable, ClientEvents, EventType, GameEvent } from "../types";
 
-type RelayFunction<T> = (event: GameEvent<T>) => Promise<void> | void;
-
-type EventMap = Record<EventType, any>;
-type EventKey<T extends EventMap> = EventType & keyof T;
-interface Emitter<T extends EventMap> {
-  on<K extends EventKey<T>>
-    (eventName: K, fn: RelayFunction<T[K]>): void;
-  off<K extends EventKey<T>>
-    (eventName: K, fn: RelayFunction<T[K]>): void;
-  emit<K extends EventKey<T>>
-    (eventName: K, params: T[K]): void;
-}
-
-const emitter = new EventEmitter();
-
-export class EventRelay<T extends EventMap> implements Emitter<T> {
+export class EventRelay {
   private emitter = new EventEmitter();
-  on<K extends EventKey<T>>(eventName: K, fn: RelayFunction<T[K]>) {
+  on<K extends keyof ClientEvents>(eventName: K, fn: (event: GameEvent<ClientEvents[K]>) => Awaitable<void>) {
     this.emitter.on(eventName, fn);
   }
 
-  off<K extends EventKey<T>>(eventName: K, fn: RelayFunction<T[K]>) {
+  off<K extends keyof ClientEvents>(eventName: K, fn: (event: GameEvent<ClientEvents[K]>) => Awaitable<void>) {
     this.emitter.off(eventName, fn);
   }
 
-  emit<K extends EventKey<T>>(eventName: K, params: T[K]) {
-    this.emitter.emit(eventName, params);
+  emit<K extends keyof ClientEvents>(eventName: K, event: GameEvent<ClientEvents[K]>) {
+    this.emitter.emit(eventName, event);
   }
 };

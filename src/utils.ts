@@ -1,3 +1,5 @@
+import { EventType } from "./types";
+
 export function until(
   condition: () => boolean,
   timeout: number = 500

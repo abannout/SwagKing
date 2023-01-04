@@ -2,15 +2,8 @@ import { getGames, registerForGame } from "./client";
 import { untilAsync } from "./utils";
 import * as amqplib from "amqplib";
 import {
-  EventGameStatusPayload,
   EventHeaders,
-  EventRobotMoved,
-  EventRobotSpawned,
-  EventRoundStatusPayload,
-  EventType,
-  PlanetDiscovered,
   ResGetGame,
-  RobotInventoryUpdated,
 } from "./types";
 import * as client from "./client";
 import logger from "./logger";
@@ -19,6 +12,7 @@ import fleet from "./fleet";
 import map from "./map";
 import { buyRobots, moveTo } from "./commands";
 import context from "./context";
+import { EventRelay } from "./event/relay";
 
 const isInDevMode = context.env.mode === "development";
 
@@ -68,20 +62,10 @@ const conn = await amqplib.connect(
 const channel = await conn.createChannel();
 await channel.assertQueue(playerQueue);
 
-type HandlerFn = (event: any) => Promise<void>;
-
 // Oh Gosh this is hacky
 type CommandFunction = () => Promise<void>;
 let commands: Record<string, CommandFunction> = {};
-const handlers: Record<EventType, HandlerFn> = {
-  "round-status": handleRoundStatusEvent,
-  status: handleGameStatusEvent,
-  RobotSpawned: handleRobotSpawnedEvent,
-  RobotInventoryUpdated: handleRobotInventoryUpdatedEvent,
-  "planet-discovered": handlePlanetDiscoveredEvent,
-  error: handleErrorEvent,
-  RobotMoved: handleRobotMovedEvent,
-};
+const relay = new EventRelay();
 
 channel.consume(playerQueue, async (msg) => {
   if (msg !== null) {
@@ -95,10 +79,10 @@ channel.consume(playerQueue, async (msg) => {
       event,
     });
 
-    const handler = handlers[headers.type];
-    if (handler !== undefined) {
-      await handler(event);
-    }
+    relay.emit(headers.type, {
+      headers,
+      payload: event
+    });
 
     channel.ack(msg);
   } else {
@@ -109,15 +93,17 @@ channel.consume(playerQueue, async (msg) => {
 // -----------------------------
 // Handlers
 // -----------------------------
-async function handleRobotSpawnedEvent(event: EventRobotSpawned) {
+relay.on("RobotSpawned", (event) => {
   logger.info("Robot spawned!");
-  fleet.add(event.robot);
-  map.setRobot(event.robot.id, event.robot.planet.planetId);
-}
+  const { robot } = event.payload;
+  fleet.add(robot);
+  map.setRobot(robot.id, robot.planet.planetId);
+});
 
-async function handlePlanetDiscoveredEvent(event: PlanetDiscovered) {
+relay.on("planet-discovered", async (event) => {
   logger.info("Planet Discovered!");
-  map.setPlanet(event);
+  const planet = event.payload;
+  map.setPlanet(planet);
   await map.draw();
 
   const robot = fleet.first();
@@ -125,15 +111,15 @@ async function handlePlanetDiscoveredEvent(event: PlanetDiscovered) {
     throw new Error("No Robot in fleet. Perhaps it has been killed?");
   }
 
-  if (!event.planet) {
-    const randomNeighbour = map.getRandomNeighbour(event.planet)!;
+  if (!planet) {
+    const randomNeighbour = map.getRandomNeighbour(planet)!;
     commands[robot.id] = () => moveTo(robot, randomNeighbour);
   } else {
     // commands.push(() => mine(robot));
   }
-}
+});
 
-async function handleRobotInventoryUpdatedEvent(event: RobotInventoryUpdated) {
+relay.on("RobotInventoryUpdated", (event) => {
   logger.info("Robot Inventory updated!");
   logger.info(event);
 
@@ -144,20 +130,19 @@ async function handleRobotInventoryUpdatedEvent(event: RobotInventoryUpdated) {
   }
 
   // commands.push(() => sell(robot));
-}
+});
 
-async function handleRoundStatusEvent<T extends EventRoundStatusPayload>(
-  event: T
-) {
+relay.on("round-status", async (event) => {
+  const round = event.payload;
   logger.info(
-    `Round ${event.roundNumber} switched to status: ${event.roundStatus}`
+    `Round ${round.roundNumber} switched to status: ${round.roundStatus}`
   );
 
-  if (fleet.size() === 0 && event.roundStatus === "started") {
+  if (fleet.size() === 0 && round.roundStatus === "started") {
     commands[""] = () => buyRobots(1);
   }
 
-  if (event.roundStatus === "started") {
+  if (round.roundStatus === "started") {
     await Promise.all(Object.values(commands).map((c) => c()));
     commands = {};
   }
@@ -170,19 +155,17 @@ async function handleRoundStatusEvent<T extends EventRoundStatusPayload>(
     // const randomNeighbour = map.getRandomNeighbour(robot.planet.planetId)!;
     // commands[robot.id] = () => moveTo(robot, randomNeighbour);
   }
-}
+});
 
-async function handleRobotMovedEvent<T extends EventRobotMoved>(event: T) {
-  logger.info(`Robot ${event.robot} moved to planet ${event.fromPlanet}`);
-  map.moveRobot(event.robot, event.fromPlanet, event.toPlanet);
-}
+relay.on("RobotMoved", (event) => {
+  logger.info(`Robot ${event.payload.robot} moved to planet ${event.payload.fromPlanet}`);
+  map.moveRobot(event.payload.robot, event.payload.fromPlanet, event.payload.toPlanet);
+});
 
-async function handleGameStatusEvent<T extends EventGameStatusPayload>(
-  event: T
-) {
-  logger.info(`Game ${event.gameId} switched to status: ${event.status}`);
-}
+relay.on("game-status", (event) => {
+  logger.info(`Game ${event.payload.gameId} switched to status: ${event.payload.status}`);
+});
 
-async function handleErrorEvent(event: any) {
+relay.on("error", (event) => {
   logger.error(event, "Error event received");
-}
+});
