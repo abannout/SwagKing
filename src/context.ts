@@ -1,5 +1,5 @@
 import axios from "axios";
-import { defaults, fetchOrUpdatePlayer } from "./client";
+import { defaults, fetchOrUpdatePlayer } from "./net/client";
 
 export type Context = {
   player: {

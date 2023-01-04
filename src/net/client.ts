@@ -5,7 +5,7 @@ import type {
   ResCreatePlayer,
   ResGetGame,
   ResRegisterGame,
-} from "./types";
+} from "../types";
 
 type ClientDefaults = {
   player: string | null;

@@ -2,7 +2,7 @@ import pino, { StreamEntry } from "pino";
 import * as util from "util";
 import * as fs from "fs";
 import * as path from "node:path";
-import context from "./context";
+import context from "../context";
 
 const streams: StreamEntry[] = [
   {

@@ -1,5 +1,5 @@
-import { createGame, endGame, getGames, setRoundDuration } from "../client";
-import logger from "../logger";
+import { createGame, endGame, getGames, setRoundDuration } from "../net/client";
+import logger from "../utils/logger";
 import { ResGetGame } from "../types";
 
 const cRounds = 10_000;

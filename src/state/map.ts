@@ -1,4 +1,4 @@
-import { Planet, Resource } from "./types";
+import { Planet, Resource } from "../types";
 import graphviz from "graphviz-wasm";
 import fs from "fs/promises";
 import * as path from "node:path";

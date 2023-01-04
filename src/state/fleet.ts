@@ -1,4 +1,4 @@
-import { Robot } from "./types";
+import { Robot } from "../types";
 
 const fleet: Robot[] = [];
 

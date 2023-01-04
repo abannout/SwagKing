@@ -6,10 +6,10 @@ import {
   Robot,
   SellCommand,
 } from "./types";
-import { sendCommand } from "./client";
+import { sendCommand } from "./net/client";
 import { send } from "process";
-import logger from "./logger";
-import map from "./map";
+import logger from "./utils/logger";
+import map from "./state/map";
 
 // Command helper library
 

@@ -1,18 +1,18 @@
-import { getGames, registerForGame } from "./client";
-import { untilAsync } from "./utils";
+import { getGames, registerForGame } from "./net/client";
+import { untilAsync } from "./utils/utils";
 import * as amqplib from "amqplib";
 import {
   EventHeaders,
   ResGetGame,
 } from "./types";
-import * as client from "./client";
-import logger from "./logger";
+import * as client from "./net/client";
+import logger from "./utils/logger";
 import { initializeGame } from "./dev/initializer";
-import fleet from "./fleet";
-import map from "./map";
+import fleet from "./state/fleet";
+import map from "./state/map";
 import { buyRobots, moveTo } from "./commands";
 import context from "./context";
-import { EventRelay } from "./event/relay";
+import { EventRelay } from "./net/relay";
 
 const isInDevMode = context.env.mode === "development";
 
