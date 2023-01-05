@@ -121,6 +121,25 @@ export interface ClientEvents {
   "RobotRestoredAttributesIntegrationEvent": RobotRestoredAttributesIntegrationEvent;
   "RobotSpawnedIntegrationEvent": RobotSpawnedIntegrationEvent;
   "RobotUpgradedIntegrationEvent": RobotUpgradedIntegrationEvent;
+  "BankAccountInitialized": BankAccountInitializedEvent,
+  "BankAccountCleared": BankAccountClearedEvent,
+  "BankAccountTransactionBooked": BankAccountTransactionBookedEvent
+};
+
+export type BankAccountClearedEvent = {
+  playerId: string;
+  balance: 0;
+};
+
+export type BankAccountInitializedEvent = {
+  playerId: string;
+  balance: number;
+};
+
+export type BankAccountTransactionBookedEvent = {
+  playerId: string;
+  transcationAmount: number;
+  balance: number;
 };
 
 export type GameEventMapping = Record<EventHeaders, GameEvent<infer T>>;

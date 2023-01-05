@@ -2,6 +2,7 @@ import fleet from "./fleet";
 import * as relay from "../net/relay";
 import logger from "../utils/logger";
 import map from "./map";
+import bank from "./bank";
 
 export function setupStateHandlers() {
   relay.on("RobotSpawnedIntegrationEvent", (event) => {
@@ -107,5 +108,26 @@ export function setupStateHandlers() {
     const planet = event.payload;
     map.setPlanet(planet);
     await map.draw();
+  });
+
+  relay.on("BankAccountCleared", event => {
+    logger.info("BankAccount cleared");
+    bank.init(event.payload.balance);
+  });
+
+  relay.on("BankAccountInitialized", event => {
+    const { payload } = event;
+    logger.info(`BankAccount initialized with: ${payload.balance}`);
+    bank.init(payload.balance);
+  });
+
+  relay.on("BankAccountTransactionBooked", event => {
+    const { payload } = event;
+    logger.info(`BankAccount transaction with: ${payload.transcationAmount}. Expected amount: ${payload.balance}`);
+    bank.init(payload.balance);
+    const check = bank.check(payload.balance);
+    if (!check) {
+      logger.error(`The expected amount did not match. expected: ${payload.balance} got: ${bank.get()}`);
+    }
   });
 }
