@@ -20,6 +20,7 @@ export function setupStateHandlers() {
     }
 
     robot.inventory = event.payload.resourceInventory;
+    fleet.set(robot);
   });
 
   relay.on("RobotResourceRemovedIntegrationEvent", (event) => {
@@ -32,6 +33,7 @@ export function setupStateHandlers() {
     }
 
     robot.inventory = payload.resourceInventory;
+    fleet.set(robot);
   });
 
   relay.on("RobotAttackedIntegrationEvent", (event) => {
@@ -44,12 +46,14 @@ export function setupStateHandlers() {
       target.alive = payload.target.alive;
       target.health = payload.target.availableHealth;
       target.energy = payload.target.availableEnergy;
+      fleet.set(target);
     }
 
     if (attacker) {
       attacker.alive = payload.target.alive;
       attacker.health = payload.target.availableHealth;
       attacker.energy = payload.target.availableEnergy;
+      fleet.set(attacker);
     }
   });
 
@@ -62,6 +66,7 @@ export function setupStateHandlers() {
     }
 
     robot.energy = payload.availableEnergy;
+    fleet.set(robot);
   });
 
   relay.on("RobotRestoredAttributesIntegrationEvent", (event) => {
@@ -75,16 +80,20 @@ export function setupStateHandlers() {
 
     robot.energy = payload.availableEnergy;
     robot.health = payload.availableHealth;
+    fleet.set(robot);
   });
 
   relay.on("RobotUpgradedIntegrationEvent", (event) => {
     const { payload } = event;
-    const robot = fleet.get(payload.robotId);
+    let robot = fleet.get(payload.robotId);
 
     if (!robot) {
       throw new Error("No Robot not in fleet.");
     }
-    // TODO
+
+    // Smart lol
+    robot = { ...payload.robot, inventory: robot.inventory }
+    fleet.set(robot);
   });
 
   relay.on("RobotMovedIntegrationEvent", (event) => {

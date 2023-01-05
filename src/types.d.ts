@@ -237,6 +237,7 @@ export type RobotUpgradedIntegrationEvent = {
   robotId: string;
   level: number;
   upgrade: UpgradeType;
+  robot: Robot;
 };
 
 export type UpgradeType =

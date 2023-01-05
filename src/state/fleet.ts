@@ -19,6 +19,10 @@ function add(robot: Robot): void {
   };
 }
 
+function set(robot: FleetedRobot): void {
+  fleet[robot.id] = robot;
+}
+
 function get(id: string): FleetedRobot | undefined {
   return fleet[id];
 }
@@ -43,6 +47,7 @@ function size(): number {
 
 export default {
   add,
+  set,
   get,
   remove,
   first,
