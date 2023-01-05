@@ -52,4 +52,5 @@ export default {
   remove,
   first,
   size,
+  clear
 };

@@ -6,6 +6,11 @@ function set(newPrices: Partial<Record<Tradable, number>>) {
   prices = newPrices;
 }
 
+function clear() {
+  prices = {};
+}
+
 export default {
-  set
+  set,
+  clear
 }

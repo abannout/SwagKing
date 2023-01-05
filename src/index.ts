@@ -11,6 +11,9 @@ import * as relay from "./net/relay";
 import { setupStateHandlers } from "./state/handlers";
 import fleet from "./state/fleet";
 import { buyRobots } from "./commands";
+import bank from "./state/bank";
+import map from "./state/map";
+import price from "./state/price";
 
 const isInDevMode = context.env.mode === "development";
 
@@ -91,4 +94,14 @@ relay.on("round-status", (_event) => {
 
   // No matter which round state we have, just by a fucking robot
   relay.enqueue(null, () => buyRobots(1));
+});
+
+relay.on("game-status", (event) => {
+  const { payload } = event;
+  if (payload.status !== "started") return;
+
+  bank.clear();
+  fleet.clear();
+  map.clear();
+  price.clear();
 });

@@ -2,6 +2,7 @@ import { Planet, Resource } from "../types";
 import graphviz from "graphviz-wasm";
 import fs from "fs/promises";
 import * as path from "node:path";
+import bank from "./bank";
 
 await graphviz.loadWASM();
 
@@ -10,11 +11,11 @@ type PlanetId = string;
 type RobotId = string;
 
 // This is our basic graph structure
-const NODES: Record<PlanetId, Planet> = {};
-const EDGES: Record<PlanetId, PlanetId[]> = {};
+let NODES: Record<PlanetId, Planet> = {};
+let EDGES: Record<PlanetId, PlanetId[]> = {};
 
 // We also need to keep track of our robots
-const ROBOTS: Record<PlanetId, RobotId[]> = {};
+let ROBOTS: Record<PlanetId, RobotId[]> = {};
 
 function setPlanet(planet: Planet): void {
   NODES[planet.planet] = planet;
@@ -103,6 +104,12 @@ async function draw() {
   await Promise.all([writeSvg, writeDot]);
 }
 
+function clear() {
+  NODES = {};
+  EDGES = {};
+  ROBOTS = {};
+}
+
 export default {
   setPlanet,
   getPlanet,
@@ -110,4 +117,5 @@ export default {
   setRobot,
   moveRobot,
   draw,
+  clear
 };

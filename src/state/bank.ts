@@ -33,9 +33,14 @@ function addDebit(amount: number) {
   balance.debit += amount;
 }
 
+function clear() {
+  init(0);
+}
+
 export default {
   init,
   put,
   check,
-  get
+  get,
+  clear
 }
