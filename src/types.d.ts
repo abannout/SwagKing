@@ -123,8 +123,19 @@ export interface ClientEvents {
   "RobotUpgradedIntegrationEvent": RobotUpgradedIntegrationEvent;
   "BankAccountInitialized": BankAccountInitializedEvent,
   "BankAccountCleared": BankAccountClearedEvent,
-  "BankAccountTransactionBooked": BankAccountTransactionBookedEvent
+  "BankAccountTransactionBooked": BankAccountTransactionBookedEvent,
+  "TradablePrices": TradablePricesEvent
 };
+
+export type TradableType = "UPGRADE" | "RESOURCE";
+export type UpgradeLevel = 1 | 2 | 3 | 4 | 5;
+export type Tradable = Uppercase<Resource | `${UpgradeType}_${UpgradeLevel}`>;
+export type TradablePrice = {
+  type: TradableType;
+  price: number;
+  name: Tradable;
+};
+export type TradablePricesEvent = Array<TradablePrice>;
 
 export type BankAccountClearedEvent = {
   playerId: string;

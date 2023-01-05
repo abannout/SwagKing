@@ -3,6 +3,8 @@ import * as relay from "../net/relay";
 import logger from "../utils/logger";
 import map from "./map";
 import bank from "./bank";
+import price from "./price";
+import { Tradable, TradablePrice } from "../types";
 
 export function setupStateHandlers() {
   relay.on("RobotSpawnedIntegrationEvent", (event) => {
@@ -129,5 +131,24 @@ export function setupStateHandlers() {
     if (!check) {
       logger.error(`The expected amount did not match. expected: ${payload.balance} got: ${bank.get()}`);
     }
+  });
+
+  relay.on("TradablePrices", event => {
+    const { payload } = event;
+
+    // Helper for string representation
+    const s = payload.sort((a, b) => a.name.localeCompare(b.name))
+      .map(t => `${t.name}: ${t.price}`)
+      .join(",");
+
+    logger.info(`New prices have been announced: ${s}`);
+
+    const prices: Partial<Record<Tradable, number>> = {};
+
+    for (const p of payload) {
+      prices[p.name] = p.price;
+    }
+
+    price.set(prices);
   });
 }

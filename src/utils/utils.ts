@@ -10,7 +10,7 @@ export function until(
   };
 
   return new Promise(poll);
-}
+};
 
 export function untilAsync(
   condition: () => Promise<boolean>,
@@ -22,4 +22,4 @@ export function untilAsync(
   };
 
   return new Promise(poll);
-}
+};
