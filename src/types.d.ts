@@ -91,7 +91,7 @@ export type TradingEventType = "BankAccountTransactionBooked"
   | "TradablePrices";
 
 // export type EventType = RobotEventType | RobotIntegrationEventType | GameEventType | MapEventType | ErrorEventType | TradingEventType;
-export type EventType = keyof ClientEvents;
+export type EventType = keyof ClientEvents; // TODO: I really want to use the union type above as EventType and reflect it into ClientEvents
 
 export type EventHeaders = {
   eventId: string;
@@ -113,6 +113,14 @@ export interface ClientEvents {
   "game-status": EventGameStatusPayload;
   "round-status": EventRoundStatusPayload;
   "error": any;
+  "RobotAttackedIntegrationEvent": RobotAttackedIntegrationEvent;
+  "RobotMovedIntegrationEvent": RobotMovedIntegrationEvent;
+  "RobotRegeneratedIntegrationEvent": RobotRegeneratedIntegrationEvent;
+  "RobotResourceMinedIntegrationEvent": RobotResourceMinedIntegrationEvent;
+  "RobotResourceRemovedIntegrationEvent": RobotResourceRemovedIntegrationEvent;
+  "RobotRestoredAttributesIntegrationEvent": RobotRestoredAttributesIntegrationEvent;
+  "RobotSpawnedIntegrationEvent": RobotSpawnedIntegrationEvent;
+  "RobotUpgradedIntegrationEvent": RobotUpgradedIntegrationEvent;
 };
 
 export type GameEventMapping = Record<EventHeaders, GameEvent<infer T>>;
@@ -173,6 +181,83 @@ export type RobotInventoryUpdated = {
   };
 };
 
+export type RobotAttackedIntegrationEvent = {
+  attacker: RobotAttack;
+  target: RobotAttack;
+};
+
+type RobotAttack = {
+  robotId: string;
+  availableHealth: number;
+  availableEnergy: number;
+  alive: boolean;
+};
+
+export type RobotMovedIntegrationEvent = {
+  robotId: string;
+  remainingEnergy: number;
+  fromPlanet: Movement;
+  toPlanet: Movement;
+};
+
+type Movement = {
+  id: string;
+  movementDifficulty: number;
+};
+
+export type RobotRegeneratedIntegrationEvent = {
+  robotId: string;
+  availableEnergy: number;
+};
+
+export type RobotResourceMinedIntegrationEvent = {
+  robotId: string;
+  minedAmount: number;
+  minedResource: Resource;
+  resourceInventory: ResourceInventory;
+};
+
+export type RobotResourceRemovedIntegrationEvent = {
+  robotId: string;
+  removedAmount: number;
+  removedResource: Resource;
+  resourceInventory: ResourceInventory;
+};
+
+export type RobotRestoredAttributesIntegrationEvent = {
+  restorationType: RestorationType;
+  robotId: string;
+  availableEnergy: number;
+  availableHealth: number;
+};
+
+export type RobotSpawnedIntegrationEvent = {
+  robot: Robot;
+};
+
+export type RobotUpgradedIntegrationEvent = {
+  robotId: string;
+  level: number;
+  upgrade: UpgradeType;
+};
+
+export type UpgradeType =
+  | "STORAGE"
+  | "HEALTH"
+  | "DAMAGE"
+  | "MINING_SPEED"
+  | "MINING"
+  | "MAX_ENERGY"
+  | "ENERGY_REGEN";
+export type RestorationType = "HEALTH" | "ENERGY";
+export type ResourceInventory = Record<Resource, number>;
+
+export type Resource =
+  | "coal"
+  | "iron"
+  | "gem"
+  | "gold"
+  | "platin";
 // -------------------------------
 // Commands
 // -------------------------------
