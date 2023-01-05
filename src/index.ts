@@ -1,18 +1,14 @@
 import { getGames, registerForGame } from "./net/client";
 import { untilAsync } from "./utils/utils";
-import * as amqplib from "amqplib";
 import {
-  EventHeaders,
   ResGetGame,
 } from "./types";
 import * as client from "./net/client";
 import logger from "./utils/logger";
 import { initializeGame } from "./dev/initializer";
-import fleet from "./state/fleet";
-import map from "./state/map";
-import { buyRobots, moveTo } from "./commands";
 import context from "./context";
 import * as relay from "./net/relay";
+import { setupStateHandlers } from "./state/handlers";
 
 const isInDevMode = context.env.mode === "development";
 
@@ -64,73 +60,16 @@ relay.setupRelay(context);
 // -----------------------------
 // Handlers
 // -----------------------------
-relay.on("RobotSpawned", (event) => {
-  logger.info("Robot spawned!");
-  const { robot } = event.payload;
-  fleet.add(robot);
-  map.setRobot(robot.id, robot.planet.planetId);
-});
+setupStateHandlers();
 
-relay.on("planet-discovered", async (event) => {
-  logger.info("Planet Discovered!");
-  const planet = event.payload;
-  map.setPlanet(planet);
-  await map.draw();
-
-  const robot = fleet.first();
-  if (!robot) {
-    throw new Error("No Robot in fleet. Perhaps it has been killed?");
-  }
-
-  if (!planet) {
-    const randomNeighbour = map.getRandomNeighbour(planet)!;
-    commands[robot.id] = () => moveTo(robot, randomNeighbour);
-  } else {
-    // commands.push(() => mine(robot));
-  }
-});
-
-relay.on("RobotInventoryUpdated", (event) => {
-  logger.info("Robot Inventory updated!");
-  logger.info(event);
-
-  const robot = fleet.first();
-
-  if (!robot) {
-    throw new Error("No Robot in fleet. Perhaps it has been killed?");
-  }
-
-  // commands.push(() => sell(robot));
-});
-
+// -----------------------------
+// Logging Handlers
+// -----------------------------
 relay.on("round-status", async (event) => {
   const round = event.payload;
   logger.info(
     `Round ${round.roundNumber} switched to status: ${round.roundStatus}`
   );
-
-  if (fleet.size() === 0 && round.roundStatus === "started") {
-    commands[""] = () => buyRobots(1);
-  }
-
-  if (round.roundStatus === "started") {
-    await Promise.all(Object.values(commands).map((c) => c()));
-    commands = {};
-  }
-
-  const robot = fleet.first();
-
-  if (robot) {
-    // await sell(robot);
-    // await moveToRandomNeighbour(robot);
-    // const randomNeighbour = map.getRandomNeighbour(robot.planet.planetId)!;
-    // commands[robot.id] = () => moveTo(robot, randomNeighbour);
-  }
-});
-
-relay.on("RobotMoved", (event) => {
-  logger.info(`Robot ${event.payload.robot} moved to planet ${event.payload.fromPlanet}`);
-  map.moveRobot(event.payload.robot, event.payload.fromPlanet, event.payload.toPlanet);
 });
 
 relay.on("game-status", (event) => {
