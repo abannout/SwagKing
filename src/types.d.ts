@@ -175,9 +175,7 @@ export type EventRobotMoved = {
 export type RobotInventoryUpdated = {
   robot: string;
   inventory: {
-    resources: {
-      [key: Resource]: number;
-    };
+    resources: ResourceInventory;
   };
 };
 

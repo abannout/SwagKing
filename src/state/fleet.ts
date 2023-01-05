@@ -1,30 +1,44 @@
-import { Robot } from "../types";
+import { ResourceInventory, Robot } from "../types";
 
-const fleet: Robot[] = [];
-
-function add(robot: Robot): void {
-  fleet.push(robot);
+type FleetedRobot = Robot & {
+  inventory: ResourceInventory;
 }
 
-function get(id: string): Robot | undefined {
-  return fleet.find((robot) => robot.id === id);
+const fleet: Record<string, FleetedRobot> = {};
+
+function add(robot: Robot): void {
+  fleet[robot.id] = {
+    ...robot,
+    inventory: {
+      coal: 0,
+      gem: 0,
+      gold: 0,
+      iron: 0,
+      platin: 0
+    }
+  };
+}
+
+function get(id: string): FleetedRobot | undefined {
+  return fleet[id];
 }
 
 function remove(id: string): void {
-  const index = fleet.findIndex((robot) => robot.id === id);
-  fleet.splice(index, 1);
+  delete fleet[id];
 }
 
 function clear(): void {
-  fleet.splice(0, fleet.length);
+  for (const prop of Object.getOwnPropertyNames(fleet)) {
+    delete fleet[prop];
+  }
 }
 
-function first(): Robot | undefined {
+function first(): FleetedRobot | undefined {
   return fleet[0];
 }
 
 function size(): number {
-  return fleet.length;
+  return Object.keys(fleet).length;
 }
 
 export default {

@@ -11,14 +11,80 @@ export function setupStateHandlers() {
     map.setRobot(robot.id, robot.planet.planetId);
   });
 
-  relay.on("RobotInventoryUpdated", (event) => {
-    logger.info("Robot Inventory updated!");
-    const robot = fleet.first();
+  relay.on("RobotResourceMinedIntegrationEvent", (event) => {
+    logger.info("Robot Mined a resource!");
+    const robot = fleet.get(event.payload.robotId);
 
     if (!robot) {
-      throw new Error("No Robot in fleet. Perhaps it has been killed?");
+      throw new Error("No Robot not in fleet.");
     }
 
+    robot.inventory = event.payload.resourceInventory;
+  });
+
+  relay.on("RobotResourceRemovedIntegrationEvent", (event) => {
+    logger.info("Robot removed a resource!");
+    const { payload } = event;
+    const robot = fleet.get(payload.robotId);
+
+    if (!robot) {
+      throw new Error("No Robot not in fleet.");
+    }
+
+    robot.inventory = payload.resourceInventory;
+  });
+
+  relay.on("RobotAttackedIntegrationEvent", (event) => {
+    logger.info("Robot removed a resource!");
+    const { payload } = event;
+    const target = fleet.get(payload.target.robotId);
+    const attacker = fleet.get(payload.attacker.robotId);
+
+    if (target) {
+      target.alive = payload.target.alive;
+      target.health = payload.target.availableHealth;
+      target.energy = payload.target.availableEnergy;
+    }
+
+    if (attacker) {
+      attacker.alive = payload.target.alive;
+      attacker.health = payload.target.availableHealth;
+      attacker.energy = payload.target.availableEnergy;
+    }
+  });
+
+  relay.on("RobotRegeneratedIntegrationEvent", (event) => {
+    const { payload } = event;
+    const robot = fleet.get(payload.robotId);
+
+    if (!robot) {
+      throw new Error("No Robot not in fleet.");
+    }
+
+    robot.energy = payload.availableEnergy;
+  });
+
+  relay.on("RobotRestoredAttributesIntegrationEvent", (event) => {
+    const { payload } = event;
+    logger.info(`Robot restored ${payload.restorationType}`);
+    const robot = fleet.get(payload.robotId);
+
+    if (!robot) {
+      throw new Error("No Robot not in fleet.");
+    }
+
+    robot.energy = payload.availableEnergy;
+    robot.health = payload.availableHealth;
+  });
+
+  relay.on("RobotUpgradedIntegrationEvent", (event) => {
+    const { payload } = event;
+    const robot = fleet.get(payload.robotId);
+
+    if (!robot) {
+      throw new Error("No Robot not in fleet.");
+    }
+    // TODO
   });
 
   relay.on("RobotMovedIntegrationEvent", (event) => {
