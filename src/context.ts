@@ -46,7 +46,6 @@ async function createContext(): Promise<Context> {
     playerCredentials.name,
     playerCredentials.email
   );
-  defaults.player = player.playerId;
 
   return {
     player: {
