@@ -12,7 +12,7 @@ import fleet from "./state/fleet";
 import map from "./state/map";
 import { buyRobots, moveTo } from "./commands";
 import context from "./context";
-import { EventRelay } from "./net/relay";
+import * as relay from "./net/relay";
 
 const isInDevMode = context.env.mode === "development";
 
@@ -54,41 +54,11 @@ if (isInDevMode) {
   await client.startGame(game.gameId);
 }
 
-const { rabbitMQ } = context.net;
-const conn = await amqplib.connect(
-  `amqp://${rabbitMQ.user}:${rabbitMQ.password}@${rabbitMQ.host}:${rabbitMQ.port}`
-);
-
-const channel = await conn.createChannel();
-await channel.assertQueue(playerQueue);
-
 // Oh Gosh this is hacky
 type CommandFunction = () => Promise<void>;
 let commands: Record<string, CommandFunction> = {};
-const relay = new EventRelay();
 
-channel.consume(playerQueue, async (msg) => {
-  if (msg !== null) {
-    const event = JSON.parse(msg.content.toString());
-    const headers: EventHeaders = Object.entries(msg.properties.headers)
-      .map(([key, value]) => ({ key, value: value.toString() }))
-      .reduce((acc, { key, value }) => ({ ...acc, [key]: value }), {}) as any;
-
-    logger.debug({
-      headers,
-      event,
-    });
-
-    relay.emit(headers.type, {
-      headers,
-      payload: event
-    });
-
-    channel.ack(msg);
-  } else {
-    logger.info("Consumer cancelled by server");
-  }
-});
+relay.setupRelay(context, playerQueue);
 
 // -----------------------------
 // Handlers
