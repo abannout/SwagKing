@@ -6,7 +6,12 @@ import logger from "../utils/logger";
 
 const emitter = new EventEmitter();
 
-export async function setupRelay(context: Context, playerQueue: string) {
+export async function setupRelay(context: Context) {
+  const { playerQueue } = context.player;
+  if (playerQueue === undefined) {
+    throw Error("Player Queue is undefined");
+  }
+
   const { rabbitMQ } = context.net;
   const conn = await amqplib.connect(
     `amqp://${rabbitMQ.user}:${rabbitMQ.password}@${rabbitMQ.host}:${rabbitMQ.port}`

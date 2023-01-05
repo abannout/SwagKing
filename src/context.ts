@@ -6,6 +6,7 @@ export type Context = {
     name: string;
     email: string;
     id: string;
+    playerQueue: string | undefined;
   };
   env: {
     mode: string;

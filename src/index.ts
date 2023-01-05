@@ -48,6 +48,7 @@ if (!isParticipating(game)) {
   const gameRegistration = await registerForGame(game.gameId);
   playerQueue = gameRegistration.playerQueue;
 }
+context.player.playerQueue = playerQueue;
 
 if (isInDevMode) {
   logger.debug("Starting game");
@@ -58,7 +59,7 @@ if (isInDevMode) {
 type CommandFunction = () => Promise<void>;
 let commands: Record<string, CommandFunction> = {};
 
-relay.setupRelay(context, playerQueue);
+relay.setupRelay(context);
 
 // -----------------------------
 // Handlers
