@@ -93,7 +93,7 @@ relay.on("round-status", (event) => {
   if (event.payload.roundStatus !== "started") return;
 
   logger.info("Fleet eliminated, trying to buy a new robot");
-  relay.enqueue(() => buyRobots(1));
+  relay.enqueue(() => buyRobots(5));
 });
 
 relay.on("game-status", (event) => {
