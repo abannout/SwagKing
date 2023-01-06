@@ -113,8 +113,8 @@ function undiscoveredPlanets(): PlanetId[] {
   return Object.keys(EDGES).filter(e => NODES[e] === undefined);
 }
 
-function shortestPath(source: PlanetId, target: PlanetId): PlanetId[] | null {
-  if (source === target) {
+function shortestPath(source: PlanetId, predicate: (p: PlanetId) => boolean): PlanetId[] | null {
+  if (predicate(source)) {
     return [];
   }
 
@@ -124,10 +124,10 @@ function shortestPath(source: PlanetId, target: PlanetId): PlanetId[] | null {
 
   while (queue.length > 0) {
     const elem = queue.pop()!;
-    if (elem === target) {
+    if (predicate(elem)) {
       // Found, backtrace parents
-      const path = [target];
-      let current = target;
+      const path = [elem];
+      let current = elem;
 
       while (current !== source) {
         current = parents[current]
@@ -150,6 +150,19 @@ function shortestPath(source: PlanetId, target: PlanetId): PlanetId[] | null {
   return null;
 }
 
+function shortestPathTo(source: PlanetId, target: PlanetId): PlanetId[] | null {
+  return shortestPath(source, p => p === target);
+}
+
+// Helper Methods
+function shortestPathToUnknownPlanet(source: PlanetId): PlanetId[] | null {
+  return shortestPath(source, p => NODES[p] === undefined);
+}
+
+function shortestPathToResource(source: PlanetId, resource: Resource): PlanetId[] | null {
+  return shortestPath(source, p => NODES[p]?.resource?.resource_type === resource && NODES[p]?.resource?.current_amount > 0);
+}
+
 export default {
   setPlanet,
   getPlanet,
@@ -157,5 +170,8 @@ export default {
   setRobot,
   moveRobot,
   draw,
-  clear
+  clear,
+  shortestPathToUnknownPlanet,
+  shortestPathToResource,
+  shortestPathTo
 };
