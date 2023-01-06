@@ -1,14 +1,12 @@
 import EventEmitter from "events";
-import { Awaitable, ClientEvents, EventHeaders, EventType, GameEvent } from "../types";
+import { Awaitable, ClientEvents, EventHeaders, GameEvent } from "../types";
 import { Context } from "../context";
 import * as amqplib from "amqplib";
 import logger from "../utils/logger";
-import { stat } from "fs";
 
 const emitter = new EventEmitter();
 type CommandFunction = () => Promise<void>;
-const robotCommands: Record<string, CommandFunction> = {};
-const robotlessCommands: CommandFunction[] = [];
+const commands: CommandFunction[] = [];
 
 export async function setupRelay(context: Context) {
   const { playerQueue } = context.player;
@@ -56,38 +54,43 @@ export function off<K extends keyof ClientEvents>(eventName: K, fn: (event: Game
   emitter.off(eventName, fn);
 }
 
-export function enqueue(robotId: string | null, fn: CommandFunction) {
-  if (robotId !== null) {
-    robotCommands[robotId] = fn;
-  }
-  else {
-    robotlessCommands.push(fn);
-  }
+export function enqueue(fn: CommandFunction) {
+  commands.push(fn);
 }
 
 function emit<K extends keyof ClientEvents>(eventName: K, event: GameEvent<ClientEvents[K]>) {
   emitter.emit(eventName, event);
 }
 
-// Let's just dispatch all commands once the round has been started. We might need to tweak that later but I think it is okay as we're just
-// one round behind using that tactic
-on("round-status", async (event) => {
-  const status = event.payload.roundStatus;
-  if (status !== "started") return;
+// We need to queue the command cleanup as the last action to do on round end. Probably it would make more sense to implement priorities
+// into the relay. For now just call this method at the end of index.ts to make life easier for now. But I think I need to do something
+// like this in the future anyway.
+export function setupCommandCleanup() {
+  // Let's just dispatch all commands once the round has been started. We might need to tweak that later but I think it is okay as we're just
+  // one round behind using that tactic
+  on("round-status", async (event) => {
+    const status = event.payload.roundStatus;
+    if (status !== "started") return;
 
-  const commandsToSend = [...robotlessCommands, ...Object.values(robotCommands)];
-  const result = await Promise.allSettled(commandsToSend.map(fn => fn()));
-  const rejected = result.filter(r => r.status === "rejected") as PromiseRejectedResult[];
-  const fulfilled = result.filter(r => r.status === "fulfilled") as PromiseFulfilledResult<void>[];
+    const commandsToSend = commands.map(fn => fn());
+    const result = await Promise.allSettled(commandsToSend);
+    const rejected = result.filter(r => r.status === "rejected") as PromiseRejectedResult[];
+    const fulfilled = result.filter(r => r.status === "fulfilled") as PromiseFulfilledResult<void>[];
 
-  logger.info(`Sent ${commandsToSend.length} commands (${rejected.length} rejected / ${fulfilled.length} fulfilled)`);
+    logger.info(`Sent ${commandsToSend.length} commands (${rejected.length} rejected / ${fulfilled.length} fulfilled)`);
 
-  rejected.forEach(promise => {
-    logger.debug("Failed because: ", promise.reason)
-  })
+    rejected.forEach(promise => {
+      logger.error(`Failed because: ${promise.reason}`)
+    });
 
-  for (const key of Object.keys(robotCommands)) {
-    delete robotCommands[key];
-  }
-  robotlessCommands.splice(0, robotlessCommands.length);
-});
+    const deletedCommands = commands.splice(0, commands.length);
+    logger.debug(`Deleted ${deletedCommands} commands`);
+  });
+}
+
+// on("round-status", (event) => {
+//   const status = event.payload.roundStatus;
+//   if (status !== "ended") return;
+
+//   commands.splice(0, commands.length);
+// });

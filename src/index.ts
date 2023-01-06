@@ -88,20 +88,23 @@ relay.on("error", (event) => {
 // -----------------------------
 
 // If we don't have any robot in our fleet we must buy one.
-relay.on("round-status", (_event) => {
+relay.on("round-status", (event) => {
   if (fleet.size() > 0) return;
-  logger.info("Fleet eliminated, trying to buy a new robot");
+  if (event.payload.roundStatus !== "started") return;
 
-  // No matter which round state we have, just by a fucking robot
-  relay.enqueue(null, () => buyRobots(1));
+  logger.info("Fleet eliminated, trying to buy a new robot");
+  relay.enqueue(() => buyRobots(1));
 });
 
 relay.on("game-status", (event) => {
   const { payload } = event;
-  if (payload.status !== "started") return;
+  if (payload.status !== "ended") return;
 
   bank.clear();
   fleet.clear();
   map.clear();
   price.clear();
 });
+
+// Needs to be called near the end.
+relay.setupCommandCleanup();

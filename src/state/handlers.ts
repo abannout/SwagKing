@@ -4,7 +4,7 @@ import logger from "../utils/logger";
 import map from "./map";
 import bank from "./bank";
 import price from "./price";
-import { Tradable, TradablePrice } from "../types";
+import { Tradable } from "../types";
 
 export function setupStateHandlers() {
   relay.on("RobotSpawnedIntegrationEvent", (event) => {
@@ -125,23 +125,28 @@ export function setupStateHandlers() {
 
   relay.on("BankAccountTransactionBooked", event => {
     const { payload } = event;
-    logger.info(`BankAccount transaction with: ${payload.transcationAmount}. Expected amount: ${payload.balance}`);
-    bank.init(payload.balance);
+    logger.info(`BankAccount transaction with: ${payload.transactionAmount}. Expected amount: ${payload.balance}`);
+    bank.put(payload.transactionAmount);
     const check = bank.check(payload.balance);
     if (!check) {
       logger.error(`The expected amount did not match. expected: ${payload.balance} got: ${bank.get()}`);
     }
   });
 
+  let firstAnnouncement = true;
   relay.on("TradablePrices", event => {
     const { payload } = event;
 
-    // Helper for string representation
-    const s = payload.sort((a, b) => a.name.localeCompare(b.name))
-      .map(t => `${t.name}: ${t.price}`)
-      .join(",");
+    // Hacky to not flood
+    if (firstAnnouncement) {
+      firstAnnouncement = false;
+      // Helper for string representation
+      const s = payload.sort((a, b) => a.name.localeCompare(b.name))
+        .map(t => `${t.name}: ${t.price}`)
+        .join(",");
 
-    logger.info(`New prices have been announced: ${s}`);
+      logger.info(`New prices have been announced: ${s}`);
+    }
 
     const prices: Partial<Record<Tradable, number>> = {};
 

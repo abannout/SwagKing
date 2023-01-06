@@ -129,7 +129,7 @@ export interface ClientEvents {
 
 export type TradableType = "UPGRADE" | "RESOURCE";
 export type UpgradeLevel = 1 | 2 | 3 | 4 | 5;
-export type Tradable = Uppercase<Resource | `${UpgradeType}_${UpgradeLevel}`>;
+export type Tradable = Uppercase<Resource | `${UpgradeType}_${UpgradeLevel}` | "ROBOT">;
 export type TradablePrice = {
   type: TradableType;
   price: number;
@@ -149,7 +149,7 @@ export type BankAccountInitializedEvent = {
 
 export type BankAccountTransactionBookedEvent = {
   playerId: string;
-  transcationAmount: number;
+  transactionAmount: number;
   balance: number;
 };
 
@@ -303,12 +303,12 @@ type BaseCommandObject = {
   commandType: CommandType;
   planetId: string | null;
   targetId: string | null;
-  itemName: string | null;
+  itemName: Tradable | null;
   itemQuantity: number | null;
 };
 
 export type BuyRobotCommandObject = Pick<BaseCommandObject, "commandType"> & {
-  itemName: "robot";
+  itemName: "ROBOT";
   itemQuantity: number;
 };
 

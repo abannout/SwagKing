@@ -2,7 +2,6 @@ import { Planet, Resource } from "../types";
 import graphviz from "graphviz-wasm";
 import fs from "fs/promises";
 import * as path from "node:path";
-import bank from "./bank";
 
 await graphviz.loadWASM();
 

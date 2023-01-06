@@ -8,7 +8,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "node --es-module-specifier-resolution=node dist/index.js",
-    "compile": "tsc --sourceMap false --removeComments true",
+    "compile": "tsc --removeComments true",
     "dev": "npm run watch",
     "watch-node": "nodemon --on-change-only --es-module-specifier-resolution=node dist/index.js",
     "watch-ts": "tsc -w",

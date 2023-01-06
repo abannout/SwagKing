@@ -1,4 +1,3 @@
-import { EventType } from "../types";
 
 export function until(
   condition: () => boolean,
