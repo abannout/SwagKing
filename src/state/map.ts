@@ -65,6 +65,17 @@ async function draw() {
       return `"${id}" [label="${label}"]`;
     })
     .join(";\n");
+
+  const undiscoveredPlanets = Object.values(EDGES)
+    .flat()
+    .filter(id => NODES[id] === undefined)
+    .map((id) => {
+      let label: string = trimUUID(id);
+
+      return `"${id}" [label="${label}" color="red"]`;
+    })
+    .join(";\n");
+
   const connections = Object.entries(EDGES)
     .map(([id, neighbours]) => {
       return neighbours
@@ -94,6 +105,7 @@ async function draw() {
     ];
 
     ${planetNodes}
+    ${undiscoveredPlanets}
     ${connections}
   }`;
 
