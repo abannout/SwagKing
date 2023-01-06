@@ -109,6 +109,47 @@ function clear() {
   ROBOTS = {};
 }
 
+function undiscoveredPlanets(): PlanetId[] {
+  return Object.keys(EDGES).filter(e => NODES[e] === undefined);
+}
+
+function shortestPath(source: PlanetId, target: PlanetId): PlanetId[] | null {
+  if (source === target) {
+    return [];
+  }
+
+  const queue = [source];
+  const visited = [source];
+  const parents: Record<PlanetId, PlanetId> = {};
+
+  while (queue.length > 0) {
+    const elem = queue.pop()!;
+    if (elem === target) {
+      // Found, backtrace parents
+      const path = [target];
+      let current = target;
+
+      while (current !== source) {
+        current = parents[current]
+        if (current === undefined) throw Error("Should not happen")
+        path.push(current);
+      }
+
+      return path.reverse();
+    }
+
+    const adjacentEdges = EDGES[elem] || [];
+    for (const edge of adjacentEdges) {
+      if (visited.includes(edge)) continue;
+      parents[edge] = elem;
+      visited.push(edge);
+      queue.push(edge);
+    }
+  }  
+
+  return null;
+}
+
 export default {
   setPlanet,
   getPlanet,
