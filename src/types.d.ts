@@ -51,8 +51,14 @@ export type ResCreateGame = {
 // Game Constants
 // -------------------------------
 
-export type GameStatus = "created" | "started" | "ended";
-export type RoundStatus = "started" | "command input ended" | "ended";
+export type GameStatus =
+  | "created"
+  | "started"
+  | "ended";
+export type RoundStatus =
+  | "started"
+  | "command input ended"
+  | "ended";
 export type CommandType =
   | "mining"
   | "movement"
@@ -75,15 +81,21 @@ export type RobotIntegrationEventType =
   | "RobotSpawnedIntegrationEvent"
   | "RobotUpgradedIntegrationEvent";
 
-export type RobotEventType = "RobotSpawned" | "RobotInventoryUpdated" | "RobotMoved";
+export type RobotEventType =
+  | "RobotSpawned"
+  | "RobotInventoryUpdated"
+  | "RobotMoved";
 
-export type GameEventType = "round-status" | "status";
+export type GameEventType =
+  | "round-status"
+  | "status";
 
 export type ErrorEventType = "error";
 
 export type MapEventType = "planet-discovered";
 
-export type TradingEventType = "BankAccountTransactionBooked"
+export type TradingEventType =
+  | "BankAccountTransactionBooked"
   | "BankAccountTransactionBooked"
   | "BankAccountInitialized"
   | "TradableBought"
@@ -127,7 +139,9 @@ export interface ClientEvents {
   "TradablePrices": TradablePricesEvent
 };
 
-export type TradableType = "UPGRADE" | "RESOURCE";
+export type TradableType =
+  | "UPGRADE"
+  | "RESOURCE";
 export type UpgradeLevel = 1 | 2 | 3 | 4 | 5;
 export type Tradable = Uppercase<Resource | `${UpgradeType}_${UpgradeLevel}` | "ROBOT">;
 export type TradablePrice = {
@@ -278,7 +292,9 @@ export type UpgradeType =
   | "MINING"
   | "MAX_ENERGY"
   | "ENERGY_REGEN";
-export type RestorationType = "HEALTH" | "ENERGY";
+export type RestorationType =
+  | "HEALTH"
+  | "ENERGY";
 export type ResourceInventory = Record<Resource, number>;
 
 export type Resource =
@@ -351,8 +367,17 @@ export type MoveCommand = Pick<
 
 export type GameCommand = BuyRobotCommand | GameCommand;
 
-export type Direction = "north" | "south" | "east" | "west";
-export type Resource = "coal" | "iron" | "gem" | "gold" | "platin";
+export type Direction =
+  | "north"
+  | "south"
+  | "east"
+  | "west";
+export type Resource =
+  | "coal"
+  | "iron"
+  | "gem"
+  | "gold"
+  | "platin";
 export type PlanetNeighbour = {
   direction: Direction;
   id: string;
