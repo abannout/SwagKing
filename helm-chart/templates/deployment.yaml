@@ -25,7 +25,7 @@ spec:
         - name: RABBITMQ_HOST
           value: rabbitmq-service.rabbitmq
         volumeMounts:
-        - mountPath: /logs
+        - mountPath: /app/logs
           name: logs-volume
       volumes:
       - name: logs-volume
