@@ -317,6 +317,15 @@ export type BuyRobotCommand = Omit<
   commandType: "buying";
 };
 
+export type BuyCommandObject = Pick<BaseCommandObject, "commandType"> & {
+  itemName: Tradable;
+  itemQuantity: number;
+};
+
+export type BuyCommand = BaseCommand<BuyCommandObject> & {
+  commandType: "buying";
+};
+
 export type SellCommandObject = Pick<BaseCommandObject, "commandType">;
 
 export type SellCommand = Pick<

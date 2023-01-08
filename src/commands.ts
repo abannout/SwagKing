@@ -2,11 +2,13 @@ import { sendCommand } from "./net/client";
 import bank from "./state/bank";
 import price from "./state/price";
 import {
+  BuyCommand,
   BuyRobotCommand,
   MineCommand,
   MoveCommand,
   Robot,
   SellCommand,
+  Tradable,
 } from "./types";
 import logger from "./utils/logger";
 
@@ -26,6 +28,28 @@ export async function buyRobots(amount: number): Promise<void> {
       itemName: "ROBOT",
       itemQuantity: amount,
     },
+  });
+}
+
+export async function buy(
+  robotId: string,
+  item: Tradable,
+  amount = 1
+): Promise<void> {
+  logger.info(`Buying ${amount}x${item} for robot ${robotId}`);
+  const p = price.get(item);
+  if (p === undefined) throw Error("I don't know how much it cost");
+  console.log(bank.get());
+  if (p > bank.get()) throw Error("I don't have enough money");
+
+  await sendCommand<BuyCommand>({
+    commandType: "buying",
+    commandObject: {
+      commandType: "buying",
+      itemName: item,
+      itemQuantity: amount,
+    },
+    robotId: robotId,
   });
 }
 
