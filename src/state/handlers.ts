@@ -105,6 +105,12 @@ export function setupStateHandlers() {
       `Robot ${payload.robotId} moved to planet ${payload.fromPlanet}`
     );
     map.moveRobot(payload.robotId, payload.fromPlanet.id, payload.toPlanet.id);
+    const robot = fleet.get(payload.robotId);
+    if (robot === undefined) {
+      logger.info("Detected a movement from another robot");
+      return;
+    }
+    robot.energy = payload.remainingEnergy;
   });
 
   relay.on("planet-discovered", async (event) => {

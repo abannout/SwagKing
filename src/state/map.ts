@@ -187,10 +187,15 @@ function shortestPathToResource(
   );
 }
 
+function getRobotsOnPlanet(planet: PlanetId): RobotId[] {
+  return ROBOTS[planet] || [];
+}
+
 export default {
   setPlanet,
   getPlanet,
   getRandomNeighbour,
+  getRobotsOnPlanet,
   setRobot,
   moveRobot,
   draw,

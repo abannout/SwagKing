@@ -326,6 +326,12 @@ export type BuyCommand = BaseCommand<BuyCommandObject> & {
   commandType: "buying";
 };
 
+export type RegenerateCommandObject = Pick<BaseCommandObject, "commandType">;
+
+export type RegenerateCommand = BaseCommand<RegenerateCommandObject> & {
+  commandType: "regenerate";
+};
+
 export type SellCommandObject = Pick<BaseCommandObject, "commandType">;
 
 export type SellCommand = Pick<

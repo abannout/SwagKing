@@ -1,6 +1,6 @@
 import { ResourceInventory, Robot } from "../types";
 
-type FleetedRobot = Robot & {
+export type FleetedRobot = Robot & {
   inventory: ResourceInventory;
 };
 

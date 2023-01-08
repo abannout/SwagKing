@@ -6,6 +6,7 @@ import {
   BuyRobotCommand,
   MineCommand,
   MoveCommand,
+  RegenerateCommand,
   Robot,
   SellCommand,
   Tradable,
@@ -31,7 +32,7 @@ export async function buyRobots(amount: number): Promise<void> {
   });
 }
 
-export async function buy(
+export async function buyItem(
   robotId: string,
   item: Tradable,
   amount = 1
@@ -39,7 +40,6 @@ export async function buy(
   logger.info(`Buying ${amount}x${item} for robot ${robotId}`);
   const p = price.get(item);
   if (p === undefined) throw Error("I don't know how much it cost");
-  console.log(bank.get());
   if (p > bank.get()) throw Error("I don't have enough money");
 
   await sendCommand<BuyCommand>({
@@ -86,6 +86,17 @@ export async function moveTo(
     commandObject: {
       commandType: "movement",
       planetId: neighbourId,
+    },
+  });
+}
+
+export async function regenerate(robot: Pick<Robot, "id">): Promise<void> {
+  logger.info(`Regenerating robot ${robot.id}`);
+  await sendCommand<RegenerateCommand>({
+    commandType: "regenerate",
+    robotId: robot.id,
+    commandObject: {
+      commandType: "regenerate",
     },
   });
 }

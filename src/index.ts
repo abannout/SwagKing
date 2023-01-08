@@ -1,17 +1,17 @@
-import { getGames, registerForGame } from "./net/client";
-import { untilAsync } from "./utils/utils";
-import { ResGetGame } from "./types";
-import * as client from "./net/client";
-import logger from "./utils/logger";
-import { initializeGame } from "./dev/initializer";
+import { buyRobots, moveTo, regenerate } from "./commands";
 import context from "./context";
+import { initializeGame } from "./dev/initializer";
+import * as client from "./net/client";
+import { getGames, registerForGame } from "./net/client";
 import * as relay from "./net/relay";
-import { setupStateHandlers } from "./state/handlers";
-import fleet from "./state/fleet";
-import { buyRobots } from "./commands";
 import bank from "./state/bank";
+import fleet, { FleetedRobot } from "./state/fleet";
+import { setupStateHandlers } from "./state/handlers";
 import map from "./state/map";
 import price from "./state/price";
+import { ResGetGame } from "./types";
+import logger from "./utils/logger";
+import { untilAsync } from "./utils/utils";
 
 const isInDevMode = context.env.mode === "development";
 
@@ -103,6 +103,28 @@ relay.on("game-status", (event) => {
   fleet.clear();
   map.clear();
   price.clear();
+});
+
+// TODO: This is not an ideal implementation of a strategy or anything like it.
+// I probably want to make it a bit more sophisticated. But for the moment I just want
+// to explore the whole map
+relay.on("planet-discovered", (event) => {
+  const { payload } = event;
+  const robots = map
+    .getRobotsOnPlanet(payload.planet)
+    .map((r) => fleet.get(r))
+    .filter((r) => r !== undefined) as FleetedRobot[];
+
+  for (const robot of robots) {
+    if (robot.energy < payload.movement_difficulty) {
+      relay.enqueue(() => regenerate(robot));
+    } else {
+      const p = map.shortestPathToUnknownPlanet(payload.planet);
+      if (p === null || p.length < 1) return;
+
+      relay.enqueue(() => moveTo(robot, p[1]));
+    }
+  }
 });
 
 // Needs to be called near the end.
