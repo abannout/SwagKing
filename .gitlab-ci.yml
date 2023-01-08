@@ -1,12 +1,12 @@
 include:
   - project: "the-microservice-dungeon/devops-team/common-ci-cd"
-    ref: "0.2.0"
+    ref: "main"
     file: "helm/package-publish.yaml"
 
 stages:
+  - helm
   - lint
   - build
-  - helm
 
 variables:
   PATH_TO_CHART: "helm-chart"
