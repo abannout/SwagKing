@@ -10,6 +10,8 @@
     "start": "node --es-module-specifier-resolution=node dist/index.js",
     "compile": "tsc --removeComments true",
     "dev": "npm run watch",
+    "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "lint": "eslint . --ext .ts",
     "watch-node": "nodemon --on-change-only --es-module-specifier-resolution=node dist/index.js",
     "watch-ts": "tsc -w",
     "watch": "concurrently --kill-others -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\""
@@ -26,7 +28,13 @@
   "devDependencies": {
     "@types/amqplib": "^0.8.2",
     "@types/node": "^18.11.0",
+    "@typescript-eslint/eslint-plugin": "^5.48.0",
+    "@typescript-eslint/parser": "^5.48.0",
     "concurrently": "^7.5.0",
-    "nodemon": "^2.0.20"
+    "eslint": "^8.31.0",
+    "eslint-config-prettier": "^8.6.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "nodemon": "^2.0.20",
+    "prettier": "^2.8.2"
   }
 }

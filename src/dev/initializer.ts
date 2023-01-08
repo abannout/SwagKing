@@ -1,12 +1,12 @@
 import { createGame, endGame, getGames, setRoundDuration } from "../net/client";
-import logger from "../utils/logger";
 import { ResGetGame } from "../types";
+import logger from "../utils/logger";
 
 const cRounds = 10_000;
 const cPlayers = 10;
 const cRoundDuration = 4_000;
 
-export async function initializeGame(force: boolean = false) {
+export async function initializeGame(force = false) {
   const games: Pick<ResGetGame, "gameId" | "gameStatus">[] = await getGames();
   const runningGames = games.filter((g) => g.gameStatus === "started");
   const createdGames = games.filter((g) => g.gameStatus === "created");

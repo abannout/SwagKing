@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import type {
   GameCommand,
   ResCreateGame,
@@ -54,7 +54,7 @@ export async function fetchOrUpdatePlayer(
   try {
     const player = await getPlayer(name, email);
     return player;
-  } catch (error: any | AxiosError) {
+  } catch (error: unknown) {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 404) {
         return registerPlayer(name, email);
@@ -79,23 +79,23 @@ export async function createGame(
 export async function setRoundDuration(
   gameId: string,
   duration: number
-): Promise<any> {
+): Promise<unknown> {
   return axios
-    .patch<any>(`/games/${gameId}/duration`, {
+    .patch<unknown>(`/games/${gameId}/duration`, {
       duration,
     })
     .then((res) => res.data);
 }
 
-export async function startGame(gameId: string): Promise<any> {
+export async function startGame(gameId: string): Promise<unknown> {
   return axios
-    .post<any>(`/games/${gameId}/gameCommands/start`)
+    .post<unknown>(`/games/${gameId}/gameCommands/start`)
     .then((res) => res.data);
 }
 
-export async function endGame(gameId: string): Promise<any> {
+export async function endGame(gameId: string): Promise<unknown> {
   return axios
-    .post<any>(`/games/${gameId}/gameCommands/end`)
+    .post<unknown>(`/games/${gameId}/gameCommands/end`)
     .then((res) => res.data);
 }
 
@@ -103,7 +103,9 @@ export async function getGames(): Promise<ResGetGame[]> {
   return axios.get<ResGetGame[]>("/games").then((res) => res.data);
 }
 
-export async function registerForGame(gameId: string): Promise<ResRegisterGame> {
+export async function registerForGame(
+  gameId: string
+): Promise<ResRegisterGame> {
   return axios
     .put<ResRegisterGame>(`/games/${gameId}/players/${defaults.player}`)
     .then((res) => res.data);

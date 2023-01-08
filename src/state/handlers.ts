@@ -1,10 +1,10 @@
-import fleet from "./fleet";
 import * as relay from "../net/relay";
-import logger from "../utils/logger";
-import map from "./map";
-import bank from "./bank";
-import price from "./price";
 import { Tradable } from "../types";
+import logger from "../utils/logger";
+import bank from "./bank";
+import fleet from "./fleet";
+import map from "./map";
+import price from "./price";
 
 export function setupStateHandlers() {
   relay.on("RobotSpawnedIntegrationEvent", (event) => {
@@ -95,13 +95,15 @@ export function setupStateHandlers() {
     }
 
     // Smart lol
-    robot = { ...payload.robot, inventory: robot.inventory }
+    robot = { ...payload.robot, inventory: robot.inventory };
     fleet.set(robot);
   });
 
   relay.on("RobotMovedIntegrationEvent", (event) => {
     const { payload } = event;
-    logger.info(`Robot ${payload.robotId} moved to planet ${payload.fromPlanet}`);
+    logger.info(
+      `Robot ${payload.robotId} moved to planet ${payload.fromPlanet}`
+    );
     map.moveRobot(payload.robotId, payload.fromPlanet.id, payload.toPlanet.id);
   });
 
@@ -112,37 +114,44 @@ export function setupStateHandlers() {
     await map.draw();
   });
 
-  relay.on("BankAccountCleared", event => {
+  relay.on("BankAccountCleared", (event) => {
     logger.info("BankAccount cleared");
     bank.init(event.payload.balance);
   });
 
-  relay.on("BankAccountInitialized", event => {
+  relay.on("BankAccountInitialized", (event) => {
     const { payload } = event;
     logger.info(`BankAccount initialized with: ${payload.balance}`);
     bank.init(payload.balance);
   });
 
-  relay.on("BankAccountTransactionBooked", event => {
+  relay.on("BankAccountTransactionBooked", (event) => {
     const { payload } = event;
-    logger.info(`BankAccount transaction with: ${payload.transactionAmount}. Expected amount: ${payload.balance}`);
+    logger.info(
+      `BankAccount transaction with: ${payload.transactionAmount}. Expected amount: ${payload.balance}`
+    );
     bank.put(payload.transactionAmount);
     const check = bank.check(payload.balance);
     if (!check) {
-      logger.error(`The expected amount did not match. expected: ${payload.balance} got: ${bank.get()}`);
+      logger.error(
+        `The expected amount did not match. expected: ${
+          payload.balance
+        } got: ${bank.get()}`
+      );
     }
   });
 
   let firstAnnouncement = true;
-  relay.on("TradablePrices", event => {
+  relay.on("TradablePrices", (event) => {
     const { payload } = event;
 
     // Hacky to not flood
     if (firstAnnouncement) {
       firstAnnouncement = false;
       // Helper for string representation
-      const s = payload.sort((a, b) => a.name.localeCompare(b.name))
-        .map(t => `${t.name}: ${t.price}`)
+      const s = payload
+        .sort((a, b) => a.name.localeCompare(b.name))
+        .map((t) => `${t.name}: ${t.price}`)
         .join(",");
 
       logger.info(`New prices have been announced: ${s}`);

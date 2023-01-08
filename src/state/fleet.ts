@@ -2,7 +2,7 @@ import { ResourceInventory, Robot } from "../types";
 
 type FleetedRobot = Robot & {
   inventory: ResourceInventory;
-}
+};
 
 const fleet: Record<string, FleetedRobot> = {};
 
@@ -14,8 +14,8 @@ function add(robot: Robot): void {
       gem: 0,
       gold: 0,
       iron: 0,
-      platin: 0
-    }
+      platin: 0,
+    },
   };
 }
 
@@ -52,5 +52,5 @@ export default {
   remove,
   first,
   size,
-  clear
+  clear,
 };

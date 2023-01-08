@@ -1,8 +1,7 @@
 // -------------------------------
 // Utils
 // -------------------------------
-export type Awaitable<T> = T | PromiseLike<T>
-
+export type Awaitable<T> = T | PromiseLike<T>;
 
 // -------------------------------
 // Game HTTP Definitions
@@ -51,14 +50,8 @@ export type ResCreateGame = {
 // Game Constants
 // -------------------------------
 
-export type GameStatus =
-  | "created"
-  | "started"
-  | "ended";
-export type RoundStatus =
-  | "started"
-  | "command input ended"
-  | "ended";
+export type GameStatus = "created" | "started" | "ended";
+export type RoundStatus = "started" | "command input ended" | "ended";
 export type CommandType =
   | "mining"
   | "movement"
@@ -86,9 +79,7 @@ export type RobotEventType =
   | "RobotInventoryUpdated"
   | "RobotMoved";
 
-export type GameEventType =
-  | "round-status"
-  | "status";
+export type GameEventType = "round-status" | "status";
 
 export type ErrorEventType = "error";
 
@@ -113,37 +104,37 @@ export type EventHeaders = {
 };
 
 export type GameEvent<T> = {
-  headers: EventHeaders,
-  payload: T
+  headers: EventHeaders;
+  payload: T;
 };
 
 export interface ClientEvents {
   "planet-discovered": PlanetDiscovered;
-  "RobotMoved": EventRobotMoved;
-  "RobotInventoryUpdated": RobotInventoryUpdated;
-  "RobotSpawned": EventRobotSpawned;
+  RobotMoved: EventRobotMoved;
+  RobotInventoryUpdated: RobotInventoryUpdated;
+  RobotSpawned: EventRobotSpawned;
   "game-status": EventGameStatusPayload;
   "round-status": EventRoundStatusPayload;
-  "error": any;
-  "RobotAttackedIntegrationEvent": RobotAttackedIntegrationEvent;
-  "RobotMovedIntegrationEvent": RobotMovedIntegrationEvent;
-  "RobotRegeneratedIntegrationEvent": RobotRegeneratedIntegrationEvent;
-  "RobotResourceMinedIntegrationEvent": RobotResourceMinedIntegrationEvent;
-  "RobotResourceRemovedIntegrationEvent": RobotResourceRemovedIntegrationEvent;
-  "RobotRestoredAttributesIntegrationEvent": RobotRestoredAttributesIntegrationEvent;
-  "RobotSpawnedIntegrationEvent": RobotSpawnedIntegrationEvent;
-  "RobotUpgradedIntegrationEvent": RobotUpgradedIntegrationEvent;
-  "BankAccountInitialized": BankAccountInitializedEvent,
-  "BankAccountCleared": BankAccountClearedEvent,
-  "BankAccountTransactionBooked": BankAccountTransactionBookedEvent,
-  "TradablePrices": TradablePricesEvent
-};
+  error: unknown;
+  RobotAttackedIntegrationEvent: RobotAttackedIntegrationEvent;
+  RobotMovedIntegrationEvent: RobotMovedIntegrationEvent;
+  RobotRegeneratedIntegrationEvent: RobotRegeneratedIntegrationEvent;
+  RobotResourceMinedIntegrationEvent: RobotResourceMinedIntegrationEvent;
+  RobotResourceRemovedIntegrationEvent: RobotResourceRemovedIntegrationEvent;
+  RobotRestoredAttributesIntegrationEvent: RobotRestoredAttributesIntegrationEvent;
+  RobotSpawnedIntegrationEvent: RobotSpawnedIntegrationEvent;
+  RobotUpgradedIntegrationEvent: RobotUpgradedIntegrationEvent;
+  BankAccountInitialized: BankAccountInitializedEvent;
+  BankAccountCleared: BankAccountClearedEvent;
+  BankAccountTransactionBooked: BankAccountTransactionBookedEvent;
+  TradablePrices: TradablePricesEvent;
+}
 
-export type TradableType =
-  | "UPGRADE"
-  | "RESOURCE";
+export type TradableType = "UPGRADE" | "RESOURCE";
 export type UpgradeLevel = 1 | 2 | 3 | 4 | 5;
-export type Tradable = Uppercase<Resource | `${UpgradeType}_${UpgradeLevel}` | "ROBOT">;
+export type Tradable = Uppercase<
+  Resource | `${UpgradeType}_${UpgradeLevel}` | "ROBOT"
+>;
 export type TradablePrice = {
   type: TradableType;
   price: number;
@@ -166,8 +157,6 @@ export type BankAccountTransactionBookedEvent = {
   transactionAmount: number;
   balance: number;
 };
-
-export type GameEventMapping = Record<EventHeaders, GameEvent<infer T>>;
 
 export type EventRoundStatusPayload = {
   gameId: string;
@@ -292,17 +281,10 @@ export type UpgradeType =
   | "MINING"
   | "MAX_ENERGY"
   | "ENERGY_REGEN";
-export type RestorationType =
-  | "HEALTH"
-  | "ENERGY";
+export type RestorationType = "HEALTH" | "ENERGY";
 export type ResourceInventory = Record<Resource, number>;
 
-export type Resource =
-  | "coal"
-  | "iron"
-  | "gem"
-  | "gold"
-  | "platin";
+export type Resource = "coal" | "iron" | "gem" | "gold" | "platin";
 // -------------------------------
 // Commands
 // -------------------------------
@@ -335,7 +317,7 @@ export type BuyRobotCommand = Omit<
   commandType: "buying";
 };
 
-export type SellCommandObject = Pick<BaseCommandObject, "commandType"> & {};
+export type SellCommandObject = Pick<BaseCommandObject, "commandType">;
 
 export type SellCommand = Pick<
   BaseCommand<SellCommandObject>,
@@ -344,7 +326,7 @@ export type SellCommand = Pick<
   commandType: "selling";
 };
 
-export type MineCommandObject = Pick<BaseCommandObject, "commandType"> & {};
+export type MineCommandObject = Pick<BaseCommandObject, "commandType">;
 
 export type MineCommand = Pick<
   BaseCommand<MineCommandObject>,
@@ -367,17 +349,8 @@ export type MoveCommand = Pick<
 
 export type GameCommand = BuyRobotCommand | GameCommand;
 
-export type Direction =
-  | "north"
-  | "south"
-  | "east"
-  | "west";
-export type Resource =
-  | "coal"
-  | "iron"
-  | "gem"
-  | "gold"
-  | "platin";
+export type Direction = "north" | "south" | "east" | "west";
+export type Resource = "coal" | "iron" | "gem" | "gold" | "platin";
 export type PlanetNeighbour = {
   direction: Direction;
   id: string;

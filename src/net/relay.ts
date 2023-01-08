@@ -1,7 +1,7 @@
-import EventEmitter from "events";
-import { Awaitable, ClientEvents, EventHeaders, GameEvent } from "../types";
-import { Context } from "../context";
 import * as amqplib from "amqplib";
+import EventEmitter from "events";
+import { Context } from "../context";
+import { Awaitable, ClientEvents, EventHeaders, GameEvent } from "../types";
 import logger from "../utils/logger";
 
 const emitter = new EventEmitter();
@@ -27,7 +27,10 @@ export async function setupRelay(context: Context) {
       const event = JSON.parse(msg.content.toString());
       const headers: EventHeaders = Object.entries(msg.properties.headers)
         .map(([key, value]) => ({ key, value: value.toString() }))
-        .reduce((acc, { key, value }) => ({ ...acc, [key]: value }), {}) as any;
+        .reduce(
+          (acc, { key, value }) => ({ ...acc, [key]: value }),
+          {}
+        ) as EventHeaders;
 
       logger.debug({
         headers,
@@ -36,7 +39,7 @@ export async function setupRelay(context: Context) {
 
       emit(headers.type, {
         headers,
-        payload: event
+        payload: event,
       });
 
       channel.ack(msg);
@@ -46,11 +49,17 @@ export async function setupRelay(context: Context) {
   });
 }
 
-export function on<K extends keyof ClientEvents>(eventName: K, fn: (event: GameEvent<ClientEvents[K]>) => Awaitable<void>) {
+export function on<K extends keyof ClientEvents>(
+  eventName: K,
+  fn: (event: GameEvent<ClientEvents[K]>) => Awaitable<void>
+) {
   emitter.on(eventName, fn);
 }
 
-export function off<K extends keyof ClientEvents>(eventName: K, fn: (event: GameEvent<ClientEvents[K]>) => Awaitable<void>) {
+export function off<K extends keyof ClientEvents>(
+  eventName: K,
+  fn: (event: GameEvent<ClientEvents[K]>) => Awaitable<void>
+) {
   emitter.off(eventName, fn);
 }
 
@@ -58,7 +67,10 @@ export function enqueue(fn: CommandFunction) {
   commands.push(fn);
 }
 
-function emit<K extends keyof ClientEvents>(eventName: K, event: GameEvent<ClientEvents[K]>) {
+function emit<K extends keyof ClientEvents>(
+  eventName: K,
+  event: GameEvent<ClientEvents[K]>
+) {
   emitter.emit(eventName, event);
 }
 
@@ -72,15 +84,21 @@ export function setupCommandCleanup() {
     const status = event.payload.roundStatus;
     if (status !== "started") return;
 
-    const commandsToSend = commands.map(fn => fn());
+    const commandsToSend = commands.map((fn) => fn());
     const result = await Promise.allSettled(commandsToSend);
-    const rejected = result.filter(r => r.status === "rejected") as PromiseRejectedResult[];
-    const fulfilled = result.filter(r => r.status === "fulfilled") as PromiseFulfilledResult<void>[];
+    const rejected = result.filter(
+      (r) => r.status === "rejected"
+    ) as PromiseRejectedResult[];
+    const fulfilled = result.filter(
+      (r) => r.status === "fulfilled"
+    ) as PromiseFulfilledResult<void>[];
 
-    logger.info(`Sent ${commandsToSend.length} commands (${rejected.length} rejected / ${fulfilled.length} fulfilled)`);
+    logger.info(
+      `Sent ${commandsToSend.length} commands (${rejected.length} rejected / ${fulfilled.length} fulfilled)`
+    );
 
-    rejected.forEach(promise => {
-      logger.error(`Failed because: ${promise.reason}`)
+    rejected.forEach((promise) => {
+      logger.error(`Failed because: ${promise.reason}`);
     });
 
     const deletedCommands = commands.splice(0, commands.length);

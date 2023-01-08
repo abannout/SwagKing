@@ -1,3 +1,6 @@
+import { sendCommand } from "./net/client";
+import bank from "./state/bank";
+import price from "./state/price";
 import {
   BuyRobotCommand,
   MineCommand,
@@ -5,10 +8,7 @@ import {
   Robot,
   SellCommand,
 } from "./types";
-import { sendCommand } from "./net/client";
 import logger from "./utils/logger";
-import price from "./state/price";
-import bank from "./state/bank";
 
 // Command helper library
 
@@ -16,7 +16,7 @@ export async function buyRobots(amount: number): Promise<void> {
   logger.info(`Buying ${amount} robots`);
   const p = price.get("ROBOT");
   if (p === undefined) throw Error("I don't know how much a robot cost");
-  console.log(bank.get())
+  console.log(bank.get());
   if (p > bank.get()) throw Error("I don't have enough money");
 
   await sendCommand<BuyRobotCommand>({

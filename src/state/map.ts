@@ -1,7 +1,7 @@
-import { Planet, Resource } from "../types";
-import graphviz from "graphviz-wasm";
 import fs from "fs/promises";
+import graphviz from "graphviz-wasm";
 import * as path from "node:path";
+import { Planet, Resource } from "../types";
 
 await graphviz.loadWASM();
 
@@ -68,9 +68,9 @@ async function draw() {
 
   const undiscoveredPlanets = Object.values(EDGES)
     .flat()
-    .filter(id => NODES[id] === undefined)
+    .filter((id) => NODES[id] === undefined)
     .map((id) => {
-      let label: string = trimUUID(id);
+      const label: string = trimUUID(id);
 
       return `"${id}" [label="${label}" color="red"]`;
     })
@@ -122,10 +122,13 @@ function clear() {
 }
 
 function undiscoveredPlanets(): PlanetId[] {
-  return Object.keys(EDGES).filter(e => NODES[e] === undefined);
+  return Object.keys(EDGES).filter((e) => NODES[e] === undefined);
 }
 
-function shortestPath(source: PlanetId, predicate: (p: PlanetId) => boolean): PlanetId[] | null {
+function shortestPath(
+  source: PlanetId,
+  predicate: (p: PlanetId) => boolean
+): PlanetId[] | null {
   if (predicate(source)) {
     return [];
   }
@@ -135,6 +138,7 @@ function shortestPath(source: PlanetId, predicate: (p: PlanetId) => boolean): Pl
   const parents: Record<PlanetId, PlanetId> = {};
 
   while (queue.length > 0) {
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const elem = queue.pop()!;
     if (predicate(elem)) {
       // Found, backtrace parents
@@ -142,8 +146,8 @@ function shortestPath(source: PlanetId, predicate: (p: PlanetId) => boolean): Pl
       let current = elem;
 
       while (current !== source) {
-        current = parents[current]
-        if (current === undefined) throw Error("Should not happen")
+        current = parents[current];
+        if (current === undefined) throw Error("Should not happen");
         path.push(current);
       }
 
@@ -157,22 +161,30 @@ function shortestPath(source: PlanetId, predicate: (p: PlanetId) => boolean): Pl
       visited.push(edge);
       queue.push(edge);
     }
-  }  
+  }
 
   return null;
 }
 
 function shortestPathTo(source: PlanetId, target: PlanetId): PlanetId[] | null {
-  return shortestPath(source, p => p === target);
+  return shortestPath(source, (p) => p === target);
 }
 
 // Helper Methods
 function shortestPathToUnknownPlanet(source: PlanetId): PlanetId[] | null {
-  return shortestPath(source, p => NODES[p] === undefined);
+  return shortestPath(source, (p) => NODES[p] === undefined);
 }
 
-function shortestPathToResource(source: PlanetId, resource: Resource): PlanetId[] | null {
-  return shortestPath(source, p => NODES[p]?.resource?.resource_type === resource && NODES[p]?.resource?.current_amount > 0);
+function shortestPathToResource(
+  source: PlanetId,
+  resource: Resource
+): PlanetId[] | null {
+  return shortestPath(
+    source,
+    (p) =>
+      NODES[p]?.resource?.resource_type === resource &&
+      NODES[p]?.resource?.current_amount > 0
+  );
 }
 
 export default {
@@ -185,5 +197,5 @@ export default {
   clear,
   shortestPathToUnknownPlanet,
   shortestPathToResource,
-  shortestPathTo
+  shortestPathTo,
 };

@@ -4,12 +4,26 @@ include:
     file: "helm/package-publish.yaml"
 
 stages:
+  - lint
   - build
   - helm
 
 variables:
   PATH_TO_CHART: "helm-chart"
   CHART_NAME: "player-hackschnitzel"
+
+cache:
+  paths:
+    - node_modules/
+
+lint:
+  stage: lint
+  before_script:
+    - npm ci
+  script:
+    - npm run lint
+  allow_failure: true
+
 
 build:
   stage: build

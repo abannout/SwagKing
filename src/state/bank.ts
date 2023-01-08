@@ -1,7 +1,7 @@
 const balance = {
   credit: 0,
-  debit: 0
-}
+  debit: 0,
+};
 
 function init(newBalance: number) {
   balance.credit = newBalance;
@@ -42,5 +42,5 @@ export default {
   put,
   check,
   get,
-  clear
-}
+  clear,
+};

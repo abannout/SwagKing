@@ -1,8 +1,6 @@
 import { getGames, registerForGame } from "./net/client";
 import { untilAsync } from "./utils/utils";
-import {
-  ResGetGame,
-} from "./types";
+import { ResGetGame } from "./types";
 import * as client from "./net/client";
 import logger from "./utils/logger";
 import { initializeGame } from "./dev/initializer";
@@ -75,13 +73,14 @@ relay.on("round-status", async (event) => {
 });
 
 relay.on("game-status", (event) => {
-  logger.info(`Game ${event.payload.gameId} switched to status: ${event.payload.status}`);
+  logger.info(
+    `Game ${event.payload.gameId} switched to status: ${event.payload.status}`
+  );
 });
 
 relay.on("error", (event) => {
   logger.error(event, "Error event received");
 });
-
 
 // -----------------------------
 // Crucial Fallback Handlers

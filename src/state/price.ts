@@ -17,5 +17,5 @@ function clear() {
 export default {
   set,
   clear,
-  get
-}
+  get,
+};
