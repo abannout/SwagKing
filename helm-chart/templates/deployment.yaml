@@ -24,3 +24,10 @@ spec:
           value: http://game-service.game:8080
         - name: RABBITMQ_HOST
           value: rabbitmq-service.rabbitmq
+        volumeMounts:
+        - mountPath: /logs
+          name: logs-volume
+      volumes:
+      - name: logs-volume
+        emptyDir:
+          sizeLimit: 500Mi
