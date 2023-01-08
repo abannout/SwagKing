@@ -12,12 +12,13 @@ variables:
   PATH_TO_CHART: "helm-chart"
   CHART_NAME: "player-hackschnitzel"
 
-cache:
-  paths:
-    - node_modules/
 
 lint:
   stage: lint
+  image: node:latest
+  cache:
+    paths:
+      - node_modules/
   before_script:
     - npm ci
   script:
