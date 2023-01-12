@@ -2,6 +2,7 @@ import fs from "fs/promises";
 import graphviz from "graphviz-wasm";
 import * as path from "node:path";
 import { Planet, Resource } from "../types";
+import logger from "../utils/logger";
 
 await graphviz.loadWASM();
 
@@ -22,13 +23,13 @@ function setPlanet(planet: Planet): void {
 }
 
 function setRobot(robotId: RobotId, planetId: PlanetId): void {
-  console.log("Setting robot", robotId, "on planet", planetId);
+  logger.debug("Setting robot", robotId, "on planet", planetId);
   ROBOTS[planetId] = ROBOTS[planetId] || [];
   ROBOTS[planetId].push(robotId);
 }
 
 function moveRobot(robotId: RobotId, from: PlanetId, to: PlanetId): void {
-  console.log("Moving robot", robotId, "from", from, "to", to);
+  logger.debug("Moving robot", robotId, "from", from, "to", to);
   ROBOTS[from] = ROBOTS[from].filter((id) => id !== robotId);
   setRobot(robotId, to);
 }

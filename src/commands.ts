@@ -19,7 +19,6 @@ export async function buyRobots(amount: number): Promise<void> {
   logger.info(`Buying ${amount} robots`);
   const p = price.get("ROBOT");
   if (p === undefined) throw Error("I don't know how much a robot cost");
-  console.log(bank.get());
   if (p > bank.get()) throw Error("I don't have enough money");
 
   await sendCommand<BuyRobotCommand>({
