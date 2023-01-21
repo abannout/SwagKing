@@ -59,8 +59,8 @@ async function draw() {
     .map(([id, planet]) => {
       let label: string = trimUUID(planet.planet);
       if (planet.resource) {
-        label = `${resourceIcon[planet.resource.resource_type]} ${label}`;
-        label += `\n${planet.resource.current_amount} / ${planet.resource.max_amount}`;
+        label = `${resourceIcon[planet.resource.resourceType]} ${label}`;
+        label += `\n${planet.resource.currentAmount} / ${planet.resource.maxAmount}`;
       }
 
       return `"${id}" [label="${label}"]`;
@@ -183,8 +183,8 @@ function shortestPathToResource(
   return shortestPath(
     source,
     (p) =>
-      NODES[p]?.resource?.resource_type === resource &&
-      NODES[p]?.resource?.current_amount > 0
+      NODES[p]?.resource?.resourceType === resource &&
+      NODES[p]?.resource?.currentAmount > 0
   );
 }
 

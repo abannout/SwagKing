@@ -109,7 +109,7 @@ export type GameEvent<T> = {
 };
 
 export interface ClientEvents {
-  "planet-discovered": PlanetDiscovered;
+  PlanetDiscovered: PlanetDiscovered;
   RobotMoved: EventRobotMoved;
   RobotInventoryUpdated: RobotInventoryUpdated;
   RobotSpawned: EventRobotSpawned;
@@ -364,21 +364,21 @@ export type MoveCommand = Pick<
 
 export type GameCommand = BuyRobotCommand | GameCommand;
 
-export type Direction = "north" | "south" | "east" | "west";
-export type Resource = "coal" | "iron" | "gem" | "gold" | "platin";
+export type Direction = "NORTH" | "SOUTH" | "EAST" | "WEST";
+export type Resource = "COUAL" | "IRON" | "GEM" | "GOLD" | "PLATIN";
 export type PlanetNeighbour = {
   direction: Direction;
   id: string;
 };
 export type ResourceDefinition = {
-  resource_type: Resource;
-  max_amount: number;
-  current_amount: nunmber;
+  resourceType: Resource;
+  maxAmount: number;
+  currentAmount: nunmber;
 };
 
 export type Planet = {
   planet: string;
-  movement_difficulty: number;
+  movementDifficulty: number;
   neighbours: PlanetNeighbour[];
   resource: ResourceDefinition | null | undefined;
 };

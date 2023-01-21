@@ -108,7 +108,7 @@ relay.on("game-status", (event) => {
 // TODO: This is not an ideal implementation of a strategy or anything like it.
 // I probably want to make it a bit more sophisticated. But for the moment I just want
 // to explore the whole map
-relay.on("planet-discovered", (event) => {
+relay.on("PlanetDiscovered", (event) => {
   const { payload } = event;
   const robots = map
     .getRobotsOnPlanet(payload.planet)
@@ -116,7 +116,7 @@ relay.on("planet-discovered", (event) => {
     .filter((r) => r !== undefined) as FleetedRobot[];
 
   for (const robot of robots) {
-    if (robot.energy < payload.movement_difficulty) {
+    if (robot.energy < payload.movementDifficulty) {
       relay.enqueue(() => regenerate(robot));
     } else {
       const p = map.shortestPathToUnknownPlanet(payload.planet);

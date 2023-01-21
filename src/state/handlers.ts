@@ -113,7 +113,7 @@ export function setupStateHandlers() {
     robot.energy = payload.remainingEnergy;
   });
 
-  relay.on("planet-discovered", async (event) => {
+  relay.on("PlanetDiscovered", async (event) => {
     logger.info("Planet Discovered!");
     const planet = event.payload;
     map.setPlanet(planet);
