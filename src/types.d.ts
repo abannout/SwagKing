@@ -282,9 +282,7 @@ export type UpgradeType =
   | "MAX_ENERGY"
   | "ENERGY_REGEN";
 export type RestorationType = "HEALTH" | "ENERGY";
-export type ResourceInventory = Record<Resource, number>;
-
-export type Resource = "coal" | "iron" | "gem" | "gold" | "platin";
+export type ResourceInventory = Record<ResourceType, number>;
 // -------------------------------
 // Commands
 // -------------------------------
@@ -365,13 +363,13 @@ export type MoveCommand = Pick<
 export type GameCommand = BuyRobotCommand | GameCommand;
 
 export type Direction = "NORTH" | "SOUTH" | "EAST" | "WEST";
-export type Resource = "COUAL" | "IRON" | "GEM" | "GOLD" | "PLATIN";
+export type ResourceType = "COAL" | "IRON" | "GEM" | "GOLD" | "PLATIN";
 export type PlanetNeighbour = {
   direction: Direction;
   id: string;
 };
 export type ResourceDefinition = {
-  resourceType: Resource;
+  resourceType: ResourceType;
   maxAmount: number;
   currentAmount: nunmber;
 };

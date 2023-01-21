@@ -1,7 +1,7 @@
 import fs from "fs/promises";
 import graphviz from "graphviz-wasm";
 import * as path from "node:path";
-import { Planet, Resource } from "../types";
+import { Planet, ResourceType } from "../types";
 import logger from "../utils/logger";
 
 await graphviz.loadWASM();
@@ -45,12 +45,12 @@ function getRandomNeighbour(id: PlanetId): PlanetId | undefined {
 
 // TODO: Put that somewhere else
 async function draw() {
-  const resourceIcon: Record<Resource, string> = {
-    coal: "🪨",
-    gold: "🪙",
-    iron: "🧲",
-    gem: "💎",
-    platin: "🛡️",
+  const resourceIcon: Record<ResourceType, string> = {
+    COAL: "🪨",
+    GOLD: "🪙",
+    IRON: "🧲",
+    GEM: "💎",
+    PLATIN: "🛡️",
   };
 
   const trimUUID = (uuid: string) => uuid.slice(0, 8);
@@ -178,7 +178,7 @@ function shortestPathToUnknownPlanet(source: PlanetId): PlanetId[] | null {
 
 function shortestPathToResource(
   source: PlanetId,
-  resource: Resource
+  resource: ResourceType
 ): PlanetId[] | null {
   return shortestPath(
     source,
