@@ -128,6 +128,8 @@ export interface ClientEvents {
   BankAccountCleared: BankAccountClearedEvent;
   BankAccountTransactionBooked: BankAccountTransactionBookedEvent;
   TradablePrices: TradablePricesEvent;
+  TradableBought: TradableBoughtEvent;
+  TradableSold: TradableSoldEvent;
 }
 
 export type TradableType = "UPGRADE" | "RESOURCE";
@@ -141,6 +143,18 @@ export type TradablePrice = {
   name: Tradable;
 };
 export type TradablePricesEvent = Array<TradablePrice>;
+
+export type TradableSoldEvent = {
+  playerId: string;
+  robotId: string;
+  type: TradableType;
+  name: Tradable;
+  amount: number;
+  pricePerUnit: number;
+  totalPrice: number;
+};
+
+export type TradableBoughtEvent = TradableSoldEvent;
 
 export type BankAccountClearedEvent = {
   playerId: string;

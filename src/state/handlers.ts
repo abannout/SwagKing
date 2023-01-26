@@ -171,4 +171,18 @@ export function setupStateHandlers() {
 
     price.set(prices);
   });
+
+  relay.on("TradableBought", (event) => {
+    const { payload } = event;
+    logger.info(
+      `Bought ${payload.amount}x${payload.name} for ${payload.totalPrice}`
+    );
+  });
+
+  relay.on("TradableSold", (event) => {
+    const { payload } = event;
+    logger.info(
+      `Sold ${payload.amount}x${payload.name} for ${payload.totalPrice}`
+    );
+  });
 }
