@@ -10,11 +10,11 @@ function add(robot: Robot): void {
   fleet[robot.id] = {
     ...robot,
     inventory: {
-      coal: 0,
-      gem: 0,
-      gold: 0,
-      iron: 0,
-      platin: 0,
+      COAL: 0,
+      GEM: 0,
+      GOLD: 0,
+      IRON: 0,
+      PLATIN: 0,
     },
   };
 }
