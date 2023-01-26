@@ -185,4 +185,9 @@ export function setupStateHandlers() {
       `Sold ${payload.amount}x${payload.name} for ${payload.totalPrice}`
     );
   });
+
+  relay.on("RobotsRevealedIntegrationEvent", (event) => {
+    const { payload } = event;
+    logger.info(`Revealed ${payload.robots.length} robots`);
+  });
 }

@@ -72,7 +72,8 @@ export type RobotIntegrationEventType =
   | "RobotResourceRemovedIntegrationEvent"
   | "RobotRestoredAttributesIntegrationEvent"
   | "RobotSpawnedIntegrationEvent"
-  | "RobotUpgradedIntegrationEvent";
+  | "RobotUpgradedIntegrationEvent"
+  | "RobotsRevealedIntegrationEvent";
 
 export type RobotEventType =
   | "RobotSpawned"
@@ -130,6 +131,7 @@ export interface ClientEvents {
   TradablePrices: TradablePricesEvent;
   TradableBought: TradableBoughtEvent;
   TradableSold: TradableSoldEvent;
+  RobotsRevealedIntegrationEvent: RevealedRobotsEvent;
 }
 
 export type TradableType = "UPGRADE" | "RESOURCE";
@@ -200,6 +202,9 @@ export type Robot = {
   miningSpeed: number;
   health: number;
   energy: number;
+} & RobotLevels;
+
+export type RobotLevels = {
   healthLevel: number;
   damageLevel: number;
   miningSpeedLevel: number;
@@ -207,6 +212,16 @@ export type Robot = {
   energyLevel: number;
   energyRegenLevel: number;
   storageLevel: number;
+};
+
+export type RevealedRobotsEvent = {
+  robots: RevealedRobot[];
+};
+
+export type RevealedRobot = {
+  robotId: string;
+  planetId: string;
+  levels: RobotLevels;
 };
 
 export type EventRobotSpawned = {
