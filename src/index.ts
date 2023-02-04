@@ -1,5 +1,5 @@
 import { buyRobots, moveTo, regenerate, sell } from "./commands";
-import context from "./context";
+import { config } from "./config";
 import { initializeGame } from "./dev/initializer";
 import * as client from "./net/client";
 import { getGames, registerForGame } from "./net/client";
@@ -12,8 +12,11 @@ import logger from "./utils/logger";
 import { untilAsync } from "./utils/utils";
 
 // #region Setup
-
-client.defaults.player = context.player.id;
+const player = await client.fetchOrUpdatePlayer(
+  config.player.name,
+  config.player.email
+);
+client.defaults.player = player.playerId;
 
 type GameRegistration = {
   gameId: string;
@@ -23,7 +26,7 @@ type GameRegistration = {
 
 async function registerForNextAvailableGame(): Promise<GameRegistration> {
   const isParticipating = (game: ResGetGame) =>
-    game.participatingPlayers.includes(context.player.name);
+    game.participatingPlayers.includes(player.name);
   const canRegister = (game: ResGetGame) =>
     game.gameStatus === "created" && !isParticipating(game);
 
@@ -42,25 +45,19 @@ async function registerForNextAvailableGame(): Promise<GameRegistration> {
 
   logger.info(`Registering for game: ${game.gameId}`);
 
-  let playerQueue = `player-${context.player.id}`;
+  let playerQueue = `player-${player.playerId}`;
   if (!isParticipating(game)) {
     const gameRegistration = await registerForGame(game.gameId);
     playerQueue = gameRegistration.playerQueue;
   }
   return {
     gameId: game.gameId,
-    playerId: context.player.id,
+    playerId: player.playerId,
     playerQueue,
   };
 }
 
-function patchContext(registration: GameRegistration) {
-  logger.info(`Playing in game: ${registration.gameId}`);
-  client.defaults.game = registration.gameId;
-  context.player.playerQueue = registration.playerQueue;
-}
-
-const isInDevMode = context.env.mode === "development";
+const isInDevMode = config.env.mode === "development";
 
 if (isInDevMode) {
   logger.debug("Running in development mode...");
@@ -69,14 +66,14 @@ if (isInDevMode) {
 }
 
 const registration = await registerForNextAvailableGame();
-patchContext(registration);
+logger.info(`Playing in game: ${registration.gameId}`);
+client.defaults.game = registration.gameId;
+relay.setupRelay(registration.playerQueue);
 
 if (isInDevMode) {
   logger.debug("Starting game");
   await client.startGame(registration.gameId);
 }
-
-relay.setupRelay(context);
 
 // #endregion
 

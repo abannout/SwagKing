@@ -1,7 +1,6 @@
-import pino, { StreamEntry } from "pino";
 import * as fs from "fs";
 import * as path from "node:path";
-import context from "../context";
+import pino, { StreamEntry } from "pino";
 
 const streams: StreamEntry[] = [
   {
@@ -18,7 +17,7 @@ const streams: StreamEntry[] = [
 
 const logger = pino(
   {
-    level: context.env.mode === "development" ? "debug" : "info",
+    level: "debug",
   },
   pino.multistream(streams)
 );

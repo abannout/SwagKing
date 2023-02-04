@@ -1,6 +1,6 @@
 import * as amqplib from "amqplib";
 import EventEmitter from "events";
-import { Context } from "../context";
+import { config } from "../config";
 import { Awaitable, ClientEvents, EventHeaders, GameEvent } from "../types";
 import logger from "../utils/logger";
 
@@ -8,13 +8,12 @@ const emitter = new EventEmitter();
 type CommandFunction = () => Promise<void>;
 const commands: CommandFunction[] = [];
 
-export async function setupRelay(context: Context) {
-  const { playerQueue } = context.player;
+export async function setupRelay(playerQueue: string) {
   if (playerQueue === undefined) {
     throw Error("Player Queue is undefined");
   }
 
-  const { rabbitMQ } = context.net;
+  const { rabbitMQ } = config.net;
   const conn = await amqplib.connect(
     `amqp://${rabbitMQ.user}:${rabbitMQ.password}@${rabbitMQ.host}:${rabbitMQ.port}`
   );
