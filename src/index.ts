@@ -13,6 +13,55 @@ import { ResGetGame } from "./types";
 import logger from "./utils/logger";
 import { untilAsync } from "./utils/utils";
 
+// #region Setup
+
+client.defaults.player = context.player.id;
+
+type GameRegistration = {
+  gameId: string;
+  playerId: string;
+  playerQueue: string;
+};
+
+async function registerForNextAvailableGame(): Promise<GameRegistration> {
+  const isParticipating = (game: ResGetGame) =>
+    game.participatingPlayers.includes(context.player.name);
+  const canRegister = (game: ResGetGame) =>
+    game.gameStatus === "created" && !isParticipating(game);
+
+  // Wait until we have a game we can register for
+  await untilAsync(
+    async () =>
+      (await getGames()).some((g) => canRegister(g) || isParticipating(g)),
+    500
+  );
+  const games = await getGames();
+  const game = games.find((g) => canRegister(g) || isParticipating(g));
+  if (!game) {
+    // Shouldn't happen
+    throw new Error("No game found");
+  }
+
+  logger.info(`Registering for game: ${game.gameId}`);
+
+  let playerQueue = `player-${context.player.id}`;
+  if (!isParticipating(game)) {
+    const gameRegistration = await registerForGame(game.gameId);
+    playerQueue = gameRegistration.playerQueue;
+  }
+  return {
+    gameId: game.gameId,
+    playerId: context.player.id,
+    playerQueue,
+  };
+}
+
+function patchContext(registration: GameRegistration) {
+  logger.info(`Playing in game: ${registration.gameId}`);
+  client.defaults.game = registration.gameId;
+  context.player.playerQueue = registration.playerQueue;
+}
+
 const isInDevMode = context.env.mode === "development";
 
 if (isInDevMode) {
@@ -21,41 +70,17 @@ if (isInDevMode) {
   await initializeGame(true);
 }
 
-const isParticipating = (game: ResGetGame) =>
-  game.participatingPlayers.includes(context.player.name);
-const canRegister = (game: ResGetGame) =>
-  game.gameStatus === "created" && !isParticipating(game);
-
-await untilAsync(
-  async () =>
-    (await getGames()).some((g) => canRegister(g) || isParticipating(g)),
-  500
-);
-
-const games = await getGames();
-const game = games.find((g) => canRegister(g) || isParticipating(g));
-
-if (!game) {
-  throw new Error("No game found");
-}
-
-logger.info(`Playing in game: ${game.gameId}`);
-client.defaults.game = game.gameId;
-client.defaults.player = context.player.id;
-
-let playerQueue = `player-${context.player.id}`;
-if (!isParticipating(game)) {
-  const gameRegistration = await registerForGame(game.gameId);
-  playerQueue = gameRegistration.playerQueue;
-}
-context.player.playerQueue = playerQueue;
+const registration = await registerForNextAvailableGame();
+patchContext(registration);
 
 if (isInDevMode) {
   logger.debug("Starting game");
-  await client.startGame(game.gameId);
+  await client.startGame(registration.gameId);
 }
 
 relay.setupRelay(context);
+
+// #endregion
 
 // -----------------------------
 // Handlers
