@@ -55,13 +55,6 @@ export function on<K extends keyof ClientEvents>(
   emitter.on(eventName, fn);
 }
 
-export function off<K extends keyof ClientEvents>(
-  eventName: K,
-  fn: (event: GameEvent<ClientEvents[K]>) => Awaitable<void>
-) {
-  emitter.off(eventName, fn);
-}
-
 export function enqueue(fn: CommandFunction) {
   commands.push(fn);
 }
