@@ -8,11 +8,14 @@ const emitter = new EventEmitter();
 type CommandFunction = () => Promise<void>;
 const commands: CommandFunction[] = [];
 
-export async function setupRelay(playerQueue: string) {
+export type RelayContext = {
+  playerId: string;
+};
+
+export async function setupRelay(playerQueue: string, context: RelayContext) {
   if (playerQueue === undefined) {
     throw Error("Player Queue is undefined");
   }
-
   const { rabbitMQ } = config.net;
   const conn = await amqplib.connect(
     `amqp://${rabbitMQ.user}:${rabbitMQ.password}@${rabbitMQ.host}:${rabbitMQ.port}`
@@ -36,10 +39,14 @@ export async function setupRelay(playerQueue: string) {
         event,
       });
 
-      emit(headers.type, {
-        headers,
-        payload: event,
-      });
+      emit(
+        headers.type,
+        {
+          headers,
+          payload: event,
+        },
+        context
+      );
 
       channel.ack(msg);
     } else {
@@ -50,7 +57,10 @@ export async function setupRelay(playerQueue: string) {
 
 export function on<K extends keyof ClientEvents>(
   eventName: K,
-  fn: (event: GameEvent<ClientEvents[K]>) => Awaitable<void>
+  fn: (
+    event: GameEvent<ClientEvents[K]>,
+    context: RelayContext
+  ) => Awaitable<void>
 ) {
   emitter.on(eventName, fn);
 }
@@ -61,9 +71,10 @@ export function enqueue(fn: CommandFunction) {
 
 function emit<K extends keyof ClientEvents>(
   eventName: K,
-  event: GameEvent<ClientEvents[K]>
+  event: GameEvent<ClientEvents[K]>,
+  context: RelayContext
 ) {
-  emitter.emit(eventName, event);
+  emitter.emit(eventName, event, context);
 }
 
 // We need to queue the command cleanup as the last action to do on round end. Probably it would make more sense to implement priorities

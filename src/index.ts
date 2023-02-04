@@ -68,7 +68,7 @@ if (isInDevMode) {
 const registration = await registerForNextAvailableGame();
 logger.info(`Playing in game: ${registration.gameId}`);
 client.defaults.game = registration.gameId;
-relay.setupRelay(registration.playerQueue);
+relay.setupRelay(registration.playerQueue, { playerId: player.playerId });
 
 if (isInDevMode) {
   logger.debug("Starting game");

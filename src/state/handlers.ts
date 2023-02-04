@@ -2,7 +2,7 @@ import { drawMap } from "../dev/visualization";
 import * as relay from "../net/relay";
 import { Tradable } from "../types";
 import logger from "../utils/logger";
-import { bank, fleet, map, price } from "./state";
+import { bank, fleet, map, price, radar } from "./state";
 
 export function setupStateHandlers() {
   relay.on("RobotSpawnedIntegrationEvent", (event) => {
@@ -196,11 +196,17 @@ export function setupStateHandlers() {
     );
   });
 
-  relay.on("RobotsRevealedIntegrationEvent", (event) => {
+  relay.on("RobotsRevealedIntegrationEvent", (event, context) => {
     const { payload } = event;
-    // console.log(payload);
 
-    logger.info(`Revealed ${payload.robots.length} robots`);
+    // We only want enemy robots to be in our radar.
+    const myNotion = radar.getNotion(context.playerId);
+    const enemyRobots = payload.robots.filter(
+      (r) => r.playerNotion !== myNotion
+    );
+
+    logger.info(`Revealed ${enemyRobots.length} robots`);
+    radar.next(enemyRobots);
   });
 
   relay.on("round-status", async (event) => {
