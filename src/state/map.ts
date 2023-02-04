@@ -43,6 +43,17 @@ function getRandomNeighbour(id: PlanetId): PlanetId | undefined {
   return neighbours[Math.floor(Math.random() * neighbours.length)];
 }
 
+function count() {
+  return Object.keys(NODES).length;
+}
+
+function countUndiscovered() {
+  const undiscoveredPlanets = Object.values(EDGES)
+    .flat()
+    .filter((id) => NODES[id] === undefined);
+  return undiscoveredPlanets.length;
+}
+
 // TODO: Put that somewhere else
 async function draw() {
   const resourceIcon: Record<ResourceType, string> = {
@@ -204,4 +215,6 @@ export default {
   shortestPathToUnknownPlanet,
   shortestPathToResource,
   shortestPathTo,
+  count,
+  countUndiscovered,
 };

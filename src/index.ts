@@ -1,4 +1,4 @@
-import { buyRobots, mine, moveTo, regenerate, sell } from "./commands";
+import { buyRobots, moveTo, regenerate, sell } from "./commands";
 import context from "./context";
 import { initializeGame } from "./dev/initializer";
 import * as client from "./net/client";
@@ -143,15 +143,33 @@ relay.on("PlanetDiscovered", (event) => {
   for (const robot of robots) {
     if (robot.energy < payload.movementDifficulty) {
       relay.enqueue(() => regenerate(robot));
-    } else if (payload.resource?.resourceType === "COAL") {
+    } /* else if (payload.resource?.resourceType === "COAL") {
       relay.enqueue(() => mine(robot));
-    } else {
+    }*/ else {
       const p = map.shortestPathToUnknownPlanet(payload.planet);
       if (p === null || p.length < 1) return;
 
       relay.enqueue(() => moveTo(robot, p[1]));
     }
   }
+});
+
+relay.on("RobotRegeneratedIntegrationEvent", (event) => {
+  const { payload } = event;
+  const robot = fleet.get(payload.robotId);
+  if (robot === undefined) {
+    throw Error("Unknown robot");
+  }
+  const planet = map.getPlanet(robot.planet.planetId)!;
+  if (planet.movementDifficulty > robot.energy) {
+    relay.enqueue(() => regenerate(robot));
+    return;
+  }
+
+  const p = map.shortestPathToUnknownPlanet(robot.planet.planetId);
+  if (p === null || p.length < 1) return;
+
+  relay.enqueue(() => moveTo(robot, p[1]));
 });
 
 relay.on("RobotResourceMinedIntegrationEvent", (event) => {

@@ -117,6 +117,10 @@ export function setupStateHandlers() {
     logger.info("Planet Discovered!");
     const planet = event.payload;
     map.setPlanet(planet);
+    logger.info(`Total amount of discovered Planets: ${map.count()}`);
+    logger.info(
+      `Total amount of undiscovered Planets: ${map.countUndiscovered()}`
+    );
     await map.draw();
   });
 
@@ -188,7 +192,7 @@ export function setupStateHandlers() {
 
   relay.on("RobotsRevealedIntegrationEvent", (event) => {
     const { payload } = event;
-    console.log(payload);
+    // console.log(payload);
 
     logger.info(`Revealed ${payload.robots.length} robots`);
   });
