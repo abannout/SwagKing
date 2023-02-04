@@ -1,3 +1,4 @@
+import { drawMap } from "../dev/visualization";
 import * as relay from "../net/relay";
 import { Tradable } from "../types";
 import logger from "../utils/logger";
@@ -127,7 +128,6 @@ export function setupStateHandlers() {
     logger.info(
       `Total amount of undiscovered Planets: ${map.countUndiscovered()}`
     );
-    await map.draw();
   });
 
   relay.on("BankAccountCleared", (event) => {
@@ -201,5 +201,12 @@ export function setupStateHandlers() {
     // console.log(payload);
 
     logger.info(`Revealed ${payload.robots.length} robots`);
+  });
+
+  relay.on("round-status", async (event) => {
+    const { payload } = event;
+    if (payload.roundStatus === "ended") {
+      await drawMap(map.getMap());
+    }
   });
 }

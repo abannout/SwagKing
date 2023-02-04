@@ -1,6 +1,4 @@
-import fs from "fs/promises";
 import graphviz from "graphviz-wasm";
-import * as path from "node:path";
 import { Planet, ResourceType } from "../types";
 import logger from "../utils/logger";
 
@@ -10,12 +8,21 @@ await graphviz.loadWASM();
 type PlanetId = string;
 type RobotId = string;
 
-// This is our basic graph structure
-let NODES: Record<PlanetId, Planet> = {};
-let EDGES: Record<PlanetId, PlanetId[]> = {};
+export type Map = {
+  nodes: Record<PlanetId, Planet>;
+  edges: Record<PlanetId, PlanetId[]>;
+  robots: Record<PlanetId, RobotId[]>;
+};
 
-// We also need to keep track of our robots
-let ROBOTS: Record<PlanetId, RobotId[]> = {};
+const map: Map = {
+  nodes: {},
+  edges: {},
+  robots: {},
+};
+
+const NODES = map.nodes;
+const EDGES = map.edges;
+const ROBOTS = map.robots;
 
 export function setPlanet(planet: Planet): void {
   NODES[planet.planet] = planet;
@@ -62,83 +69,14 @@ export function countUndiscovered() {
   return undiscoveredPlanets.length;
 }
 
-// TODO: Put that somewhere else
-export async function draw() {
-  const resourceIcon: Record<ResourceType, string> = {
-    COAL: "🪨",
-    GOLD: "🪙",
-    IRON: "🧲",
-    GEM: "💎",
-    PLATIN: "🛡️",
-  };
-
-  const trimUUID = (uuid: string) => uuid.slice(0, 8);
-
-  const planetNodes = Object.entries(NODES)
-    .map(([id, planet]) => {
-      let label: string = trimUUID(planet.planet);
-      if (planet.resource) {
-        label = `${resourceIcon[planet.resource.resourceType]} ${label}`;
-        label += `\n${planet.resource.currentAmount} / ${planet.resource.maxAmount}`;
-      }
-
-      return `"${id}" [label="${label}"]`;
-    })
-    .join(";\n");
-
-  const undiscoveredPlanets = Object.values(EDGES)
-    .flat()
-    .filter((id) => NODES[id] === undefined)
-    .map((id) => {
-      const label: string = trimUUID(id);
-
-      return `"${id}" [label="${label}" color="red"]`;
-    })
-    .join(";\n");
-
-  const connections = Object.entries(EDGES)
-    .map(([id, neighbours]) => {
-      return neighbours
-        .map((neighbour) => `"${id}" -- "${neighbour}"`)
-        .join(";\n");
-    })
-    .join(";\n");
-  const engine = "neato";
-
-  const dotSrc = `
-  graph {
-    layout = ${engine};
-
-    bgcolor="#36393f";
-    fontcolor="#ffffff";
-    fontname="Monospace"
-    node [
-      color="#ffffff"
-      fontcolor="#ffffff",
-      labelfontcolor="#ffffff",
-      shape=box,
-    ];
-    edge [
-      color="#ffffff"
-      fontcolor="#ffffff",
-      labelfontcolor="#ffffff",
-    ];
-
-    ${planetNodes}
-    ${undiscoveredPlanets}
-    ${connections}
-  }`;
-
-  const svg = graphviz.layout(dotSrc, "svg", engine);
-  const writeSvg = fs.writeFile(path.resolve("logs/map.svg"), svg);
-  const writeDot = fs.writeFile(path.resolve("logs/map.dot"), dotSrc);
-  await Promise.all([writeSvg, writeDot]);
+export function getMap(): Map {
+  return map;
 }
 
 export function clear() {
-  NODES = {};
-  EDGES = {};
-  ROBOTS = {};
+  map.edges = {};
+  map.nodes = {};
+  map.robots = {};
 }
 
 export function undiscoveredPlanets(): PlanetId[] {
