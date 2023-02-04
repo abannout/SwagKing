@@ -7,13 +7,13 @@
   "description": "",
   "main": "dist/index.js",
   "scripts": {
-    "start": "node --es-module-specifier-resolution=node dist/index.js",
+    "start": "node --es-module-specifier-resolution=node dist/src/index.js",
     "compile": "tsc --removeComments true",
     "dev": "npm run watch",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "lint": "eslint . --ext .ts",
     "test": "mocha",
-    "watch-node": "nodemon --on-change-only --es-module-specifier-resolution=node dist/index.js",
+    "watch-node": "nodemon --on-change-only --es-module-specifier-resolution=node dist/src/index.js",
     "watch-ts": "tsc -w",
     "watch": "concurrently --kill-others -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\""
   },

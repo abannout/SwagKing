@@ -6,26 +6,27 @@ import { ResourceType } from "../types";
 
 await graphviz.loadWASM();
 
+const resourceIcon: Record<ResourceType, string> = {
+  COAL: "🪨",
+  GOLD: "🪙",
+  IRON: "🧲",
+  GEM: "💎",
+  PLATIN: "🛡️",
+};
+
+const trimUUID = (uuid: string) => uuid.slice(0, 8);
+
 export async function drawMap(map: Map) {
-  const resourceIcon: Record<ResourceType, string> = {
-    COAL: "🪨",
-    GOLD: "🪙",
-    IRON: "🧲",
-    GEM: "💎",
-    PLATIN: "🛡️",
-  };
-
-  const trimUUID = (uuid: string) => uuid.slice(0, 8);
-
   const planetNodes = Object.entries(map.nodes)
     .map(([id, planet]) => {
-      let label: string = trimUUID(planet.planet);
+      const dotId = trimUUID(id);
+      let label = dotId;
       if (planet.resource) {
         label = `${resourceIcon[planet.resource.resourceType]} ${label}`;
         label += `\n${planet.resource.currentAmount} / ${planet.resource.maxAmount}`;
       }
 
-      return `"${id}" [label="${label}"]`;
+      return `"${dotId}" [label="${label}"]`;
     })
     .join(";\n");
 
@@ -33,16 +34,16 @@ export async function drawMap(map: Map) {
     .flat()
     .filter((id) => map.nodes[id] === undefined)
     .map((id) => {
-      const label: string = trimUUID(id);
-
-      return `"${id}" [label="${label}" color="red"]`;
+      const dotId = trimUUID(id);
+      return `"${dotId}" [color="red"]`;
     })
     .join(";\n");
 
   const connections = Object.entries(map.edges)
     .map(([id, neighbours]) => {
+      const dotId = trimUUID(id);
       return neighbours
-        .map((neighbour) => `"${id}" -- "${neighbour}"`)
+        .map((neighbour) => `"${dotId}" -- "${trimUUID(neighbour)}"`)
         .join(";\n");
     })
     .join(";\n");
