@@ -1,10 +1,7 @@
 import * as relay from "../net/relay";
 import { Tradable } from "../types";
 import logger from "../utils/logger";
-import * as bank from "./bank";
-import * as fleet from "./fleet";
-import * as map from "./map";
-import * as price from "./price";
+import { bank, fleet, map, price } from "./state";
 
 export function setupStateHandlers() {
   relay.on("RobotSpawnedIntegrationEvent", (event) => {

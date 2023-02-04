@@ -25,11 +25,11 @@ export function get(): number {
   return balance.credit - balance.debit;
 }
 
-export function addCredit(amount: number) {
+function addCredit(amount: number) {
   balance.credit += amount;
 }
 
-export function addDebit(amount: number) {
+function addDebit(amount: number) {
   balance.debit += amount;
 }
 
