@@ -141,7 +141,8 @@ relay.on("PlanetDiscovered", (event) => {
     } else {
       if (robot.movePath.length === 0) {
         const p = map.shortestPathToUnknownPlanet(payload.planet);
-        if (p === null || p.length < 1) return;
+        if (p === null || p.length <= 1) return;
+        p.splice(0, 1);
         robot.movePath = p;
       }
       const path = robot.movePath;
@@ -160,7 +161,8 @@ relay.on("RobotRegeneratedIntegrationEvent", (event) => {
 
   if (robot.movePath.length === 0) {
     const p = map.shortestPathToUnknownPlanet(robot.planet.planetId);
-    if (p === null || p.length < 1) return;
+    if (p === null || p.length <= 1) return;
+    p.splice(0, 1);
     robot.movePath = p;
   }
   const path = robot.movePath;

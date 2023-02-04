@@ -1,8 +1,5 @@
-import graphviz from "graphviz-wasm";
 import { Planet, ResourceType } from "../types";
 import logger from "../utils/logger";
-
-await graphviz.loadWASM();
 
 // For readability
 type PlanetId = string;
@@ -110,9 +107,6 @@ export function shortestPath(
       }
 
       path.reverse();
-      path.splice(0, 1);
-
-      console.log(`Source: ${source}, Path: ${path}`);
       return path;
     }
 

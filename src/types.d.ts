@@ -145,7 +145,7 @@ export type ErrorEvent = {
 export type TradableType = "UPGRADE" | "RESOURCE";
 export type UpgradeLevel = 1 | 2 | 3 | 4 | 5;
 export type Tradable = Uppercase<
-  Resource | `${UpgradeType}_${UpgradeLevel}` | "ROBOT"
+  ResourceType | `${UpgradeType}_${UpgradeLevel}` | "ROBOT"
 >;
 export type TradablePrice = {
   type: TradableType;
@@ -403,7 +403,7 @@ export type GameCommand = BuyRobotCommand | GameCommand;
 export type Direction = "NORTH" | "SOUTH" | "EAST" | "WEST";
 export type ResourceType = "COAL" | "IRON" | "GEM" | "GOLD" | "PLATIN";
 export type PlanetNeighbour = {
-  direction: Direction;
+  direction?: Direction;
   id: string;
 };
 export type ResourceDefinition = {
