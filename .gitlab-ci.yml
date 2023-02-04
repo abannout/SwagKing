@@ -4,8 +4,8 @@ include:
     file: "helm/package-publish.yaml"
 
 stages:
-  - helm
   - lint
+  - test
   - build
   - helm
 
@@ -26,6 +26,16 @@ lint:
     - npm run lint
   allow_failure: true
 
+test:
+  stage: test
+  image: node:latest
+  cache:
+    paths:
+      - node_modules/
+  before_script:
+    - npm ci
+  script:
+    - npm run test
 
 build:
   stage: build
