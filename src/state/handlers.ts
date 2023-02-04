@@ -188,6 +188,8 @@ export function setupStateHandlers() {
 
   relay.on("RobotsRevealedIntegrationEvent", (event) => {
     const { payload } = event;
+    console.log(payload);
+
     logger.info(`Revealed ${payload.robots.length} robots`);
   });
 }

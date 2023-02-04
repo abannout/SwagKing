@@ -221,6 +221,7 @@ export type RevealedRobotsEvent = {
 export type RevealedRobot = {
   robotId: string;
   planetId: string;
+  playerNotion: string;
   levels: RobotLevels;
 };
 
