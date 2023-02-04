@@ -10,7 +10,7 @@
     "start": "node --es-module-specifier-resolution=node dist/src/index.js",
     "compile": "tsc --removeComments true",
     "dev": "npm run watch",
-    "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "format": "prettier --config .prettierrc 'src/**/*.ts' 'test/**/*.ts' --write",
     "lint": "eslint . --ext .ts",
     "test": "mocha",
     "watch-node": "nodemon --on-change-only --es-module-specifier-resolution=node dist/src/index.js",
