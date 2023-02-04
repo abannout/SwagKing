@@ -79,7 +79,7 @@ export async function moveTo(
 ): Promise<void> {
   const fleetRobot = fleet.get(robot.id);
   if (fleetRobot === undefined) throw Error("");
-  const currentPlanet = fleetRobot.planet.planetId;
+  const currentPlanet = fleetRobot.planet;
   if (currentPlanet === neighbourId) {
     throw Error("Can't move to the same planet");
   }
@@ -88,7 +88,7 @@ export async function moveTo(
   }
 
   logger.info(
-    `Moving robot robot ${robot.id}: ${fleetRobot.planet.planetId} -> ${neighbourId}`
+    `Moving robot robot ${robot.id}: ${fleetRobot.planet} -> ${neighbourId}`
   );
   await sendCommand<MoveCommand>({
     commandType: "movement",

@@ -156,7 +156,7 @@ relay.on("RobotRegeneratedIntegrationEvent", (event) => {
   }
 
   if (robot.movePath.length === 0) {
-    const p = map.shortestPathToUnknownPlanet(robot.planet.planetId);
+    const p = map.shortestPathToUnknownPlanet(robot.planet);
     if (p === null || p.length <= 1) return;
     p.splice(0, 1);
     robot.movePath = p;

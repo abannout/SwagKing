@@ -94,6 +94,7 @@ export function setupStateHandlers() {
     // Smart lol
     robot = {
       ...payload.robot,
+      planet: robot.planet,
       inventory: robot.inventory,
       movePath: robot.movePath,
     };
@@ -114,7 +115,7 @@ export function setupStateHandlers() {
     robot.movePath = [
       ...robot.movePath.filter((p) => payload.toPlanet.id !== p),
     ];
-    robot.planet.planetId = payload.toPlanet.id;
+    robot.planet = payload.toPlanet.id;
     fleet.set(robot);
   });
 

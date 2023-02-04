@@ -1,6 +1,7 @@
 import { ResourceInventory, Robot } from "../types";
 
-export type FleetedRobot = Robot & {
+export type FleetedRobot = Omit<Robot, "planet"> & {
+  planet: string;
   inventory: ResourceInventory;
   movePath: string[];
 };
@@ -10,6 +11,7 @@ const fleet: Record<string, FleetedRobot> = {};
 export function add(robot: Robot): void {
   fleet[robot.id] = {
     ...robot,
+    planet: robot.planet.planetId,
     inventory: {
       COAL: 0,
       GEM: 0,
@@ -30,7 +32,7 @@ export function get(id: string): FleetedRobot | undefined {
 }
 
 export function getRobotsOnPlanet(id: string): FleetedRobot[] {
-  return Object.values(fleet).filter((r) => r.planet.planetId === id);
+  return Object.values(fleet).filter((r) => r.planet === id);
 }
 
 export function remove(id: string): void {
