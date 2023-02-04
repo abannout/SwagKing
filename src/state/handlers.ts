@@ -9,7 +9,6 @@ export function setupStateHandlers() {
     logger.info("Robot Spawned!");
     const { robot } = event.payload;
     fleet.add(robot);
-    map.setRobot(robot.id, robot.planet.planetId);
   });
 
   relay.on("RobotResourceMinedIntegrationEvent", (event) => {
@@ -106,7 +105,6 @@ export function setupStateHandlers() {
     logger.info(
       `Robot ${payload.robotId} moved: ${payload.fromPlanet.id} -> ${payload.toPlanet.id}`
     );
-    map.moveRobot(payload.robotId, payload.fromPlanet.id, payload.toPlanet.id);
     const robot = fleet.get(payload.robotId);
     if (robot === undefined) {
       logger.info("Detected a movement from another robot");

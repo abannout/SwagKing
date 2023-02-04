@@ -1,45 +1,24 @@
 import { Planet, ResourceType } from "../types";
-import logger from "../utils/logger";
 
 // For readability
 type PlanetId = string;
-type RobotId = string;
 
 export type Map = {
   nodes: Record<PlanetId, Planet>;
   edges: Record<PlanetId, PlanetId[]>;
-  robots: Record<PlanetId, RobotId[]>;
 };
 
 const map: Map = {
   nodes: {},
   edges: {},
-  robots: {},
 };
 
 const NODES = map.nodes;
 const EDGES = map.edges;
-const ROBOTS = map.robots;
 
 export function setPlanet(planet: Planet): void {
   NODES[planet.planet] = planet;
   EDGES[planet.planet] = planet.neighbours.map((n) => n.id);
-}
-
-export function setRobot(robotId: RobotId, planetId: PlanetId): void {
-  logger.debug("Setting robot", robotId, "on planet", planetId);
-  ROBOTS[planetId] = ROBOTS[planetId] || [];
-  ROBOTS[planetId].push(robotId);
-}
-
-export function moveRobot(
-  robotId: RobotId,
-  from: PlanetId,
-  to: PlanetId
-): void {
-  logger.debug("Moving robot", robotId, "from", from, "to", to);
-  ROBOTS[from] = ROBOTS[from].filter((id) => id !== robotId);
-  setRobot(robotId, to);
 }
 
 export function getPlanet(id: PlanetId): Planet | undefined {
@@ -73,7 +52,6 @@ export function getMap(): Map {
 export function clear() {
   map.edges = {};
   map.nodes = {};
-  map.robots = {};
 }
 
 export function undiscoveredPlanets(): PlanetId[] {
@@ -146,8 +124,4 @@ export function shortestPathToResource(
       NODES[p]?.resource?.resourceType === resource &&
       NODES[p]?.resource?.currentAmount > 0
   );
-}
-
-export function getRobotsOnPlanet(planet: PlanetId): RobotId[] {
-  return ROBOTS[planet] || [];
 }

@@ -4,7 +4,6 @@ import { initializeGame } from "./dev/initializer";
 import * as client from "./net/client";
 import { getGames, registerForGame } from "./net/client";
 import * as relay from "./net/relay";
-import { FleetedRobot } from "./state/fleet";
 import { setupStateHandlers } from "./state/handlers";
 import { bank, fleet, map, price } from "./state/state";
 import { ResGetGame } from "./types";
@@ -130,10 +129,7 @@ relay.on("game-status", (event) => {
 // to explore the whole map
 relay.on("PlanetDiscovered", (event) => {
   const { payload } = event;
-  const robots = map
-    .getRobotsOnPlanet(payload.planet)
-    .map((r) => fleet.get(r))
-    .filter((r) => r !== undefined) as FleetedRobot[];
+  const robots = fleet.getRobotsOnPlanet(payload.planet);
 
   for (const robot of robots) {
     if (robot.energy < payload.movementDifficulty) {

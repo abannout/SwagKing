@@ -29,6 +29,10 @@ export function get(id: string): FleetedRobot | undefined {
   return fleet[id];
 }
 
+export function getRobotsOnPlanet(id: string): FleetedRobot[] {
+  return Object.values(fleet).filter((r) => r.planet.planetId === id);
+}
+
 export function remove(id: string): void {
   delete fleet[id];
 }
