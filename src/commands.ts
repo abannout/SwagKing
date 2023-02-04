@@ -1,8 +1,8 @@
 import { sendCommand } from "./net/client";
-import bank from "./state/bank";
-import fleet from "./state/fleet";
-import map from "./state/map";
-import price from "./state/price";
+import * as bank from "./state/bank";
+import * as fleet from "./state/fleet";
+import * as map from "./state/map";
+import * as price from "./state/price";
 import {
   BuyCommand,
   BuyRobotCommand,

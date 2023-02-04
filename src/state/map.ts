@@ -17,41 +17,45 @@ let EDGES: Record<PlanetId, PlanetId[]> = {};
 // We also need to keep track of our robots
 let ROBOTS: Record<PlanetId, RobotId[]> = {};
 
-function setPlanet(planet: Planet): void {
+export function setPlanet(planet: Planet): void {
   NODES[planet.planet] = planet;
   EDGES[planet.planet] = planet.neighbours.map((n) => n.id);
 }
 
-function setRobot(robotId: RobotId, planetId: PlanetId): void {
+export function setRobot(robotId: RobotId, planetId: PlanetId): void {
   logger.debug("Setting robot", robotId, "on planet", planetId);
   ROBOTS[planetId] = ROBOTS[planetId] || [];
   ROBOTS[planetId].push(robotId);
 }
 
-function moveRobot(robotId: RobotId, from: PlanetId, to: PlanetId): void {
+export function moveRobot(
+  robotId: RobotId,
+  from: PlanetId,
+  to: PlanetId
+): void {
   logger.debug("Moving robot", robotId, "from", from, "to", to);
   ROBOTS[from] = ROBOTS[from].filter((id) => id !== robotId);
   setRobot(robotId, to);
 }
 
-function getPlanet(id: PlanetId): Planet | undefined {
+export function getPlanet(id: PlanetId): Planet | undefined {
   return NODES[id];
 }
 
-function getRandomNeighbour(id: PlanetId): PlanetId | undefined {
+export function getRandomNeighbour(id: PlanetId): PlanetId | undefined {
   const neighbours = EDGES[id];
   return neighbours[Math.floor(Math.random() * neighbours.length)];
 }
 
-function areNeighbours(id: PlanetId, neighbourId: PlanetId): boolean {
+export function areNeighbours(id: PlanetId, neighbourId: PlanetId): boolean {
   return EDGES[id].some((p) => p === neighbourId);
 }
 
-function count() {
+export function count() {
   return Object.keys(NODES).length;
 }
 
-function countUndiscovered() {
+export function countUndiscovered() {
   const undiscoveredPlanets = Object.values(EDGES)
     .flat()
     .filter((id) => NODES[id] === undefined);
@@ -59,7 +63,7 @@ function countUndiscovered() {
 }
 
 // TODO: Put that somewhere else
-async function draw() {
+export async function draw() {
   const resourceIcon: Record<ResourceType, string> = {
     COAL: "🪨",
     GOLD: "🪙",
@@ -131,17 +135,17 @@ async function draw() {
   await Promise.all([writeSvg, writeDot]);
 }
 
-function clear() {
+export function clear() {
   NODES = {};
   EDGES = {};
   ROBOTS = {};
 }
 
-function undiscoveredPlanets(): PlanetId[] {
+export function undiscoveredPlanets(): PlanetId[] {
   return Object.keys(EDGES).filter((e) => NODES[e] === undefined);
 }
 
-function shortestPath(
+export function shortestPath(
   source: PlanetId,
   predicate: (p: PlanetId) => boolean
 ): PlanetId[] | null {
@@ -186,16 +190,21 @@ function shortestPath(
   return null;
 }
 
-function shortestPathTo(source: PlanetId, target: PlanetId): PlanetId[] | null {
+export function shortestPathTo(
+  source: PlanetId,
+  target: PlanetId
+): PlanetId[] | null {
   return shortestPath(source, (p) => p === target);
 }
 
 // Helper Methods
-function shortestPathToUnknownPlanet(source: PlanetId): PlanetId[] | null {
+export function shortestPathToUnknownPlanet(
+  source: PlanetId
+): PlanetId[] | null {
   return shortestPath(source, (p) => NODES[p] === undefined);
 }
 
-function shortestPathToResource(
+export function shortestPathToResource(
   source: PlanetId,
   resource: ResourceType
 ): PlanetId[] | null {
@@ -207,23 +216,6 @@ function shortestPathToResource(
   );
 }
 
-function getRobotsOnPlanet(planet: PlanetId): RobotId[] {
+export function getRobotsOnPlanet(planet: PlanetId): RobotId[] {
   return ROBOTS[planet] || [];
 }
-
-export default {
-  setPlanet,
-  getPlanet,
-  getRandomNeighbour,
-  getRobotsOnPlanet,
-  setRobot,
-  moveRobot,
-  draw,
-  clear,
-  shortestPathToUnknownPlanet,
-  shortestPathToResource,
-  shortestPathTo,
-  areNeighbours,
-  count,
-  countUndiscovered,
-};

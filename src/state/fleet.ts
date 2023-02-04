@@ -7,7 +7,7 @@ export type FleetedRobot = Robot & {
 
 const fleet: Record<string, FleetedRobot> = {};
 
-function add(robot: Robot): void {
+export function add(robot: Robot): void {
   fleet[robot.id] = {
     ...robot,
     inventory: {
@@ -21,38 +21,28 @@ function add(robot: Robot): void {
   };
 }
 
-function set(robot: FleetedRobot): void {
+export function set(robot: FleetedRobot): void {
   fleet[robot.id] = robot;
 }
 
-function get(id: string): FleetedRobot | undefined {
+export function get(id: string): FleetedRobot | undefined {
   return fleet[id];
 }
 
-function remove(id: string): void {
+export function remove(id: string): void {
   delete fleet[id];
 }
 
-function clear(): void {
+export function clear(): void {
   for (const prop of Object.getOwnPropertyNames(fleet)) {
     delete fleet[prop];
   }
 }
 
-function first(): FleetedRobot | undefined {
+export function first(): FleetedRobot | undefined {
   return fleet[0];
 }
 
-function size(): number {
+export function size(): number {
   return Object.keys(fleet).length;
 }
-
-export default {
-  add,
-  set,
-  get,
-  remove,
-  first,
-  size,
-  clear,
-};

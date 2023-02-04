@@ -3,12 +3,12 @@ const balance = {
   debit: 0,
 };
 
-function init(newBalance: number) {
+export function init(newBalance: number) {
   balance.credit = newBalance;
   balance.debit = 0;
 }
 
-function put(amount: number) {
+export function put(amount: number) {
   if (amount === 0) return;
   if (amount < 0) {
     addDebit(-amount);
@@ -17,30 +17,22 @@ function put(amount: number) {
   }
 }
 
-function check(amount: number) {
+export function check(amount: number) {
   return get() === amount;
 }
 
-function get(): number {
+export function get(): number {
   return balance.credit - balance.debit;
 }
 
-function addCredit(amount: number) {
+export function addCredit(amount: number) {
   balance.credit += amount;
 }
 
-function addDebit(amount: number) {
+export function addDebit(amount: number) {
   balance.debit += amount;
 }
 
-function clear() {
+export function clear() {
   init(0);
 }
-
-export default {
-  init,
-  put,
-  check,
-  get,
-  clear,
-};

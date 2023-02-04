@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { describe, test } from "mocha";
-import map from "../../src/state/map";
+import * as map from "../../src/state/map";
 
 describe("A Map", () => {
   test("should return 0 discovered planets when empty", () => {
