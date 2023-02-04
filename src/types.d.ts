@@ -116,7 +116,7 @@ export interface ClientEvents {
   RobotSpawned: EventRobotSpawned;
   "game-status": EventGameStatusPayload;
   "round-status": EventRoundStatusPayload;
-  error: unknown;
+  error: ErrorEvent;
   RobotAttackedIntegrationEvent: RobotAttackedIntegrationEvent;
   RobotMovedIntegrationEvent: RobotMovedIntegrationEvent;
   RobotRegeneratedIntegrationEvent: RobotRegeneratedIntegrationEvent;
@@ -133,6 +133,14 @@ export interface ClientEvents {
   TradableSold: TradableSoldEvent;
   RobotsRevealedIntegrationEvent: RevealedRobotsEvent;
 }
+
+export type ErrorEvent = {
+  playerId: string;
+  transactionId: string;
+  robotId: string;
+  description: string;
+  code: string;
+};
 
 export type TradableType = "UPGRADE" | "RESOURCE";
 export type UpgradeLevel = 1 | 2 | 3 | 4 | 5;

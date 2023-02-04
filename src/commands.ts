@@ -1,5 +1,7 @@
 import { sendCommand } from "./net/client";
 import bank from "./state/bank";
+import fleet from "./state/fleet";
+import map from "./state/map";
 import price from "./state/price";
 import {
   BuyCommand,
@@ -78,7 +80,19 @@ export async function moveTo(
   robot: Pick<Robot, "id">,
   neighbourId: string
 ): Promise<void> {
-  logger.info(`Moving robot robot ${robot.id} to planet ${neighbourId}`);
+  const fleetRobot = fleet.get(robot.id);
+  if (fleetRobot === undefined) throw Error("");
+  const currentPlanet = fleetRobot.planet.planetId;
+  if (currentPlanet === neighbourId) {
+    throw Error("Can't move to the same planet");
+  }
+  if (!map.areNeighbours(currentPlanet, neighbourId)) {
+    throw Error("That is not a valid neighbour");
+  }
+
+  logger.info(
+    `Moving robot robot ${robot.id}: ${fleetRobot.planet.planetId} -> ${neighbourId}`
+  );
   await sendCommand<MoveCommand>({
     commandType: "movement",
     robotId: robot.id,

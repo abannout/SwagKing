@@ -143,13 +143,15 @@ relay.on("PlanetDiscovered", (event) => {
   for (const robot of robots) {
     if (robot.energy < payload.movementDifficulty) {
       relay.enqueue(() => regenerate(robot));
-    } /* else if (payload.resource?.resourceType === "COAL") {
-      relay.enqueue(() => mine(robot));
-    }*/ else {
-      const p = map.shortestPathToUnknownPlanet(payload.planet);
-      if (p === null || p.length < 1) return;
+    } else {
+      if (robot.movePath.length === 0) {
+        const p = map.shortestPathToUnknownPlanet(payload.planet);
+        if (p === null || p.length < 1) return;
+        robot.movePath = p;
+      }
+      const path = robot.movePath;
 
-      relay.enqueue(() => moveTo(robot, p[1]));
+      relay.enqueue(() => moveTo(robot, path[0]));
     }
   }
 });
@@ -160,16 +162,15 @@ relay.on("RobotRegeneratedIntegrationEvent", (event) => {
   if (robot === undefined) {
     throw Error("Unknown robot");
   }
-  const planet = map.getPlanet(robot.planet.planetId)!;
-  if (planet.movementDifficulty > robot.energy) {
-    relay.enqueue(() => regenerate(robot));
-    return;
+
+  if (robot.movePath.length === 0) {
+    const p = map.shortestPathToUnknownPlanet(robot.planet.planetId);
+    if (p === null || p.length < 1) return;
+    robot.movePath = p;
   }
+  const path = robot.movePath;
 
-  const p = map.shortestPathToUnknownPlanet(robot.planet.planetId);
-  if (p === null || p.length < 1) return;
-
-  relay.enqueue(() => moveTo(robot, p[1]));
+  relay.enqueue(() => moveTo(robot, path[0]));
 });
 
 relay.on("RobotResourceMinedIntegrationEvent", (event) => {
@@ -183,6 +184,17 @@ relay.on("RobotResourceMinedIntegrationEvent", (event) => {
   if (robot.inventory.COAL > 0) {
     relay.enqueue(() => sell(robot));
   }
+});
+
+relay.on("error", (event) => {
+  const { payload } = event;
+  const robot = fleet.get(payload.robotId);
+
+  if (!robot) {
+    return;
+  }
+
+  relay.enqueue(() => regenerate(robot));
 });
 
 // Needs to be called near the end.

@@ -43,6 +43,10 @@ function getRandomNeighbour(id: PlanetId): PlanetId | undefined {
   return neighbours[Math.floor(Math.random() * neighbours.length)];
 }
 
+function areNeighbours(id: PlanetId, neighbourId: PlanetId): boolean {
+  return EDGES[id].some((p) => p === neighbourId);
+}
+
 function count() {
   return Object.keys(NODES).length;
 }
@@ -151,7 +155,7 @@ function shortestPath(
 
   while (queue.length > 0) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const elem = queue.pop()!;
+    const elem = queue.shift()!;
     if (predicate(elem)) {
       // Found, backtrace parents
       const path = [elem];
@@ -163,7 +167,11 @@ function shortestPath(
         path.push(current);
       }
 
-      return path.reverse();
+      path.reverse();
+      path.splice(0, 1);
+
+      console.log(`Source: ${source}, Path: ${path}`);
+      return path;
     }
 
     const adjacentEdges = EDGES[elem] || [];
@@ -215,6 +223,7 @@ export default {
   shortestPathToUnknownPlanet,
   shortestPathToResource,
   shortestPathTo,
+  areNeighbours,
   count,
   countUndiscovered,
 };

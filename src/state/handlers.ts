@@ -95,14 +95,18 @@ export function setupStateHandlers() {
     }
 
     // Smart lol
-    robot = { ...payload.robot, inventory: robot.inventory };
+    robot = {
+      ...payload.robot,
+      inventory: robot.inventory,
+      movePath: robot.movePath,
+    };
     fleet.set(robot);
   });
 
   relay.on("RobotMovedIntegrationEvent", (event) => {
     const { payload } = event;
     logger.info(
-      `Robot ${payload.robotId} moved to planet ${payload.fromPlanet}`
+      `Robot ${payload.robotId} moved: ${payload.fromPlanet.id} -> ${payload.toPlanet.id}`
     );
     map.moveRobot(payload.robotId, payload.fromPlanet.id, payload.toPlanet.id);
     const robot = fleet.get(payload.robotId);
@@ -111,6 +115,11 @@ export function setupStateHandlers() {
       return;
     }
     robot.energy = payload.remainingEnergy;
+    robot.movePath = [
+      ...robot.movePath.filter((p) => payload.toPlanet.id !== p),
+    ];
+    robot.planet.planetId = payload.toPlanet.id;
+    fleet.set(robot);
   });
 
   relay.on("PlanetDiscovered", async (event) => {
