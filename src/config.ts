@@ -1,19 +1,19 @@
 const netConfig = {
   rabbitMQ: {
     host: process.env.RABBITMQ_HOST || "localhost",
-    port: 5672,
-    user: "admin",
-    password: "admin",
+    port: Number(process.env.RABBITMQ_PORT) || 5672,
+    user: process.env.RABBITMQ_USER || "admin",
+    password: process.env.RABBITMQ_PASSWORD || "admin",
   },
   game: {
     url: process.env.GAME_URL || "http://localhost:8080",
   },
-} as const;
+};
 
 const playerConfig = {
-  name: "hackschnitzel",
-  email: "hack@schnitzel.org",
-} as const;
+  name: process.env.PLAYER_NAME || "hackschnitzel",
+  email: process.env.PLAYER_EMAIL || "hack@schnitzel.org",
+};
 
 export const config = {
   player: playerConfig,
@@ -21,4 +21,4 @@ export const config = {
     mode: process.env.NODE_ENV || "development",
   },
   net: netConfig,
-} as const;
+};
