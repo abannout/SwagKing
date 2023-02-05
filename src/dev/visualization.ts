@@ -1,7 +1,9 @@
 import fs from "fs/promises";
 import graphviz from "graphviz-wasm";
 import * as path from "node:path";
+import * as relay from "../net/relay";
 import { Map } from "../state/map";
+import { map } from "../state/state";
 import { ResourceType } from "../types";
 
 await graphviz.loadWASM();
@@ -77,4 +79,13 @@ export async function drawMap(map: Map) {
   const writeSvg = fs.writeFile(path.resolve("logs/map.svg"), svg);
   const writeDot = fs.writeFile(path.resolve("logs/map.dot"), dotSrc);
   await Promise.all([writeSvg, writeDot]);
+}
+
+export function setupVisualization() {
+  relay.on("round-status", async (event) => {
+    const { payload } = event;
+    if (payload.roundStatus === "ended") {
+      await drawMap(map.getMap());
+    }
+  });
 }

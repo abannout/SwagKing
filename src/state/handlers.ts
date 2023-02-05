@@ -1,4 +1,3 @@
-import { drawMap } from "../dev/visualization";
 import * as relay from "../net/relay";
 import { Tradable } from "../types";
 import logger from "../utils/logger";
@@ -202,12 +201,5 @@ export function setupStateHandlers() {
 
     logger.info(`Revealed ${enemyRobots.length} robots`);
     radar.next(enemyRobots);
-  });
-
-  relay.on("round-status", async (event) => {
-    const { payload } = event;
-    if (payload.roundStatus === "ended") {
-      await drawMap(map.getMap());
-    }
   });
 }

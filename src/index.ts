@@ -1,6 +1,7 @@
 import { setupInstructor } from "./commander/instructor";
 import { config } from "./config";
 import { initializeGame } from "./dev/initializer";
+import { setupVisualization } from "./dev/visualization";
 import * as client from "./net/client";
 import { getGames, registerForGame } from "./net/client";
 import * as relay from "./net/relay";
@@ -116,6 +117,10 @@ relay.on("game-status", (event) => {
 });
 
 setupInstructor();
+
+if (isInDevMode) {
+  setupVisualization();
+}
 
 // Needs to be called near the end.
 relay.setupCommandCleanup();
