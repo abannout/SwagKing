@@ -5,13 +5,22 @@
 // We really want to decouple the various strategies from our
 // state implementation to keep it really portable.
 
-import { buyRobots } from "../commands";
+import { buyRobots, moveTo, regenerate } from "../commands";
 import { CommandFunction, CommanderNotification } from "../types";
 
-import { bank, fleet, price } from "../state/state";
+import { FleetedRobot } from "../state/fleet";
+import { bank, fleet, map, price } from "../state/state";
 
 const MAX_FLEET_SIZE = 30;
 const DEFAULT_ROBOT_BUY_BATCH_SIZE = 5;
+const REGENERATE_THRESHOLD = 5;
+const IDLE_ACTION = (robot: FleetedRobot): CommandFunction => {
+  const path = map.shortestPathToUnknownPlanet(robot.planet);
+  if (path && path.length > 1) {
+    return () => moveTo(robot, path[1]);
+  }
+  return () => regenerate(robot);
+};
 
 function calculateRobotBuyAmount(): number {
   const robotPrice = price.get("ROBOT") || Number.MAX_VALUE;
@@ -21,8 +30,8 @@ function calculateRobotBuyAmount(): number {
   return Math.min(DEFAULT_ROBOT_BUY_BATCH_SIZE, maxBuyableAmount);
 }
 
-export function fetchCommands(): CommandFunction[] {
-  const arr: CommandFunction[] = [];
+function globalCommands(): CommandFunction[] {
+  const arr = [];
   const fleetSize = fleet.size();
   const shouldBuyRobots = fleetSize < MAX_FLEET_SIZE;
   if (shouldBuyRobots) {
@@ -32,6 +41,28 @@ export function fetchCommands(): CommandFunction[] {
     }
   }
   return arr;
+}
+
+function robotCommands(): CommandFunction[] {
+  const robotCmd: Record<string, CommandFunction> = {};
+
+  for (const robot of fleet.getAll()) {
+    const id = robot.id;
+
+    switch (true) {
+      case robot.energy < REGENERATE_THRESHOLD:
+        robotCmd[id] = () => regenerate(robot);
+        break;
+      default:
+        robotCmd[id] = IDLE_ACTION(robot);
+    }
+  }
+
+  return Object.values(robotCmd);
+}
+
+export function fetchCommands(): CommandFunction[] {
+  return [...globalCommands(), ...robotCommands()];
 }
 
 export function notify(notification: CommanderNotification) {

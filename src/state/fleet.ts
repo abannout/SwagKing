@@ -7,6 +7,10 @@ export type FleetedRobot = Omit<Robot, "planet"> & {
 
 const fleet: Record<string, FleetedRobot> = {};
 
+export function getAll(): FleetedRobot[] {
+  return Object.values(fleet);
+}
+
 export function add(robot: Robot): void {
   fleet[robot.id] = {
     ...robot,
