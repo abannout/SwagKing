@@ -1,4 +1,4 @@
-import { buyRobots, moveTo, regenerate, sell } from "./commands";
+import { setupInstructor } from "./commander/instructor";
 import { config } from "./config";
 import { initializeGame } from "./dev/initializer";
 import * as client from "./net/client";
@@ -106,13 +106,13 @@ relay.on("error", (event) => {
 // -----------------------------
 
 // If we don't have any robot in our fleet we must buy one.
-relay.on("round-status", (event) => {
+/*relay.on("round-status", (event) => {
   if (fleet.size() > 0) return;
   if (event.payload.roundStatus !== "started") return;
 
   logger.info("Fleet eliminated, trying to buy a new robot");
   relay.enqueue(() => buyRobots(5));
-});
+});*/
 
 relay.on("game-status", (event) => {
   const { payload } = event;
@@ -127,7 +127,8 @@ relay.on("game-status", (event) => {
 // TODO: This is not an ideal implementation of a strategy or anything like it.
 // I probably want to make it a bit more sophisticated. But for the moment I just want
 // to explore the whole map
-relay.on("PlanetDiscovered", (event) => {
+setupInstructor();
+/*relay.on("PlanetDiscovered", (event) => {
   const { payload } = event;
   const robots = fleet.getRobotsOnPlanet(payload.planet);
 
@@ -188,7 +189,7 @@ relay.on("error", (event) => {
   }
 
   relay.enqueue(() => regenerate(robot));
-});
+});*/
 
 // Needs to be called near the end.
 relay.setupCommandCleanup();

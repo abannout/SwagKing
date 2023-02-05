@@ -145,7 +145,10 @@ export type ErrorEvent = {
 export type TradableType = "UPGRADE" | "RESOURCE";
 export type UpgradeLevel = 1 | 2 | 3 | 4 | 5;
 export type Tradable = Uppercase<
-  ResourceType | `${UpgradeType}_${UpgradeLevel}` | "ROBOT"
+  | ResourceType
+  | `${UpgradeType}_${UpgradeLevel}`
+  | "ROBOT"
+  | `${RestorationType}_RESTORE`
 >;
 export type TradablePrice = {
   type: TradableType;
@@ -420,3 +423,14 @@ export type Planet = {
 };
 
 export type PlanetDiscovered = Planet;
+
+export type CommandFunction = () => Promise<void>;
+export type GameNotification = {
+  type: "game";
+  status: "started" | "ended";
+};
+export type RoundNotification = {
+  type: "round";
+  status: "started" | "ended";
+};
+export type CommanderNotification = GameNotification | RoundNotification;

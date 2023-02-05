@@ -1,11 +1,17 @@
 import * as amqplib from "amqplib";
 import EventEmitter from "events";
+import { fetchCommands } from "../commander/commander";
 import { config } from "../config";
-import { Awaitable, ClientEvents, EventHeaders, GameEvent } from "../types";
+import {
+  Awaitable,
+  ClientEvents,
+  CommandFunction,
+  EventHeaders,
+  GameEvent,
+} from "../types";
 import logger from "../utils/logger";
 
 const emitter = new EventEmitter();
-type CommandFunction = () => Promise<void>;
 const commands: CommandFunction[] = [];
 
 export type RelayContext = {
@@ -65,15 +71,12 @@ export function on<K extends keyof ClientEvents>(
   emitter.on(eventName, fn);
 }
 
-export function enqueue(fn: CommandFunction) {
-  commands.push(fn);
-}
-
 function emit<K extends keyof ClientEvents>(
   eventName: K,
   event: GameEvent<ClientEvents[K]>,
   context: RelayContext
 ) {
+  // Triggers hopefully all of our state handlers
   emitter.emit(eventName, event, context);
 }
 
@@ -87,7 +90,7 @@ export function setupCommandCleanup() {
     const status = event.payload.roundStatus;
     if (status !== "started") return;
 
-    const commandsToSend = commands.map((fn) => fn());
+    const commandsToSend = fetchCommands().map((fn) => fn());
     const result = await Promise.allSettled(commandsToSend);
     const rejected = result.filter(
       (r) => r.status === "rejected"
