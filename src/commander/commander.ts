@@ -8,36 +8,32 @@
 import { buyRobots } from "../commands";
 import { CommandFunction, CommanderNotification } from "../types";
 
-// import { bank, fleet, map, price, radar } from "../state/state";
+import { bank, fleet, price } from "../state/state";
 
-// Each round we can issue commands on per-robot basis and
-// one global command
-type CommandRegistry = {
-  global?: CommandFunction;
-  robots: Record<string, CommandFunction>;
-};
-const commands: CommandRegistry = {
-  robots: {},
-};
+const MAX_FLEET_SIZE = 30;
+const DEFAULT_ROBOT_BUY_BATCH_SIZE = 5;
 
-function clearRegistry() {
-  delete commands.global;
-  commands.robots = {};
+function calculateRobotBuyAmount(): number {
+  const robotPrice = price.get("ROBOT") || Number.MAX_VALUE;
+  const balance = bank.get();
+  const maxBuyableAmount = Math.floor(balance / robotPrice);
+
+  return Math.min(DEFAULT_ROBOT_BUY_BATCH_SIZE, maxBuyableAmount);
 }
 
 export function fetchCommands(): CommandFunction[] {
-  const arr = [];
-  if (commands.global) {
-    arr.push(commands.global);
+  const arr: CommandFunction[] = [];
+  const fleetSize = fleet.size();
+  const shouldBuyRobots = fleetSize < MAX_FLEET_SIZE;
+  if (shouldBuyRobots) {
+    const buyAmount = calculateRobotBuyAmount();
+    if (buyAmount > 0) {
+      arr.push(() => buyRobots(buyAmount));
+    }
   }
-  arr.push(...Object.values(commands.robots));
-  clearRegistry();
   return arr;
 }
 
 export function notify(notification: CommanderNotification) {
-  // First action is buying robots
-  if (notification.type === "game" && notification.status === "started") {
-    commands.global = () => buyRobots(5);
-  }
+  return;
 }

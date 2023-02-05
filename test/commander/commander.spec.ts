@@ -1,23 +1,13 @@
 import { assert } from "chai";
 import { describe, test } from "mocha";
-import { fetchCommands, notify } from "../../src/commander/commander";
+import { fetchCommands } from "../../src/commander/commander";
+import { bank } from "../../src/state/state";
 
 describe("The Commander", () => {
-  describe("When notified about game start", () => {
-    beforeEach(() =>
-      notify({
-        type: "game",
-        status: "started",
-      })
-    );
-
+  describe("When Money is available", () => {
+    bank.put(500);
     test("fetch should have a command", () => {
       assert.isAtLeast(fetchCommands().length, 1);
-    });
-
-    test("fetch should clear commands", () => {
-      const commands = fetchCommands();
-      assert.isEmpty(fetchCommands());
     });
   });
 });
