@@ -3,7 +3,6 @@ import { ResourceInventory, Robot } from "../types";
 export type FleetedRobot = Omit<Robot, "planet"> & {
   planet: string;
   inventory: ResourceInventory;
-  movePath: string[];
 };
 
 const fleet: Record<string, FleetedRobot> = {};
@@ -19,7 +18,6 @@ export function add(robot: Robot): void {
       IRON: 0,
       PLATIN: 0,
     },
-    movePath: [],
   };
 }
 

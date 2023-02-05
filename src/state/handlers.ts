@@ -96,7 +96,6 @@ export function setupStateHandlers() {
       ...payload.robot,
       planet: robot.planet,
       inventory: robot.inventory,
-      movePath: robot.movePath,
     };
     fleet.set(robot);
   });
@@ -112,9 +111,6 @@ export function setupStateHandlers() {
       return;
     }
     robot.energy = payload.remainingEnergy;
-    robot.movePath = [
-      ...robot.movePath.filter((p) => payload.toPlanet.id !== p),
-    ];
     robot.planet = payload.toPlanet.id;
     fleet.set(robot);
   });
