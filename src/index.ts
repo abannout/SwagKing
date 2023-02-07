@@ -6,7 +6,7 @@ import * as client from "./net/client";
 import { getGames, registerForGame } from "./net/client";
 import * as relay from "./net/relay";
 import { setupStateHandlers } from "./state/handlers";
-import { bank, fleet, map, price } from "./state/state";
+import { bank, fleet, map, price, radar } from "./state/state";
 import { ResGetGame } from "./types";
 import logger from "./utils/logger";
 import { untilAsync } from "./utils/utils";
@@ -50,6 +50,11 @@ async function registerForNextAvailableGame(): Promise<GameRegistration> {
     const gameRegistration = await registerForGame(game.gameId);
     playerQueue = gameRegistration.playerQueue;
   }
+
+  logger.info(`Playing in game: ${game.gameId}`);
+  client.defaults.game = game.gameId;
+  relay.setupRelay(playerQueue, { playerId: player.playerId });
+
   return {
     gameId: game.gameId,
     playerId: player.playerId,
@@ -66,9 +71,6 @@ if (isInDevMode) {
 }
 
 const registration = await registerForNextAvailableGame();
-logger.info(`Playing in game: ${registration.gameId}`);
-client.defaults.game = registration.gameId;
-relay.setupRelay(registration.playerQueue, { playerId: player.playerId });
 
 if (isInDevMode) {
   logger.debug("Starting game");
@@ -106,7 +108,7 @@ relay.on("error", (event) => {
 // Crucial Fallback Handlers
 // -----------------------------
 
-relay.on("game-status", (event) => {
+relay.on("game-status", async (event) => {
   const { payload } = event;
   if (payload.status !== "ended") return;
 
@@ -114,6 +116,8 @@ relay.on("game-status", (event) => {
   fleet.clear();
   map.clear();
   price.clear();
+  radar.clear();
+  await registerForNextAvailableGame();
 });
 
 setupInstructor();
