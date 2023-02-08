@@ -7,7 +7,7 @@ It is being developed in a hacky way without following good coding practices.
 
 Note that the player has a pre-configured dev-mode which is enabled by default. In this mode 
 the player will manage the lifecycle by its own. To disable the dev mode, set a `NODE_ENV` 
-variable to something else than `production`.
+variable to something else than `development`.
 
 
 ```
