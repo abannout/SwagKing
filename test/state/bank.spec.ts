@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { describe, test } from "mocha";
-import { bank } from "../../src/state/state";
+import { bank } from "../../src/state/state.js";
 
 describe("The Bank", () => {
   beforeEach(() => bank.clear());

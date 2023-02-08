@@ -1,6 +1,6 @@
 import { assert } from "chai";
 import { describe, test } from "mocha";
-import * as map from "../../src/state/map";
+import * as map from "../../src/state/map.js";
 import { Planet } from "../../src/types";
 
 describe("A Map", () => {

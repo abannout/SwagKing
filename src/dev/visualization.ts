@@ -1,10 +1,10 @@
 import fs from "fs/promises";
 import graphviz from "graphviz-wasm";
 import * as path from "node:path";
-import * as relay from "../net/relay";
-import { Map } from "../state/map";
-import { map } from "../state/state";
-import { ResourceType } from "../types";
+import * as relay from "../net/relay.js";
+import { Map } from "../state/map.js";
+import { map } from "../state/state.js";
+import { ResourceType } from "../types.js";
 
 await graphviz.loadWASM();
 

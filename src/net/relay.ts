@@ -1,7 +1,7 @@
 import * as amqplib from "amqplib";
 import EventEmitter from "events";
-import { fetchCommands } from "../commander/commander";
-import { config } from "../config";
+import { fetchCommands } from "../commander/commander.js";
+import { config } from "../config.js";
 import {
   Awaitable,
   ClientEvents,
@@ -9,7 +9,7 @@ import {
   EventHeaders,
   GameEvent,
 } from "../types";
-import logger from "../utils/logger";
+import logger from "../utils/logger.js";
 
 const emitter = new EventEmitter();
 const commands: CommandFunction[] = [];

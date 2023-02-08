@@ -1,6 +1,11 @@
-import { createGame, endGame, getGames, setRoundDuration } from "../net/client";
+import {
+  createGame,
+  endGame,
+  getGames,
+  setRoundDuration,
+} from "../net/client.js";
 import { ResGetGame } from "../types";
-import logger from "../utils/logger";
+import logger from "../utils/logger.js";
 
 const cRounds = 10_000;
 const cPlayers = 10;

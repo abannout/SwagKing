@@ -1,6 +1,6 @@
 // The instructors job is to notify the commander about events
-import * as relay from "../net/relay";
-import * as commander from "./commander";
+import * as relay from "../net/relay.js";
+import * as commander from "./commander.js";
 
 export function setupInstructor() {
   relay.on("round-status", (event) => {

@@ -1,15 +1,15 @@
-import { setupInstructor } from "./commander/instructor";
-import { config } from "./config";
-import { initializeGame } from "./dev/initializer";
-import { setupVisualization } from "./dev/visualization";
-import * as client from "./net/client";
-import { getGames, registerForGame } from "./net/client";
-import * as relay from "./net/relay";
-import { setupStateHandlers } from "./state/handlers";
-import { bank, fleet, map, price, radar } from "./state/state";
+import { setupInstructor } from "./commander/instructor.js";
+import { config } from "./config.js";
+import { initializeGame } from "./dev/initializer.js";
+import { setupVisualization } from "./dev/visualization.js";
+import * as client from "./net/client.js";
+import { getGames, registerForGame } from "./net/client.js";
+import * as relay from "./net/relay.js";
+import { setupStateHandlers } from "./state/handlers.js";
+import { bank, fleet, map, price, radar } from "./state/state.js";
 import { ResGetGame } from "./types";
-import logger from "./utils/logger";
-import { untilAsync } from "./utils/utils";
+import logger from "./utils/logger.js";
+import { untilAsync } from "./utils/utils.js";
 
 // #region Setup
 const player = await client.fetchOrUpdatePlayer(

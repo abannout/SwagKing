@@ -1,5 +1,5 @@
-export * as bank from "./bank";
-export * as fleet from "./fleet";
-export * as map from "./map";
-export * as price from "./price";
-export * as radar from "./radar";
+export * as bank from "./bank.js";
+export * as fleet from "./fleet.js";
+export * as map from "./map.js";
+export * as price from "./price.js";
+export * as radar from "./radar.js";

@@ -1,7 +1,7 @@
 import { assert } from "chai";
 import { describe, test } from "mocha";
-import { fetchCommands } from "../../src/commander/commander";
-import { bank } from "../../src/state/state";
+import { fetchCommands } from "../../src/commander/commander.js";
+import { bank } from "../../src/state/state.js";
 
 describe("The Commander", () => {
   describe("When Money is available", () => {

@@ -1,5 +1,5 @@
-import { sendCommand } from "./net/client";
-import { bank, fleet, map, price } from "./state/state";
+import { sendCommand } from "./net/client.js";
+import { bank, fleet, map, price } from "./state/state.js";
 import {
   BuyCommand,
   BuyRobotCommand,
@@ -10,7 +10,7 @@ import {
   SellCommand,
   Tradable,
 } from "./types";
-import logger from "./utils/logger";
+import logger from "./utils/logger.js";
 
 // Command helper library
 
