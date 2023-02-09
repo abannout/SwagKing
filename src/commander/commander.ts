@@ -14,6 +14,7 @@ import { bank, fleet, map, price } from "../state/state.js";
 const MAX_FLEET_SIZE = 30;
 const DEFAULT_ROBOT_BUY_BATCH_SIZE = 5;
 const REGENERATE_THRESHOLD = 5;
+
 const IDLE_ACTION = (robot: FleetedRobot): CommandFunction => {
   const path = map.shortestPathToUnknownPlanet(robot.planet);
   if (path && path.length > 1) {

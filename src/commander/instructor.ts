@@ -26,4 +26,12 @@ export function setupInstructor() {
       status,
     });
   });
+
+  relay.on("RobotSpawnedIntegrationEvent", (event) => {
+    commander.notify({
+      type: "robot",
+      status: "spawned",
+      id: event.payload.robot.id,
+    });
+  });
 }

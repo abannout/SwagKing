@@ -433,4 +433,12 @@ export type RoundNotification = {
   type: "round";
   status: "started" | "ended";
 };
-export type CommanderNotification = GameNotification | RoundNotification;
+export type RobotNotification = {
+  type: "robot";
+  status: "spawned";
+  id: string;
+};
+export type CommanderNotification =
+  | GameNotification
+  | RoundNotification
+  | RobotNotification;
