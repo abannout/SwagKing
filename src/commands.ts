@@ -1,6 +1,7 @@
 import { sendCommand } from "./net/client.js";
 import { bank, fleet, map, price } from "./state/state.js";
 import {
+  AttackCommand,
   BuyCommand,
   BuyRobotCommand,
   MineCommand,
@@ -8,6 +9,7 @@ import {
   RegenerateCommand,
   Robot,
   SellCommand,
+  SpottedRobot,
   Tradable,
 } from "./types";
 import logger from "./utils/logger.js";
@@ -58,6 +60,21 @@ export async function mine(robot: Pick<Robot, "id">): Promise<void> {
     robotId: robot.id,
     commandObject: {
       commandType: "mining",
+    },
+  });
+}
+
+export async function attack(
+  robot: Pick<Robot, "id">,
+  target: Pick<SpottedRobot, "id">
+): Promise<void> {
+  logger.info(`Attacking ${target.id} with robot ${robot.id}`);
+  await sendCommand<AttackCommand>({
+    commandType: "battle",
+    robotId: robot.id,
+    commandObject: {
+      commandType: "battle",
+      targetId: target.id,
     },
   });
 }

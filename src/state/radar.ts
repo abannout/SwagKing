@@ -1,10 +1,4 @@
-import { RevealedRobot, RobotLevels } from "../types";
-
-type SpottedRobot = {
-  levels: RobotLevels;
-  playerNotion: string;
-  movePath: string[];
-};
+import { RevealedRobot, SpottedRobot } from "../types";
 
 let spottedRobots: Record<string, SpottedRobot> = {};
 
@@ -13,6 +7,7 @@ export function next(robots: RevealedRobot[]) {
     const existing = spottedRobots[robot.robotId];
     if (existing === undefined) {
       spottedRobots[robot.robotId] = {
+        id: robot.robotId,
         levels: robot.levels,
         playerNotion: robot.playerNotion,
         movePath: [robot.planetId],
@@ -39,4 +34,10 @@ export function getNotion(id: string) {
 
 export function clear() {
   spottedRobots = {};
+}
+
+export function getOnPlanet(id: string): SpottedRobot[] {
+  return Object.values(spottedRobots).filter(
+    (s) => s.movePath[s.movePath.length - 1] === id
+  );
 }

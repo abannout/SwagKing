@@ -401,6 +401,18 @@ export type MoveCommand = Pick<
   commandType: "movement";
 };
 
+export type AttackCommandObject = Pick<
+  BaseCommandObject,
+  "commandType" | "targetId"
+>;
+
+export type AttackCommand = Pick<
+  BaseCommand<AttackCommandObject>,
+  "commandType" | "robotId" | "commandObject"
+> & {
+  commandType: "battle";
+};
+
 export type GameCommand = BuyRobotCommand | GameCommand;
 
 export type Direction = "NORTH" | "SOUTH" | "EAST" | "WEST";
@@ -442,3 +454,9 @@ export type CommanderNotification =
   | GameNotification
   | RoundNotification
   | RobotNotification;
+export type SpottedRobot = {
+  id: string;
+  levels: RobotLevels;
+  playerNotion: string;
+  movePath: string[];
+};
