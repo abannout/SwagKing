@@ -5,7 +5,14 @@
 // We really want to decouple the various strategies from our
 // state implementation to keep it really portable.
 
-import { attack, buyRobots, moveTo, regenerate } from "../commands.js";
+import {
+  attack,
+  buyRobots,
+  mine,
+  moveTo,
+  regenerate,
+  sell,
+} from "../commands.js";
 import { CommandFunction, CommanderNotification } from "../types";
 
 import { FleetedRobot } from "../state/fleet.js";
@@ -14,6 +21,7 @@ import { bank, fleet, map, price, radar } from "../state/state.js";
 const MAX_FLEET_SIZE = 30;
 const DEFAULT_ROBOT_BUY_BATCH_SIZE = 5;
 const REGENERATE_THRESHOLD = 5;
+const SELL_THRESHOLD = 10;
 
 const IDLE_ACTION = (robot: FleetedRobot): CommandFunction => {
   const path = map.shortestPathToUnknownPlanet(robot.planet);
@@ -51,10 +59,25 @@ function robotCommands(): CommandFunction[] {
   for (const robot of fleet.getAll()) {
     const id = robot.id;
     const spottedRobots = enemyRobotsInReach(robot);
+    const sumInventory = Object.values(robot.inventory).reduce(
+      (acc, curr) => acc + curr,
+      0
+    );
+
+    const shouldMine =
+      map.getPlanet(robot.id)?.resource?.resourceType === "COAL" &&
+      Math.random() < 0.5;
+    const shouldSell = sumInventory >= SELL_THRESHOLD;
 
     switch (true) {
       case spottedRobots.length > 0:
         robotCmd[id] = () => attack(robot, spottedRobots[0]);
+        break;
+      case shouldMine:
+        robotCmd[id] = () => mine(robot);
+        break;
+      case shouldSell:
+        robotCmd[id] = () => sell(robot);
         break;
       case robot.energy < REGENERATE_THRESHOLD:
         robotCmd[id] = () => regenerate(robot);
