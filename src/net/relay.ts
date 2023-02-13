@@ -23,9 +23,13 @@ export async function setupRelay(playerQueue: string, context: RelayContext) {
     throw Error("Player Queue is undefined");
   }
   const { rabbitMQ } = config.net;
-  const conn = await amqplib.connect(
-    `amqp://${rabbitMQ.user}:${rabbitMQ.password}@${rabbitMQ.host}:${rabbitMQ.port}`
-  );
+  const conn = await amqplib.connect({
+    protocol: "amqp",
+    hostname: rabbitMQ.host,
+    port: rabbitMQ.port,
+    username: rabbitMQ.user,
+    password: rabbitMQ.password,
+  });
 
   const channel = await conn.createChannel();
   await channel.assertQueue(playerQueue);
