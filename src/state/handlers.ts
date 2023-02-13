@@ -20,6 +20,15 @@ export function setupStateHandlers() {
 
     robot.inventory = event.payload.resourceInventory;
     fleet.set(robot);
+
+    const planet = map.getPlanet(robot.planet);
+    if (!planet) {
+      throw new Error("No planet associated found");
+    }
+    if (!planet.resource) {
+      throw new Error("Planet has no resource");
+    }
+    planet.resource.currentAmount -= event.payload.minedAmount;
   });
 
   relay.on("RobotResourceRemovedIntegrationEvent", (event) => {
