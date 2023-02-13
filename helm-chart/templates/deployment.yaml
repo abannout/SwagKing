@@ -24,6 +24,10 @@ spec:
           value: http://game-service.game:8080
         - name: RABBITMQ_HOST
           value: rabbitmq-service.rabbitmq
+        - name: LOGGING_VISUALIZATION
+          value: false
+        - name: LOGGING_LEVEL
+          value: info
         volumeMounts:
         - mountPath: /app/logs
           name: logs-volume

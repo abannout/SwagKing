@@ -20,5 +20,11 @@ export const config = {
   env: {
     mode: process.env.NODE_ENV || "development",
   },
+  logging: {
+    enableVisualization:
+      String(process.env.LOGGING_VISUALIZATION) === "true" || true,
+    dir: process.env.LOGGING_DIR || "logs",
+    level: process.env.LOGGING_LEVEL || "debug",
+  },
   net: netConfig,
 };

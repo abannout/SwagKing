@@ -1,8 +1,9 @@
 import * as fs from "fs";
 import * as path from "node:path";
 import pino, { StreamEntry } from "pino";
+import { config } from "../config.js";
 
-const logDirectory = "logs";
+const logDirectory = config.logging.dir || "logs";
 const logPath = path.resolve(logDirectory);
 
 if (!fs.existsSync(logPath)) {
@@ -24,7 +25,7 @@ const streams: StreamEntry[] = [
 
 const logger = pino(
   {
-    level: "debug",
+    level: config.logging.level,
   },
   pino.multistream(streams)
 );

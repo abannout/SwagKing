@@ -122,7 +122,7 @@ relay.on("game-status", async (event) => {
 
 setupInstructor();
 
-if (isInDevMode) {
+if (config.logging.enableVisualization) {
   setupVisualization();
 }
 
