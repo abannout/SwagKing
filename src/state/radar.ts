@@ -41,3 +41,7 @@ export function getOnPlanet(id: string): SpottedRobot[] {
     (s) => s.movePath[s.movePath.length - 1] === id
   );
 }
+
+export function getRobot(id: string): SpottedRobot | null {
+  return spottedRobots[id];
+}

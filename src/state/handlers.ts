@@ -45,12 +45,20 @@ export function setupStateHandlers() {
   });
 
   relay.on("RobotAttackedIntegrationEvent", (event) => {
-    logger.info("Robot removed a resource!");
     const { payload } = event;
     const target = fleet.get(payload.target.robotId);
     const attacker = fleet.get(payload.attacker.robotId);
 
+    if (target && attacker) {
+      logger.warn("Detected a self-attack. This is probably not right");
+    }
+
     if (target) {
+      const spotted = radar.getRobot(payload.attacker.robotId);
+      logger.info(
+        `Robot ${target} got attacked by ${attacker}! [Robot: ${spotted}]`
+      );
+
       target.alive = payload.target.alive;
       target.health = payload.target.availableHealth;
       target.energy = payload.target.availableEnergy;
@@ -58,6 +66,9 @@ export function setupStateHandlers() {
     }
 
     if (attacker) {
+      const spotted = radar.getRobot(payload.target.robotId);
+      logger.info(`Robot ${target} attacked ${attacker}!  [Robot: ${spotted}]`);
+
       attacker.alive = payload.target.alive;
       attacker.health = payload.target.availableHealth;
       attacker.energy = payload.target.availableEnergy;
