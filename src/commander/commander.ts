@@ -68,10 +68,16 @@ function robotCommands(): CommandFunction[] {
     const shouldMine =
       planet?.resource?.resourceType === "COAL" && Math.random() < 0.5;
     const shouldSell = sumInventory >= SELL_THRESHOLD;
-    const shouldRegenerate = robot.energy < (planet?.movementDifficulty || 0);
+    const shouldRegenerate =
+      robot.energy < (planet?.movementDifficulty || 0) ||
+      robot.energy < REGENERATE_THRESHOLD;
+    const shouldAttack = spottedRobots.length > 0;
 
     switch (true) {
-      case spottedRobots.length > 0:
+      case shouldRegenerate:
+        robotCmd[id] = () => regenerate(robot);
+        break;
+      case shouldAttack:
         robotCmd[id] = () => attack(robot, spottedRobots[0]);
         break;
       case shouldMine:
@@ -79,9 +85,6 @@ function robotCommands(): CommandFunction[] {
         break;
       case shouldSell:
         robotCmd[id] = () => sell(robot);
-        break;
-      case shouldRegenerate || robot.energy < REGENERATE_THRESHOLD:
-        robotCmd[id] = () => regenerate(robot);
         break;
       default:
         robotCmd[id] = IDLE_ACTION(robot);
