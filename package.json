@@ -9,13 +9,13 @@
   "scripts": {
     "start": "node --es-module-specifier-resolution=node dist/src/index.js",
     "compile": "tsc --removeComments true",
-    "dev": "npm run watch",
+    "dev": "npm run dev:watch",
+    "dev:watch-node": "nodemon --on-change-only --es-module-specifier-resolution=node dist/src/index.js | pino-pretty",
+    "dev:watch-ts": "tsc -w",
+    "dev:watch": "concurrently --kill-others -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run dev:watch-ts\" \"npm run dev:watch-node\"",
     "format": "prettier --config .prettierrc 'src/**/*.ts' 'test/**/*.ts' --write",
     "lint": "eslint . --ext .ts",
-    "test": "mocha",
-    "watch-node": "nodemon --on-change-only --es-module-specifier-resolution=node dist/src/index.js",
-    "watch-ts": "tsc -w",
-    "watch": "concurrently --kill-others -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run watch-ts\" \"npm run watch-node\""
+    "test": "mocha"
   },
   "author": "",
   "license": "ISC",
@@ -41,6 +41,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "mocha": "^10.2.0",
     "nodemon": "^2.0.20",
+    "pino-pretty": "^9.2.0",
     "prettier": "^2.8.2",
     "ts-node": "^10.9.1"
   }
