@@ -3,7 +3,7 @@ import graphviz from "graphviz-wasm";
 import * as path from "node:path";
 import * as relay from "../net/relay.js";
 import { Map } from "../state/map.js";
-import { map } from "../state/state.js";
+import { fleet, map, radar } from "../state/state.js";
 import { ResourceType } from "../types.js";
 
 await graphviz.loadWASM();
@@ -15,8 +15,10 @@ const resourceIcon: Record<ResourceType, string> = {
   GEM: "💎",
   PLATIN: "🛡️",
 };
+const engine = "fdp";
 
 const trimUUID = (uuid: string) => uuid.slice(0, 8);
+const removeIdentation = (s: string) => s.replace(/^ {4}/gm, "");
 
 export async function drawMap(map: Map) {
   const planetNodes = Object.entries(map.nodes)
@@ -28,7 +30,19 @@ export async function drawMap(map: Map) {
         label += `\n${planet.resource.currentAmount} / ${planet.resource.maxAmount}`;
       }
 
-      return `"${dotId}" [label="${label}"]`;
+      const locatedRobots = fleet.getRobotsOnPlanet(id);
+      let shape = "circle";
+      let color = "white";
+      if (locatedRobots.length > 0) {
+        shape = "doublecircle";
+        color = "green";
+      }
+      const spottedRobots = radar.getOnPlanet(id);
+      if (spottedRobots.length > 0) {
+        color = "red";
+      }
+
+      return `"${dotId}" [label="${label}" shape="${shape}" color="${color}"]`;
     })
     .join(";\n");
 
@@ -37,7 +51,7 @@ export async function drawMap(map: Map) {
     .filter((id) => map.nodes[id] === undefined)
     .map((id) => {
       const dotId = trimUUID(id);
-      return `"${dotId}" [color="red"]`;
+      return `"${dotId}" [color="yellow"]`;
     })
     .join(";\n");
 
@@ -49,9 +63,8 @@ export async function drawMap(map: Map) {
         .join(";\n");
     })
     .join(";\n");
-  const engine = "neato";
 
-  const dotSrc = `
+  const dotSrc = removeIdentation(`
   graph {
     layout = ${engine};
 
@@ -73,7 +86,7 @@ export async function drawMap(map: Map) {
     ${planetNodes}
     ${undiscoveredPlanets}
     ${connections}
-  }`;
+  }`);
 
   const svg = graphviz.layout(dotSrc, "svg", engine);
   const writeSvg = fs.writeFile(path.resolve("logs/map.svg"), svg);
