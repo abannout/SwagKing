@@ -25,7 +25,7 @@ spec:
         - name: RABBITMQ_HOST
           value: rabbitmq-service.rabbitmq
         - name: LOGGING_VISUALIZATION
-          value: false
+          value: "false"
         - name: LOGGING_LEVEL
           value: info
         volumeMounts:
