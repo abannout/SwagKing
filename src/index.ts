@@ -16,6 +16,9 @@ const player = await client.fetchOrUpdatePlayer(
   config.player.name,
   config.player.email
 );
+// Need the super secret ID for debugging purposes
+logger.info(`Player registered: ${player.playerId}`);
+
 client.defaults.player = player.playerId;
 
 type GameRegistration = {
