@@ -213,6 +213,7 @@ export type Robot = {
   miningSpeed: number;
   health: number;
   energy: number;
+  inventory: RobotInventory;
 } & RobotLevels;
 
 export type RobotLevels = {
@@ -248,9 +249,15 @@ export type EventRobotMoved = {
 
 export type RobotInventoryUpdated = {
   robot: string;
-  inventory: {
-    resources: ResourceInventory;
-  };
+  inventory: RobotInventory;
+};
+
+export type RobotInventory = {
+  storageLevel: number;
+  resources: ResourceInventory;
+  maxStorage: number;
+  usedStorage: number;
+  full: boolean;
 };
 
 export type RobotAttackedIntegrationEvent = {

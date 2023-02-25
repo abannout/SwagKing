@@ -116,6 +116,7 @@ export function setupStateHandlers() {
       ...payload.robot,
       planet: robot.planet,
       inventory: robot.inventory,
+      maxStorage: robot.maxStorage,
     };
     fleet.set(robot);
   });

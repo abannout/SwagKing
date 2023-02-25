@@ -4,7 +4,7 @@ import { bank, map, price } from "../../state/state.js";
 import { CommandFunction, ResourceType, Tradable } from "../../types";
 import logger from "../../utils/logger.js";
 
-const SELL_THRESHOLD = 10;
+const SELL_THRESHOLD = 0.8;
 const MAX_UPGRADE_LEVEL = 3;
 
 function mostValueableMinableResource(miningLevel: number): ResourceType {
@@ -45,7 +45,7 @@ export function nextMove(robot: FleetedRobot): CommandFunction | undefined {
     (acc, curr) => acc + curr,
     0
   );
-  if (sumInventory > SELL_THRESHOLD) {
+  if (sumInventory / robot.maxStorage >= SELL_THRESHOLD) {
     return () => sell(robot);
   }
 

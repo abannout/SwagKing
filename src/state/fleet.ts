@@ -1,8 +1,9 @@
 import { ResourceInventory, Robot } from "../types";
 
-export type FleetedRobot = Omit<Robot, "planet"> & {
+export type FleetedRobot = Omit<Robot, "planet" | "inventory"> & {
   planet: string;
   inventory: ResourceInventory;
+  maxStorage: number;
 };
 
 const fleet: Record<string, FleetedRobot> = {};
@@ -22,6 +23,7 @@ export function add(robot: Robot): void {
       IRON: 0,
       PLATIN: 0,
     },
+    maxStorage: robot.inventory.maxStorage,
   };
 }
 
