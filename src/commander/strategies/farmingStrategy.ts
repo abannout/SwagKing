@@ -63,12 +63,15 @@ export function nextMove(robot: FleetedRobot): CommandFunction | undefined {
     return undefined;
   }
 
-  const availableResource = planet.resource?.resourceType;
+  const availableResource = planet.resource;
   const mostValuableMinableResource = mostValueableMinableResource(
     robot.miningLevel
   );
 
-  if (availableResource === mostValuableMinableResource) {
+  if (
+    availableResource?.currentAmount > 0 &&
+    availableResource?.resourceType === mostValuableMinableResource
+  ) {
     return () => mine(robot);
   }
 
