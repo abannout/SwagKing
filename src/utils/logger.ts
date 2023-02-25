@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as fsp from "fs/promises";
 import * as path from "node:path";
 import pino, { StreamEntry } from "pino";
 import { config } from "../config.js";
@@ -29,5 +30,9 @@ const logger = pino(
   },
   pino.multistream(streams)
 );
+
+export async function writeToFile(file: string, content: string) {
+  fsp.writeFile(path.resolve(logPath, file), content);
+}
 
 export default logger;

@@ -45,3 +45,7 @@ export function getOnPlanet(id: string): SpottedRobot[] {
 export function getRobot(id: string): SpottedRobot | null {
   return spottedRobots[id];
 }
+
+export function getAll(): SpottedRobot[] {
+  return Object.values(spottedRobots);
+}

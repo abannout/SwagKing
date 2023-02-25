@@ -8,7 +8,7 @@ import * as relay from "./net/relay.js";
 import { setupStateHandlers } from "./state/handlers.js";
 import { bank, fleet, map, price, radar } from "./state/state.js";
 import { ResGetGame } from "./types";
-import logger from "./utils/logger.js";
+import logger, { writeToFile } from "./utils/logger.js";
 import { untilAsync } from "./utils/utils.js";
 
 // #region Setup
@@ -95,6 +95,26 @@ relay.on("round-status", async (event) => {
   logger.info(
     `Round ${round.roundNumber} switched to status: ${round.roundStatus}`
   );
+
+  if (round.roundStatus === "started") {
+    const currentMap = map.getMap();
+    const currentRadar = radar.getAll();
+    const currentFleet = fleet.getAll();
+    logger.info(
+      `Current Round statisticts: Balance: ${bank.get()}, Fleet: ${
+        currentFleet.length
+      }, Radar: ${currentRadar.length}, Map: ${
+        Object.values(currentMap.nodes).length
+      }`
+    );
+    if (config.logging.level === "debug") {
+      await Promise.all([
+        writeToFile("map.json", JSON.stringify(currentMap, null, 2)),
+        writeToFile("radar.json", JSON.stringify(currentRadar, null, 2)),
+        writeToFile("fleet.json", JSON.stringify(currentFleet, null, 2)),
+      ]);
+    }
+  }
 });
 
 relay.on("game-status", (event) => {
