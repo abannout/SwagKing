@@ -70,7 +70,7 @@ export function getStrategyForRobot(robot: FleetedRobot): Strategey {
     for (const [key, value] of Object.entries(targetDistribution)) {
       if (currentDistribution[key as StrategyType] < value) {
         strategyAssignment[robot.id] = key as StrategyType;
-        strategies[key as StrategyType];
+        return strategies[key as StrategyType];
       }
     }
   }
