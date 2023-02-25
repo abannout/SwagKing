@@ -22,7 +22,7 @@ const strategyDistribution: Record<StrategyType, number> = {
 
 const strategyAssignment: Record<string, StrategyType> = {};
 
-export const strategies: Record<StrategyType, Strategey> = {
+const strategies: Record<StrategyType, Strategey> = {
   FARMING: farming,
   FIGHTING: fighting,
   EXPLORING: exploring,
