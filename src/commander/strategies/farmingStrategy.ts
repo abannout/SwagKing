@@ -25,7 +25,7 @@ function mostValueableMinableResource(miningLevel: number): ResourceType {
 }
 
 function nextUpgrade(robot: FleetedRobot): Tradable | null {
-  const { miningLevel, miningSpeedLevel } = robot;
+  const { miningLevel, miningSpeedLevel, storageLevel } = robot;
 
   if (miningLevel < MAX_UPGRADE_LEVEL) {
     const newLevel = miningLevel + 1;
@@ -34,6 +34,11 @@ function nextUpgrade(robot: FleetedRobot): Tradable | null {
 
   if (miningSpeedLevel < MAX_UPGRADE_LEVEL) {
     const newLevel = miningSpeedLevel + 1;
+    return `MINING_SPEED_${newLevel}` as Tradable;
+  }
+
+  if (storageLevel < MAX_UPGRADE_LEVEL) {
+    const newLevel = storageLevel + 1;
     return `MINING_SPEED_${newLevel}` as Tradable;
   }
 
