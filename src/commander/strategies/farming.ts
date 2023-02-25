@@ -1,7 +1,7 @@
 import { buyItem, mine, moveTo, sell } from "../../commands.js";
 import { FleetedRobot } from "../../state/fleet.js";
 import { bank, map, price } from "../../state/state.js";
-import { CommandFunction, ResourceType, Tradable } from "../../types";
+import { CommandFunction, ResourceType, Tradable } from "../../types.js";
 import logger from "../../utils/logger.js";
 import { getUpgrade } from "../../utils/utils.js";
 
