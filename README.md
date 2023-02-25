@@ -1,7 +1,11 @@
 # Player Hackschnitzel
 
-This player is a Proof-of-Concept player, which doesn't follow any tactics or game mechanics.
-It is being developed in a hacky way without following good coding practices.
+This player is a Proof-of-Concept player.
+It is being developed in a hacky way without following good coding practices, therefore its name.
+In the beginning the player was designed to test specific game functionalities, but it has evolved over time
+to participate at the codefight.
+However, the player didn't get much upfront design, therefore some parts are questionable in design.
+But it works, which is great and hopefully makes the codefight a bit more thrilling.
 
 ## Run
 
