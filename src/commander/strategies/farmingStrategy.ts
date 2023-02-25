@@ -3,6 +3,7 @@ import { FleetedRobot } from "../../state/fleet.js";
 import { bank, map, price } from "../../state/state.js";
 import { CommandFunction, ResourceType, Tradable } from "../../types";
 import logger from "../../utils/logger.js";
+import { getUpgrade } from "../../utils/utils.js";
 
 const SELL_THRESHOLD = 0.8;
 const MAX_UPGRADE_LEVEL = 3;
@@ -28,18 +29,15 @@ function nextUpgrade(robot: FleetedRobot): Tradable | null {
   const { miningLevel, miningSpeedLevel, storageLevel } = robot;
 
   if (miningLevel < MAX_UPGRADE_LEVEL) {
-    const newLevel = miningLevel + 1;
-    return `MINING_${newLevel}` as Tradable;
+    return getUpgrade("MINING", miningLevel);
   }
 
   if (miningSpeedLevel < MAX_UPGRADE_LEVEL) {
-    const newLevel = miningSpeedLevel + 1;
-    return `MINING_SPEED_${newLevel}` as Tradable;
+    return getUpgrade("MINING_SPEED", miningSpeedLevel);
   }
 
   if (storageLevel < MAX_UPGRADE_LEVEL) {
-    const newLevel = storageLevel + 1;
-    return `MINING_SPEED_${newLevel}` as Tradable;
+    return getUpgrade("STORAGE", storageLevel);
   }
 
   return null;

@@ -1,3 +1,5 @@
+import { Tradable, UpgradeType } from "../types";
+
 export function until(condition: () => boolean, timeout = 500): Promise<void> {
   const poll = (resolve: (value: void | PromiseLike<void>) => void) => {
     if (condition()) resolve();
@@ -17,4 +19,12 @@ export function untilAsync(
   };
 
   return new Promise(poll);
+}
+
+export function getUpgrade(
+  upgrade: UpgradeType,
+  currentLevel: number
+): Tradable {
+  if (currentLevel >= 5) throw new Error(`Max level reached for ${upgrade}`);
+  return `${upgrade}_${currentLevel + 1}` as Tradable;
 }

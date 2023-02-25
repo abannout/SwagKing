@@ -5,12 +5,12 @@
 // We really want to decouple the various strategies from our
 // state implementation to keep it really portable.
 
-import { attack, buyRobots, moveTo, regenerate } from "../commands.js";
+import { buyRobots, moveTo, regenerate } from "../commands.js";
 import { CommandFunction, CommanderNotification } from "../types";
 
 import { FleetedRobot } from "../state/fleet.js";
-import { bank, fleet, map, price, radar } from "../state/state.js";
-import { farming } from "./strategies/strategies.js";
+import { bank, fleet, map, price } from "../state/state.js";
+import { farming, fighting } from "./strategies/strategies.js";
 
 const MAX_FLEET_SIZE = 30;
 const DEFAULT_ROBOT_BUY_BATCH_SIZE = 5;
@@ -47,24 +47,22 @@ function globalCommands(): CommandFunction[] {
 
 function robotCommands(): CommandFunction[] {
   const robotCmd: Record<string, CommandFunction> = {};
-  const enemyRobotsInReach = (id: FleetedRobot) => radar.getOnPlanet(id.planet);
 
   for (const robot of fleet.getAll()) {
     const id = robot.id;
-    const spottedRobots = enemyRobotsInReach(robot);
 
     const planet = map.getPlanet(robot.id);
     const shouldRegenerate =
       robot.energy < (planet?.movementDifficulty || 0) ||
       robot.energy < REGENERATE_THRESHOLD;
-    const shouldAttack = spottedRobots.length > 0;
+    const shouldAttack = Math.random() < 0.5;
 
     switch (true) {
       case shouldRegenerate:
         robotCmd[id] = () => regenerate(robot);
         break;
       case shouldAttack:
-        robotCmd[id] = () => attack(robot, spottedRobots[0]);
+        robotCmd[id] = fighting.nextMove(robot) || IDLE_ACTION(robot);
         break;
       default:
         robotCmd[id] = farming.nextMove(robot) || IDLE_ACTION(robot);
