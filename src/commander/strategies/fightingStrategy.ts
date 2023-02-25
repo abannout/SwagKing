@@ -14,15 +14,15 @@ function nextUpgrade(robot: FleetedRobot): Tradable | null {
   }
 
   if (healthLevel < MAX_UPGRADE_LEVEL) {
-    return getUpgrade("HEALTH", damageLevel);
+    return getUpgrade("HEALTH", healthLevel);
   }
 
   if (energyLevel < MAX_UPGRADE_LEVEL) {
-    return getUpgrade("MAX_ENERGY", damageLevel);
+    return getUpgrade("MAX_ENERGY", energyLevel);
   }
 
   if (energyRegenLevel < MAX_UPGRADE_LEVEL) {
-    return getUpgrade("ENERGY_REGEN", damageLevel);
+    return getUpgrade("ENERGY_REGEN", energyRegenLevel);
   }
 
   return null;

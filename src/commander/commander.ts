@@ -10,11 +10,18 @@ import { CommandFunction, CommanderNotification } from "../types";
 
 import { FleetedRobot } from "../state/fleet.js";
 import { bank, fleet, map, price } from "../state/state.js";
-import { farming, fighting } from "./strategies/strategies.js";
+import { StrategyType, strategies } from "./strategies/strategies.js";
 
 const MAX_FLEET_SIZE = 30;
 const DEFAULT_ROBOT_BUY_BATCH_SIZE = 5;
-const REGENERATE_THRESHOLD = 5;
+
+const strategyDistribution: Record<StrategyType, number> = {
+  FARMING: 0.8,
+  FIGHTING: 0,
+  EXPLORING: 0.2,
+};
+
+const strategyAssignment: Record<string, StrategyType> = {};
 
 export const IDLE_ACTION = (robot: FleetedRobot): CommandFunction => {
   const path = map.shortestPathToUnknownPlanet(robot.planet);
@@ -45,28 +52,62 @@ function globalCommands(): CommandFunction[] {
   return arr;
 }
 
+function validateStrategyDistribution() {
+  const sum = Object.values(strategyDistribution).reduce(
+    (acc, val) => acc + val,
+    0
+  );
+  if (sum !== 1) {
+    throw new Error("Strategy distribution does not sum to 1");
+  }
+}
+
+function getCurrentStratgeyDistribution(): Record<StrategyType, number> {
+  const currentDistribution: Record<StrategyType, number> = {
+    FARMING: 0,
+    FIGHTING: 0,
+    EXPLORING: 0,
+  };
+  const fleetSize = fleet.size();
+  if (fleetSize <= 0) return currentDistribution;
+
+  for (const robot of fleet.getAll()) {
+    const strategy = strategyAssignment[robot.id];
+    currentDistribution[strategy]++;
+  }
+
+  for (const strategy of Object.keys(currentDistribution)) {
+    currentDistribution[strategy as StrategyType] /= fleetSize;
+  }
+
+  return currentDistribution;
+}
+
+function getStrategyForRobot(robot: FleetedRobot): StrategyType {
+  validateStrategyDistribution();
+
+  if (!strategyAssignment[robot.id]) {
+    const currentDistribution = getCurrentStratgeyDistribution();
+    const targetDistribution = strategyDistribution;
+
+    for (const [key, value] of Object.entries(targetDistribution)) {
+      if (currentDistribution[key as StrategyType] < value) {
+        strategyAssignment[robot.id] = key as StrategyType;
+        return key as StrategyType;
+      }
+    }
+  }
+  return strategyAssignment[robot.id];
+}
+
 function robotCommands(): CommandFunction[] {
   const robotCmd: Record<string, CommandFunction> = {};
 
   for (const robot of fleet.getAll()) {
     const id = robot.id;
-
-    const planet = map.getPlanet(robot.id);
-    const shouldRegenerate =
-      robot.energy < (planet?.movementDifficulty || 0) ||
-      robot.energy < REGENERATE_THRESHOLD;
-    const shouldAttack = Math.random() < 0.5;
-
-    switch (true) {
-      case shouldRegenerate:
-        robotCmd[id] = () => regenerate(robot);
-        break;
-      case shouldAttack:
-        robotCmd[id] = fighting.nextMove(robot) || IDLE_ACTION(robot);
-        break;
-      default:
-        robotCmd[id] = farming.nextMove(robot) || IDLE_ACTION(robot);
-    }
+    const strategyType = getStrategyForRobot(robot);
+    const strategy = strategies[strategyType];
+    robotCmd[id] = strategy.nextMove(robot) || IDLE_ACTION(robot);
   }
 
   return Object.values(robotCmd);
