@@ -5,25 +5,18 @@
 // We really want to decouple the various strategies from our
 // state implementation to keep it really portable.
 
-import {
-  attack,
-  buyRobots,
-  mine,
-  moveTo,
-  regenerate,
-  sell,
-} from "../commands.js";
+import { attack, buyRobots, moveTo, regenerate } from "../commands.js";
 import { CommandFunction, CommanderNotification } from "../types";
 
 import { FleetedRobot } from "../state/fleet.js";
 import { bank, fleet, map, price, radar } from "../state/state.js";
+import { farming } from "./strategies/strategies.js";
 
 const MAX_FLEET_SIZE = 30;
 const DEFAULT_ROBOT_BUY_BATCH_SIZE = 5;
 const REGENERATE_THRESHOLD = 5;
-const SELL_THRESHOLD = 10;
 
-const IDLE_ACTION = (robot: FleetedRobot): CommandFunction => {
+export const IDLE_ACTION = (robot: FleetedRobot): CommandFunction => {
   const path = map.shortestPathToUnknownPlanet(robot.planet);
   if (path && path.length > 1) {
     return () => moveTo(robot, path[1]);
@@ -33,7 +26,7 @@ const IDLE_ACTION = (robot: FleetedRobot): CommandFunction => {
 
 function calculateRobotBuyAmount(): number {
   const robotPrice = price.get("ROBOT") || Number.MAX_VALUE;
-  const balance = bank.get();
+  const balance = bank.getAvailable();
   const maxBuyableAmount = Math.floor(balance / robotPrice);
 
   return Math.min(DEFAULT_ROBOT_BUY_BATCH_SIZE, maxBuyableAmount);
@@ -59,15 +52,8 @@ function robotCommands(): CommandFunction[] {
   for (const robot of fleet.getAll()) {
     const id = robot.id;
     const spottedRobots = enemyRobotsInReach(robot);
-    const sumInventory = Object.values(robot.inventory).reduce(
-      (acc, curr) => acc + curr,
-      0
-    );
 
     const planet = map.getPlanet(robot.id);
-    const shouldMine =
-      planet?.resource?.resourceType === "COAL" && Math.random() < 0.5;
-    const shouldSell = sumInventory >= SELL_THRESHOLD;
     const shouldRegenerate =
       robot.energy < (planet?.movementDifficulty || 0) ||
       robot.energy < REGENERATE_THRESHOLD;
@@ -80,14 +66,8 @@ function robotCommands(): CommandFunction[] {
       case shouldAttack:
         robotCmd[id] = () => attack(robot, spottedRobots[0]);
         break;
-      case shouldMine:
-        robotCmd[id] = () => mine(robot);
-        break;
-      case shouldSell:
-        robotCmd[id] = () => sell(robot);
-        break;
       default:
-        robotCmd[id] = IDLE_ACTION(robot);
+        robotCmd[id] = farming.nextMove(robot) || IDLE_ACTION(robot);
     }
   }
 
