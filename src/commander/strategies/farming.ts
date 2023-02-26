@@ -1,4 +1,4 @@
-import { buyItem, mine, moveTo, sell } from "../../commands.js";
+import { buyItem, mine, moveTo, regenerate, sell } from "../../commands.js";
 import { FleetedRobot } from "../../state/fleet.js";
 import { bank, map, price } from "../../state/state.js";
 import { CommandFunction, ResourceType, Tradable } from "../../types.js";
@@ -78,6 +78,10 @@ export function nextMove(robot: FleetedRobot): CommandFunction | undefined {
     return () => mine(robot);
   }
 
+  if (planet?.movementDifficulty > robot.energy) {
+    return () => regenerate(robot);
+  }
+
   const path = map.shortestPathToResource(
     robot.planet,
     mostValuableMinableResource
@@ -86,5 +90,9 @@ export function nextMove(robot: FleetedRobot): CommandFunction | undefined {
     return () => moveTo(robot, path[1]);
   }
 
+  const explorerPath = map.shortestPathToUnknownPlanet(robot.planet);
+  if (explorerPath && explorerPath.length > 1) {
+    return () => moveTo(robot, explorerPath[1]);
+  }
   return undefined;
 }

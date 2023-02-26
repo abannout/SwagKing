@@ -15,9 +15,9 @@ export type Strategey = {
 };
 
 const strategyDistribution: Record<StrategyType, number> = {
-  FARMING: 0.8,
-  FIGHTING: 0,
-  EXPLORING: 0.2,
+  FARMING: 0.6,
+  FIGHTING: 0.3,
+  EXPLORING: 0.1,
 };
 
 const strategyAssignment: Record<string, StrategyType> = {};
@@ -33,7 +33,7 @@ function validateStrategyDistribution() {
     (acc, val) => acc + val,
     0
   );
-  if (sum !== 1) {
+  if (Math.round(sum) !== 1) {
     throw new Error("Strategy distribution does not sum to 1");
   }
 }

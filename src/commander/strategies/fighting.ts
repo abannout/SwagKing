@@ -2,6 +2,7 @@ import { attack, buyItem, moveTo, regenerate } from "../../commands.js";
 import { FleetedRobot } from "../../state/fleet.js";
 import { bank, map, price, radar } from "../../state/state.js";
 import { CommandFunction, Tradable } from "../../types.js";
+import logger from "../../utils/logger.js";
 import { getUpgrade } from "../../utils/utils.js";
 
 const MAX_UPGRADE_LEVEL = 3;
@@ -50,6 +51,15 @@ export function nextMove(robot: FleetedRobot): CommandFunction | undefined {
   if (enemyRobots.length > 0) {
     const target = enemyRobots[0];
     return () => attack(robot, target);
+  }
+
+  const planet = map.getPlanet(robot.planet);
+  if (!planet) {
+    logger.warn(`Planet ${robot.planet} not found`);
+    return undefined;
+  }
+  if (planet.movementDifficulty > robot.energy) {
+    return () => regenerate(robot);
   }
 
   const path = map.shortestPath(
