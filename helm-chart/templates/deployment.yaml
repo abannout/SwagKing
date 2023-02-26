@@ -31,6 +31,15 @@ spec:
         volumeMounts:
         - mountPath: /app/logs
           name: logs-volume
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+            httpHeaders:
+            - name: Accept
+              value: application-json
+          initialDelaySeconds: 5
+          periodSeconds: 3
       volumes:
       - name: logs-volume
         emptyDir:
