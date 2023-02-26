@@ -12,6 +12,10 @@ import { ResGetGame } from "./types";
 import logger, { writeToFile } from "./utils/logger.js";
 import { untilAsync } from "./utils/utils.js";
 
+if (config.net.http.enable) {
+  setupHttpServer();
+}
+
 // #region Setup
 const player = await client.fetchOrUpdatePlayer(
   config.player.name,
@@ -148,10 +152,6 @@ setupInstructor();
 
 if (config.logging.enableVisualization) {
   setupVisualization();
-}
-
-if (config.net.http.enable) {
-  setupHttpServer();
 }
 
 // Needs to be called near the end.
