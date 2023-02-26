@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: player-hackschnitzel-service
+spec:
+  selector:
+    app: player-hackschnitzel-deployment
+  ports:
+    - protocol: TCP
+      port: 8000
+      targetPort: 8000
+

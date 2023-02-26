@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: player-hackschnitzel-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: player-hackschnitzel.dungeon-space.de
+      http:
+        paths:
+          - pathType: Prefix
+            path: /
+            backend:
+              service:
+                name: player-hackschnitzel-service
+                port:
+                  number: 8000
