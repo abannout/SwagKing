@@ -150,7 +150,9 @@ if (config.logging.enableVisualization) {
   setupVisualization();
 }
 
-setupHttpServer();
+if (config.net.http.enable) {
+  setupHttpServer();
+}
 
 // Needs to be called near the end.
 relay.setupCommandCleanup();
