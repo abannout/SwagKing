@@ -89,16 +89,17 @@ export async function drawMap(map: Map) {
   }`);
 
   const svg = graphviz.layout(dotSrc, "svg", engine);
-  const writeSvg = fs.writeFile(path.resolve("logs/map.svg"), svg);
-  const writeDot = fs.writeFile(path.resolve("logs/map.dot"), dotSrc);
-  await Promise.all([writeSvg, writeDot]);
+  return [dotSrc, svg];
 }
 
 export function setupVisualization() {
   relay.on("round-status", async (event) => {
     const { payload } = event;
     if (payload.roundStatus === "ended") {
-      await drawMap(map.getMap());
+      const [dotSrc, svg] = await drawMap(map.getMap());
+      const writeSvg = fs.writeFile(path.resolve("logs/map.svg"), svg);
+      const writeDot = fs.writeFile(path.resolve("logs/map.dot"), dotSrc);
+      await Promise.all([writeSvg, writeDot]);
     }
   });
 }

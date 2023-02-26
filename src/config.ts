@@ -8,6 +8,9 @@ const netConfig = {
   game: {
     url: process.env.GAME_URL || "http://localhost:8080",
   },
+  http: {
+    port: Number(process.env.HTTP_PORT) || 8000,
+  },
 };
 
 const playerConfig = {

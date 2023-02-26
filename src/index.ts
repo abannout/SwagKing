@@ -4,6 +4,7 @@ import { initializeGame } from "./dev/initializer.js";
 import { setupVisualization } from "./dev/visualization.js";
 import * as client from "./net/client.js";
 import { getGames, registerForGame } from "./net/client.js";
+import { setupHttpServer } from "./net/http.js";
 import * as relay from "./net/relay.js";
 import { setupStateHandlers } from "./state/handlers.js";
 import { bank, fleet, map, price, radar } from "./state/state.js";
@@ -148,6 +149,8 @@ setupInstructor();
 if (config.logging.enableVisualization) {
   setupVisualization();
 }
+
+setupHttpServer();
 
 // Needs to be called near the end.
 relay.setupCommandCleanup();
