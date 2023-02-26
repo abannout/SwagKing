@@ -4,7 +4,7 @@ import { drawMap } from "../dev/visualization.js";
 import { fleet, map, radar } from "../state/state.js";
 import logger from "../utils/logger.js";
 
-const host = "localhost";
+const host = config.net.http.host;
 const port = config.net.http.port;
 
 export function setupHttpServer() {
