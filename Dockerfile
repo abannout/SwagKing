@@ -1,4 +1,4 @@
-FROM node:16-slim as dependency-base
+FROM node:19-slim as dependency-base
     WORKDIR /app
 
     COPY package*.json /app/
@@ -13,7 +13,7 @@ FROM dependency-base as build
 FROM dependency-base as runtime-dependencies
     RUN NODE_ENV=production npm ci
 
-FROM node:16-slim
+FROM node:19-slim
     WORKDIR /app
 
     ENV NODE_ENV=production
