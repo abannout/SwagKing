@@ -12,6 +12,21 @@ import { ResGetGame } from "./types";
 import logger, { writeToFile } from "./utils/logger.js";
 import { untilAsync } from "./utils/utils.js";
 
+process.on("unhandledRejection", (err: any, promise) => {
+  logger.error(`Unhandled rejection (promise: ${promise})`, err);
+});
+process.on("uncaughtException", (err, origin) => {
+  logger.error(`Uncaught exception (origin: ${origin}`, err);
+});
+process.on("SIGTERM", (signal) => logger.error(`Received Sigterm: ${signal}`));
+process.on("beforeExit", (code) => {
+  logger.warn(`Process will exit with code: ${code}`);
+  process.exit(code);
+});
+process.on("exit", (code) => {
+  logger.warn(`Process exited with code: ${code}`);
+});
+
 if (config.net.http.enable) {
   setupHttpServer();
 }
