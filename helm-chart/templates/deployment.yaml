@@ -28,6 +28,8 @@ spec:
           value: "false"
         - name: LOGGING_LEVEL
           value: info
+        - name: HTTP_HOST
+          value: 0.0.0.0
         volumeMounts:
         - mountPath: /app/logs
           name: logs-volume

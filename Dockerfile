@@ -17,6 +17,7 @@ FROM node:19-slim
     WORKDIR /app
 
     ENV NODE_ENV=production
+    ENV HTTP_HOST=0.0.0.0
 
     ENV TZ 'Europe/Berlin'
     RUN cp /usr/share/zoneinfo/${TZ} /etc/localtime

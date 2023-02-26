@@ -11,6 +11,7 @@ const netConfig = {
   http: {
     enable: process.env.HTTP_ENABLE === "true" || true,
     port: Number(process.env.HTTP_PORT) || 8000,
+    host: process.env.HTTP_HOST || "localhost",
   },
 };
 

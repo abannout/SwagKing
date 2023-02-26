@@ -36,6 +36,7 @@ The player can be configured using environment variables
 | GAME_URL              | http://localhost:8080 |
 | HTTP_ENABLE           | true                  |
 | HTTP_PORT             | 8000                  |
+| HTTP_HOST             | localhost             |
 | PLAYER_NAME           | hackschnitzel         |
 | PLAYER_EMAIL          | hack@schnitzel.org    |
 | NODE_ENV              | development           |
