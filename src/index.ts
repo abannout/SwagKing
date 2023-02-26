@@ -12,11 +12,11 @@ import { ResGetGame } from "./types";
 import logger, { writeToFile } from "./utils/logger.js";
 import { untilAsync } from "./utils/utils.js";
 
-process.on("unhandledRejection", (err: any, promise) => {
-  logger.error(`Unhandled rejection (promise: ${promise})`, err);
+process.on("unhandledRejection", (err) => {
+  logger.error(`Unhandled rejection: ${err}`);
 });
 process.on("uncaughtException", (err, origin) => {
-  logger.error(`Uncaught exception (origin: ${origin}`, err);
+  logger.error(`Uncaught exception (origin: ${origin}) err: ${err}`);
 });
 process.on("SIGTERM", (signal) => logger.error(`Received Sigterm: ${signal}`));
 process.on("beforeExit", (code) => {
