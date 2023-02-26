@@ -4,7 +4,7 @@ metadata:
   name: player-hackschnitzel-service
 spec:
   selector:
-    app: player-hackschnitzel-deployment
+    app: player-hackschnitzel
   ports:
     - protocol: TCP
       port: 8000
