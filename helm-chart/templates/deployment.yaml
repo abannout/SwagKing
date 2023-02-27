@@ -48,7 +48,9 @@ spec:
             - name: Accept
               value: application-json
           initialDelaySeconds: 5
-          periodSeconds: 3
+          # Normally it would be way less. But we should avoid killing the player because we're losing state
+          failureThreshold: 10
+          periodSeconds: 6
       volumes:
       - name: logs-volume
         emptyDir:
