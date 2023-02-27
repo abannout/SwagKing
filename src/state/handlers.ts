@@ -70,9 +70,9 @@ export function setupStateHandlers() {
       const spotted = radar.getRobot(payload.target.robotId);
       logger.info(`Robot ${target} attacked ${attacker}!  [Robot: ${spotted}]`);
 
-      attacker.alive = payload.target.alive;
-      attacker.health = payload.target.availableHealth;
-      attacker.energy = payload.target.availableEnergy;
+      attacker.alive = payload.attacker.alive;
+      attacker.health = payload.attacker.availableHealth;
+      attacker.energy = payload.attacker.availableEnergy;
       fleet.set(attacker);
     }
   });
