@@ -34,7 +34,7 @@ export async function setupRelay(playerQueue: string, context: RelayContext) {
   const channel = await conn.createChannel();
   await channel.assertQueue(playerQueue);
 
-  channel.consume(playerQueue, async (msg) => {
+  channel.consume(playerQueue, (msg) => {
     if (msg !== null) {
       const event = JSON.parse(msg.content.toString());
       const headers: EventHeaders = Object.entries(msg.properties.headers)
@@ -49,16 +49,26 @@ export async function setupRelay(playerQueue: string, context: RelayContext) {
         event,
       });
 
-      emit(
-        headers.type,
-        {
-          headers,
-          payload: event,
-        },
-        context
-      );
-
+      // We need to acknowledge the message to remove it from the queue
+      // The problem is that we need to do that after we have processed the message
+      // However, in a long game we get PRECONDITION_FAILED errors if we ack the message too late
+      // As a workaround, we ack the message before we process it. This is not ideal but it works for now...
       channel.ack(msg);
+
+      try {
+        emit(
+          headers.type,
+          {
+            headers,
+            payload: event,
+          },
+          context
+        );
+      } catch (e) {
+        logger.error(e);
+      }
+
+      // channel.ack(msg);
     } else {
       logger.info("Consumer cancelled by server");
     }
