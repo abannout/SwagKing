@@ -13,35 +13,32 @@ const map: Map = {
   edges: {},
 };
 
-const NODES = map.nodes;
-const EDGES = map.edges;
-
 export function setPlanet(planet: Planet): void {
-  NODES[planet.planet] = planet;
-  EDGES[planet.planet] = planet.neighbours.map((n) => n.id);
+  map.nodes[planet.planet] = planet;
+  map.edges[planet.planet] = planet.neighbours.map((n) => n.id);
 }
 
 export function getPlanet(id: PlanetId): Planet | undefined {
-  return NODES[id];
+  return map.nodes[id];
 }
 
 export function getRandomNeighbour(id: PlanetId): PlanetId | undefined {
-  const neighbours = EDGES[id];
+  const neighbours = map.edges[id];
   return neighbours[Math.floor(Math.random() * neighbours.length)];
 }
 
 export function areNeighbours(id: PlanetId, neighbourId: PlanetId): boolean {
-  return EDGES[id].some((p) => p === neighbourId);
+  return map.edges[id].some((p) => p === neighbourId);
 }
 
 export function count() {
-  return Object.keys(NODES).length;
+  return Object.keys(map.nodes).length;
 }
 
 export function countUndiscovered() {
-  const undiscoveredPlanets = Object.values(EDGES)
+  const undiscoveredPlanets = Object.values(map.edges)
     .flat()
-    .filter((id) => NODES[id] === undefined);
+    .filter((id) => map.nodes[id] === undefined);
   return undiscoveredPlanets.length;
 }
 
@@ -55,7 +52,7 @@ export function clear() {
 }
 
 export function undiscoveredPlanets(): PlanetId[] {
-  return Object.keys(EDGES).filter((e) => NODES[e] === undefined);
+  return Object.keys(map.edges).filter((e) => map.nodes[e] === undefined);
 }
 
 export function shortestPath(
@@ -88,7 +85,7 @@ export function shortestPath(
       return path;
     }
 
-    const adjacentEdges = EDGES[elem] || [];
+    const adjacentEdges = map.edges[elem] || [];
     for (const edge of adjacentEdges) {
       if (visited.includes(edge)) continue;
       parents[edge] = elem;
@@ -111,7 +108,7 @@ export function shortestPathTo(
 export function shortestPathToUnknownPlanet(
   source: PlanetId
 ): PlanetId[] | null {
-  return shortestPath(source, (p) => NODES[p] === undefined);
+  return shortestPath(source, (p) => map.nodes[p] === undefined);
 }
 
 export function shortestPathToResource(
@@ -121,7 +118,7 @@ export function shortestPathToResource(
   return shortestPath(
     source,
     (p) =>
-      NODES[p]?.resource?.resourceType === resource &&
-      NODES[p]?.resource?.currentAmount > 0
+      map.nodes[p]?.resource?.resourceType === resource &&
+      map.nodes[p]?.resource?.currentAmount > 0
   );
 }
