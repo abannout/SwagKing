@@ -19,6 +19,13 @@ spec:
       - name: player-hackschnitzel
         image: registry.gitlab.com/the-microservice-dungeon/player-hackschnitzel:latest
         imagePullPolicy: Always
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "500m"
+          limits:
+            memory: "1G"
+            cpu: "1000m"
         env:
         - name: GAME_URL
           value: http://game-service.game:8080
