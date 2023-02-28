@@ -57,7 +57,7 @@ export function setupStateHandlers() {
     if (target) {
       const spotted = radar.getRobot(payload.attacker.robotId);
       logger.info(
-        `Robot ${target} got attacked by ${attacker}! [Robot: ${spotted}]`
+        `Robot ${target} got attacked by ${attacker?.id}! [Player: ${spotted?.playerNotion}]`
       );
 
       target.alive = payload.target.alive;
@@ -68,7 +68,9 @@ export function setupStateHandlers() {
 
     if (attacker) {
       const spotted = radar.getRobot(payload.target.robotId);
-      logger.info(`Robot ${target} attacked ${attacker}!  [Robot: ${spotted}]`);
+      logger.info(
+        `Robot ${target} attacked ${attacker}!  [Player: ${spotted?.playerNotion}]`
+      );
 
       attacker.alive = payload.attacker.alive;
       attacker.health = payload.attacker.availableHealth;
