@@ -1,6 +1,9 @@
-// The instructors job is to notify the commander about events
 import * as relay from "../net/relay.js";
-import * as commander from "./commander.js";
+import { bank, fleet } from "../state/state.js";
+import * as strategies from "./strategies/strategies.js";
+
+const NICE_AMOUNT_MONETEN = 1_000;
+let ATTACK_LATCH_COUNTER = 0;
 
 export function setupInstructor() {
   relay.on("round-status", (event) => {
@@ -9,11 +12,31 @@ export function setupInstructor() {
       return;
     }
 
-    commander.notify({
-      type: "round",
-      status,
-      round: event.payload.roundNumber,
-    });
+    if (status === "started") {
+      if (event.payload.roundNumber % 5 === 0) {
+        strategies.reconcileStrategyDistribution();
+      }
+
+      if (bank.get() < NICE_AMOUNT_MONETEN) {
+        strategies.increaseStrategyBias("FARMING");
+      } else {
+        strategies.decreaseStrategyBias("FARMING");
+      }
+
+      strategies.decreaseStrategyBias(
+        "EXPLORING",
+        0.005 * event.payload.roundNumber
+      );
+      strategies.increaseStrategyBias(
+        "FIGHTING",
+        0.05 * event.payload.roundNumber
+      );
+
+      ATTACK_LATCH_COUNTER--;
+      if (ATTACK_LATCH_COUNTER < 0) {
+        ATTACK_LATCH_COUNTER = 0;
+      }
+    }
   });
 
   relay.on("game-status", (event) => {
@@ -21,18 +44,14 @@ export function setupInstructor() {
     if (status === "created") {
       return;
     }
-
-    commander.notify({
-      type: "game",
-      status,
-    });
   });
 
-  relay.on("RobotSpawnedIntegrationEvent", (event) => {
-    commander.notify({
-      type: "robot",
-      status: "spawned",
-      id: event.payload.robot.id,
-    });
+  relay.on("RobotAttackedIntegrationEvent", (event) => {
+    const target = fleet.get(event.payload.target.robotId);
+    // If we are getting attacked, we get more angry
+    if (target) {
+      ATTACK_LATCH_COUNTER++;
+      strategies.increaseStrategyBias("FIGHTING", ATTACK_LATCH_COUNTER);
+    }
   });
 }

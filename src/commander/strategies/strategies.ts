@@ -15,10 +15,13 @@ export type Strategey = {
 };
 
 const DEFAULT_STRAGEY: StrategyType = "FARMING";
-const _strategyDistribution: Record<StrategyType, number> = {
-  FARMING: 60,
+const MIN_STRATEGY_BIAS = 0;
+const MAX_STRATEGY_BIAS = 1_000;
+
+const _strategyBiases: Record<StrategyType, number> = {
+  FARMING: 100,
   FIGHTING: 30,
-  EXPLORING: 10,
+  EXPLORING: 50,
 };
 
 const strategyAssignment: Record<string, StrategyType> = {};
@@ -69,14 +72,11 @@ function getTargetStrategyDistribution(): Record<StrategyType, number> {
   const fleetSize = fleet.size();
   if (fleetSize <= 0) return targetDistribution;
 
-  const sum = Object.values(_strategyDistribution).reduce(
-    (acc, val) => acc + val,
-    0
-  );
+  const sum = Object.values(_strategyBiases).reduce((acc, val) => acc + val, 0);
 
   for (const strategy of Object.keys(targetDistribution)) {
     targetDistribution[strategy as StrategyType] = Math.round(
-      (_strategyDistribution[strategy as StrategyType] / sum) * fleetSize
+      (_strategyBiases[strategy as StrategyType] / sum) * fleetSize
     );
   }
 
@@ -169,5 +169,24 @@ export function getStrategies() {
   return {
     target: getTargetStrategyDistribution(),
     current: getCurrentStratgeyDistribution(),
+    bias: _strategyBiases,
   };
+}
+
+export function increaseStrategyBias(strategy: StrategyType, bias = 1) {
+  if (bias <= 0) throw new Error("Bias must be greater than 0");
+  _strategyBiases[strategy] += bias;
+  if (_strategyBiases[strategy] > MAX_STRATEGY_BIAS) {
+    _strategyBiases[strategy] = MAX_STRATEGY_BIAS;
+  }
+  // reconcileStrategyDistribution();
+}
+
+export function decreaseStrategyBias(strategy: StrategyType, bias = 1) {
+  if (bias < 0) throw new Error("Bias must be greater than 0");
+  _strategyBiases[strategy] -= bias;
+  if (_strategyBiases[strategy] < MIN_STRATEGY_BIAS) {
+    _strategyBiases[strategy] = MIN_STRATEGY_BIAS;
+  }
+  // reconcileStrategyDistribution();
 }

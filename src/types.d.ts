@@ -444,27 +444,3 @@ export type Planet = {
 export type PlanetDiscovered = Planet;
 
 export type CommandFunction = () => Promise<void>;
-export type GameNotification = {
-  type: "game";
-  status: "started" | "ended";
-};
-export type RoundNotification = {
-  type: "round";
-  status: "started" | "ended";
-  round: number;
-};
-export type RobotNotification = {
-  type: "robot";
-  status: "spawned";
-  id: string;
-};
-export type CommanderNotification =
-  | GameNotification
-  | RoundNotification
-  | RobotNotification;
-export type SpottedRobot = {
-  id: string;
-  levels: RobotLevels;
-  playerNotion: string;
-  movePath: string[];
-};

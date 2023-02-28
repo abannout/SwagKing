@@ -6,7 +6,7 @@
 // state implementation to keep it really portable.
 
 import { buyRobots, moveTo, regenerate } from "../commands.js";
-import { CommandFunction, CommanderNotification } from "../types";
+import { CommandFunction } from "../types";
 
 import { FleetedRobot } from "../state/fleet.js";
 import { bank, fleet, map, price } from "../state/state.js";
@@ -58,14 +58,4 @@ function robotCommands(): CommandFunction[] {
 
 export function fetchCommands(): CommandFunction[] {
   return [...globalCommands(), ...robotCommands()];
-}
-
-export function notify(notification: CommanderNotification) {
-  if (
-    notification.type === "round" &&
-    notification.status === "started" &&
-    notification.round % 5 === 0
-  ) {
-    strategies.reconcileStrategyDistribution();
-  }
 }
