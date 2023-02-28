@@ -16,7 +16,9 @@ process.on("unhandledRejection", (err) => {
   logger.error(`Unhandled rejection: ${err}`);
 });
 process.on("uncaughtException", (err, origin) => {
-  logger.error(`Uncaught exception (origin: ${origin}) err: ${err}`);
+  logger.error(
+    `Uncaught exception (origin: ${origin}) err: ${err}\t at ${err.stack}`
+  );
 });
 process.on("SIGTERM", (signal) => logger.error(`Received Sigterm: ${signal}`));
 process.on("beforeExit", (code) => {
