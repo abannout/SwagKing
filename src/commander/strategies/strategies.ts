@@ -18,10 +18,14 @@ const DEFAULT_STRAGEY: StrategyType = "FARMING";
 const MIN_STRATEGY_BIAS = 0;
 const MAX_STRATEGY_BIAS = 1_000;
 
-const _strategyBiases: Record<StrategyType, number> = {
+const DEFAULT_BIASES: Readonly<Record<StrategyType, number>> = {
   FARMING: 100,
   FIGHTING: 30,
   EXPLORING: 50,
+};
+
+let _strategyBiases: Record<StrategyType, number> = {
+  ...DEFAULT_BIASES,
 };
 
 const strategyAssignment: Record<string, StrategyType> = {};
@@ -189,4 +193,8 @@ export function decreaseStrategyBias(strategy: StrategyType, bias = 1) {
     _strategyBiases[strategy] = MIN_STRATEGY_BIAS;
   }
   // reconcileStrategyDistribution();
+}
+
+export function resetBiases() {
+  _strategyBiases = { ...DEFAULT_BIASES };
 }

@@ -41,8 +41,8 @@ export function setupInstructor() {
 
   relay.on("game-status", (event) => {
     const status = event.payload.status;
-    if (status === "created") {
-      return;
+    if (status === "started") {
+      strategies.resetBiases();
     }
   });
 
