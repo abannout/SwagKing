@@ -46,8 +46,18 @@ function globalCommands(): CommandFunction[] {
 
 function robotCommands(): CommandFunction[] {
   const robotCmd: Record<string, CommandFunction> = {};
+  const shuffle = (array: unknown[]) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  };
 
-  for (const robot of fleet.getAll(true)) {
+  const robots = fleet.getAll(true);
+  // We shuffle the robots to give a bit of randomness to the
+  // order of upgrades
+  shuffle(robots);
+  for (const robot of robots) {
     const id = robot.id;
     const strategy = strategies.getStrategyForRobot(robot);
     robotCmd[id] = strategy.nextMove(robot) || IDLE_ACTION(robot);
