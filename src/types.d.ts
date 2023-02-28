@@ -451,6 +451,7 @@ export type GameNotification = {
 export type RoundNotification = {
   type: "round";
   status: "started" | "ended";
+  round: number;
 };
 export type RobotNotification = {
   type: "robot";

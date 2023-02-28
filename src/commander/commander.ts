@@ -47,7 +47,7 @@ function globalCommands(): CommandFunction[] {
 function robotCommands(): CommandFunction[] {
   const robotCmd: Record<string, CommandFunction> = {};
 
-  for (const robot of fleet.getAll()) {
+  for (const robot of fleet.getAll(true)) {
     const id = robot.id;
     const strategy = strategies.getStrategyForRobot(robot);
     robotCmd[id] = strategy.nextMove(robot) || IDLE_ACTION(robot);
@@ -61,5 +61,11 @@ export function fetchCommands(): CommandFunction[] {
 }
 
 export function notify(notification: CommanderNotification) {
-  return;
+  if (
+    notification.type === "round" &&
+    notification.status === "started" &&
+    notification.round % 5 === 0
+  ) {
+    strategies.reconcileStrategyDistribution();
+  }
 }

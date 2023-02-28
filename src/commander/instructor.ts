@@ -12,6 +12,7 @@ export function setupInstructor() {
     commander.notify({
       type: "round",
       status,
+      round: event.payload.roundNumber,
     });
   });
 

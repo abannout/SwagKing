@@ -8,8 +8,10 @@ export type FleetedRobot = Omit<Robot, "planet" | "inventory"> & {
 
 const fleet: Record<string, FleetedRobot> = {};
 
-export function getAll(): FleetedRobot[] {
-  return Object.values(fleet);
+export function getAll(alive?: boolean): FleetedRobot[] {
+  const values = Object.values(fleet);
+  if (alive === undefined) return values;
+  return values.filter((r) => r.alive);
 }
 
 export function add(robot: Robot): void {

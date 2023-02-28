@@ -1,4 +1,5 @@
 import * as http from "http";
+import { getStrategies } from "../commander/strategies/strategies.js";
 import { config } from "../config.js";
 import { drawMap } from "../dev/visualization.js";
 import { fleet, map, radar } from "../state/state.js";
@@ -38,6 +39,10 @@ export function setupHttpServer() {
         case "/radar":
           res.writeHead(200, { "Content-Type": "application/json" });
           res.end(JSON.stringify(radar.getAll(), null, 2));
+          break;
+        case "/strategies":
+          res.writeHead(200, { "Content-Type": "application/json" });
+          res.end(JSON.stringify(getStrategies(), null, 2));
           break;
         case "/health":
           res.writeHead(200, { "Content-Type": "application/json" });
