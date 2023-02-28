@@ -444,3 +444,9 @@ export type Planet = {
 export type PlanetDiscovered = Planet;
 
 export type CommandFunction = () => Promise<void>;
+export type SpottedRobot = {
+  id: string;
+  levels: RobotLevels;
+  playerNotion: string;
+  movePath: string[];
+};
