@@ -8,12 +8,13 @@ const MAX_UPGRADE_LEVEL = 3;
 
 function nextUpgrade(robot: FleetedRobot): Tradable | null {
   const { energyLevel, energyRegenLevel } = robot;
+  const min = Math.min(energyLevel, energyRegenLevel);
 
-  if (energyLevel < MAX_UPGRADE_LEVEL) {
+  if (energyLevel < MAX_UPGRADE_LEVEL && energyLevel === min) {
     return getUpgrade("MAX_ENERGY", energyLevel);
   }
 
-  if (energyRegenLevel < MAX_UPGRADE_LEVEL) {
+  if (energyRegenLevel < MAX_UPGRADE_LEVEL && energyRegenLevel === min) {
     return getUpgrade("ENERGY_REGEN", energyRegenLevel);
   }
 

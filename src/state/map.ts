@@ -113,12 +113,14 @@ export function shortestPathToUnknownPlanet(
 
 export function shortestPathToResource(
   source: PlanetId,
-  resource: ResourceType
+  resource: ResourceType,
+  predicate: (p: PlanetId) => boolean = () => true
 ): PlanetId[] | null {
   return shortestPath(
     source,
     (p) =>
       map.nodes[p]?.resource?.resourceType === resource &&
-      map.nodes[p]?.resource?.currentAmount > 0
+      map.nodes[p]?.resource?.currentAmount > 0 &&
+      predicate(p)
   );
 }
