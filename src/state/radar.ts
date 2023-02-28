@@ -8,6 +8,7 @@ export function next(robots: RevealedRobot[]) {
     if (existing === undefined) {
       spottedRobots[robot.robotId] = {
         id: robot.robotId,
+        alive: robot.health > 0,
         levels: robot.levels,
         playerNotion: robot.playerNotion,
         movePath: [robot.planetId],
@@ -16,6 +17,7 @@ export function next(robots: RevealedRobot[]) {
     }
 
     existing.levels = robot.levels;
+    existing.alive = robot.health > 0;
     existing.movePath.push(robot.planetId);
   }
 

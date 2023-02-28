@@ -232,6 +232,7 @@ export type RevealedRobotsEvent = {
 
 export type RevealedRobot = {
   robotId: string;
+  health: number;
   planetId: string;
   playerNotion: string;
   levels: RobotLevels;
@@ -446,6 +447,7 @@ export type PlanetDiscovered = Planet;
 export type CommandFunction = () => Promise<void>;
 export type SpottedRobot = {
   id: string;
+  alive: boolean;
   levels: RobotLevels;
   playerNotion: string;
   movePath: string[];
