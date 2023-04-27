@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import type {
   GameCommand,
   ResCreateGame,
@@ -6,6 +6,7 @@ import type {
   ResGetGame,
   ResRegisterGame,
 } from "../types";
+import logger from "../utils/logger.js";
 
 type ClientDefaults = {
   player: string | null;
@@ -15,6 +16,36 @@ type ClientDefaults = {
 axios.defaults.baseURL = process.env.GAME_URL || "http://localhost:8080";
 axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.headers.common["Accept"] = "application/json";
+
+axios.interceptors.request.use(
+  (config) => {
+    logger.trace(`Request: ${config.method?.toUpperCase()} ${config.url}`);
+    return config;
+  },
+  (error) => {
+    if (error instanceof AxiosError) {
+      logger.error(`Request error: ${JSON.stringify(error.request?.data)}`);
+    } else {
+      logger.error(`Request error: ${error}`);
+    }
+    return Promise.reject(error);
+  }
+);
+
+axios.interceptors.response.use(
+  (response) => {
+    logger.trace(`Response: ${response.status} ${response.config.url}`);
+    return response;
+  },
+  (error) => {
+    if (error instanceof AxiosError) {
+      logger.error(`Response error: ${JSON.stringify(error.response?.data)}`);
+    } else {
+      logger.error(`Response error: ${error}`);
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const defaults: ClientDefaults = {
   player: null,
