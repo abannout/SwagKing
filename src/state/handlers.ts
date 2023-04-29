@@ -225,6 +225,10 @@ export function setupStateHandlers() {
 
     logger.info(`Revealed ${enemyRobots.length} robots`);
     radar.next(enemyRobots);
+
+    // But we also want to know about our own robots to reconcile our state if we missed something.
+    const myRobots = payload.robots.filter((r) => r.playerNotion === myNotion);
+    fleet.next(myRobots);
   });
 
   relay.on("round-status", (event, context) => {

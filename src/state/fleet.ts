@@ -1,4 +1,4 @@
-import { ResourceInventory, Robot } from "../types";
+import { ResourceInventory, RevealedRobot, Robot } from "../types";
 
 export type FleetedRobot = Omit<Robot, "planet" | "inventory"> & {
   planet: string;
@@ -57,4 +57,14 @@ export function first(): FleetedRobot | undefined {
 
 export function size(): number {
   return Object.keys(fleet).length;
+}
+
+export function next(robots: RevealedRobot[]) {
+  for (const robot of robots) {
+    const fleetedRobot = fleet[robot.robotId];
+    if (fleetedRobot) {
+      fleetedRobot.planet = robot.planetId;
+      fleetedRobot.health = robot.health;
+    }
+  }
 }
