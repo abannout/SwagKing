@@ -18,7 +18,10 @@ const DEFAULT_ROBOT_BUY_BATCH_SIZE = 5;
 export const IDLE_ACTION = (robot: FleetedRobot): CommandFunction => {
   const path = map.shortestPathToUnknownPlanet(robot.planet);
   if (path && path.length > 1) {
-    return () => moveTo(robot, path[1]);
+    const planet = map.getPlanet(path[1]);
+    if (planet && robot.energy > planet.movementDifficulty + 1) {
+      return () => moveTo(robot, planet.planet);
+    }
   }
   return () => regenerate(robot);
 };

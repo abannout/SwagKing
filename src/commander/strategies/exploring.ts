@@ -31,7 +31,7 @@ export function nextMove(robot: FleetedRobot): CommandFunction | undefined {
   }
 
   const planet = map.getPlanet(robot.planet);
-  if (planet && planet.movementDifficulty > robot.energy) {
+  if (planet && planet.movementDifficulty + 1 > robot.energy) {
     return () => regenerate(robot);
   }
 

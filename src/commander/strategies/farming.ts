@@ -114,7 +114,7 @@ export function nextMove(robot: FleetedRobot): CommandFunction | undefined {
     return () => mine(robot);
   }
 
-  if (planet?.movementDifficulty > robot.energy) {
+  if (planet?.movementDifficulty + 1 > robot.energy) {
     return () => regenerate(robot);
   }
 
