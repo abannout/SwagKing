@@ -233,6 +233,7 @@ export type RevealedRobotsEvent = {
 export type RevealedRobot = {
   robotId: string;
   health: number;
+  energy: number;
   planetId: string;
   playerNotion: string;
   levels: RobotLevels;

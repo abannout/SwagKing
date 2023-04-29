@@ -65,6 +65,7 @@ export function next(robots: RevealedRobot[]) {
     if (fleetedRobot) {
       fleetedRobot.planet = robot.planetId;
       fleetedRobot.health = robot.health;
+      fleetedRobot.energy = robot.energy;
     }
   }
 }
