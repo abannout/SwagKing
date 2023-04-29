@@ -31,6 +31,17 @@ export async function setupRelay(playerQueue: string, context: RelayContext) {
     password: rabbitMQ.password,
   });
 
+  conn.on("error", function (err) {
+    if (err.message !== "Connection closing") {
+      console.error("[AMQP] conn error", err.message);
+    }
+  });
+
+  conn.on("close", function () {
+    console.error("[AMQP] reconnecting");
+    setupRelay(playerQueue, context);
+  });
+
   const channel = await conn.createChannel();
   await channel.assertQueue(playerQueue);
 
