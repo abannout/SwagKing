@@ -59,7 +59,28 @@ export function shortestPath(
   source: PlanetId,
   predicate: (p: PlanetId) => boolean
 ): PlanetId[] | null {
-  if (predicate(source)) {
+  const possiblePlanets = Object.keys(map.nodes).filter(predicate);
+  return shortestPathToOneOf(source, possiblePlanets);
+}
+
+const memorizedShortestPaths: Record<string, Record<string, PlanetId[] | null>> = {};
+export function shortestPathTo(
+  source: PlanetId,
+  target: PlanetId
+): PlanetId[] | null {
+  const memorizedPath = memorizedShortestPaths[source]?.[target];
+  if (memorizedPath !== undefined) return memorizedPath;
+  const path = shortestPath(source, (p) => p === target);
+  memorizedShortestPaths[source] = memorizedShortestPaths[source] || {};
+  memorizedShortestPaths[source][target] = path;
+  return path;
+}
+
+export function shortestPathToOneOf(
+  source: PlanetId,
+  targets: PlanetId[]
+): PlanetId[] | null {
+  if (targets.includes(source)) {
     return [];
   }
 
@@ -69,8 +90,9 @@ export function shortestPath(
 
   while (queue.length > 0) {
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    const elem = queue.shift()!;
-    if (predicate(elem)) {
+    // rome-ignore lint/style/noNonNullAssertion: <explanation>
+    const  elem = queue.shift()!;
+    if (targets.includes(elem)) {
       // Found, backtrace parents
       const path = [elem];
       let current = elem;
@@ -95,13 +117,6 @@ export function shortestPath(
   }
 
   return null;
-}
-
-export function shortestPathTo(
-  source: PlanetId,
-  target: PlanetId
-): PlanetId[] | null {
-  return shortestPath(source, (p) => p === target);
 }
 
 // Helper Methods
