@@ -83,6 +83,16 @@ export function shortestPathToOneOf(
   if (targets.includes(source)) {
     return [];
   }
+  const memorizedFromSource = memorizedShortestPaths[source];
+  const allMemorizedTargets = Object.keys(memorizedFromSource || {});
+  if(allMemorizedTargets.length > 0 && allMemorizedTargets.every(t => targets.includes(t))) {
+    // All targets are memorized and the shortest path is known
+    return allMemorizedTargets
+      .filter(t => targets.includes(t))
+      .map(t => memorizedFromSource[t])
+      .filter((p): p is PlanetId[] => p !== null)
+      .sort((a, b) => a.length - b.length)[0];
+  }
 
   const queue = [source];
   const visited = [source];
@@ -104,6 +114,8 @@ export function shortestPathToOneOf(
       }
 
       path.reverse();
+      memorizedShortestPaths[source] = memorizedShortestPaths[source] || {};
+      memorizedShortestPaths[source][elem] = path;
       return path;
     }
 
