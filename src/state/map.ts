@@ -52,7 +52,9 @@ export function clear() {
 }
 
 export function undiscoveredPlanets(): PlanetId[] {
-  return Object.keys(map.edges).filter((e) => map.nodes[e] === undefined);
+  return Object.values(map.edges)
+    .flat()
+    .filter((id) => map.nodes[id] === undefined);
 }
 
 export function shortestPath(
@@ -135,7 +137,7 @@ export function shortestPathToOneOf(
 export function shortestPathToUnknownPlanet(
   source: PlanetId
 ): PlanetId[] | null {
-  return shortestPath(source, (p) => map.nodes[p] === undefined);
+  return shortestPathToOneOf(source, undiscoveredPlanets());
 }
 
 export function shortestPathToResource(
