@@ -188,6 +188,7 @@ export type BankAccountTransactionBookedEvent = {
 export type EventRoundStatusPayload = {
   gameId: string;
   roundNumber: number;
+  roundId: string;
   roundStatus: RoundStatus;
 };
 

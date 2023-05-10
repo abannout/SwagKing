@@ -2,7 +2,7 @@ import * as relay from "../net/relay.js";
 import { Tradable } from "../types";
 import logger from "../utils/logger.js";
 import { resetReservedDebit } from "./bank.js";
-import { bank, fleet, map, price, radar } from "./state.js";
+import { bank, fleet, map, price, radar, game } from "./state.js";
 
 export function setupStateHandlers() {
   relay.on("RobotSpawnedIntegrationEvent", (event) => {
@@ -233,6 +233,10 @@ export function setupStateHandlers() {
 
   relay.on("round-status", (event, context) => {
     const { payload } = event;
+
+    if(payload.roundStatus === "started") {
+      game.set(payload.roundNumber, payload.roundId);
+    }
 
     if (payload.roundStatus === "ended") {
       resetReservedDebit();
