@@ -1,3 +1,5 @@
+const isDevMode = process.env.NODE_ENV === "development";
+
 const netConfig = {
   rabbitMQ: {
     host: process.env.RABBITMQ_HOST || "localhost",
@@ -9,7 +11,7 @@ const netConfig = {
     url: process.env.GAME_URL || "http://localhost:8080",
   },
   http: {
-    enable: process.env.HTTP_ENABLE === "true" || true,
+    enable: String(process.env.HTTP_ENABLE) === "true" || isDevMode,
     port: Number(process.env.HTTP_PORT) || 8000,
     host: process.env.HTTP_HOST || "localhost",
   },
@@ -27,7 +29,7 @@ export const config = {
   },
   logging: {
     enableVisualization:
-      String(process.env.LOGGING_VISUALIZATION) === "true" || true,
+      String(process.env.LOGGING_VISUALIZATION) === "true" || isDevMode,
     dir: process.env.LOGGING_DIR || "logs",
     level: process.env.LOGGING_LEVEL || "debug",
   },
