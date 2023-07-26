@@ -1,37 +1,29 @@
-const isDevMode = process.env.NODE_ENV === "development";
-
 const netConfig = {
   rabbitMQ: {
-    host: process.env.RABBITMQ_HOST || "localhost",
-    port: Number(process.env.RABBITMQ_PORT) || 5672,
-    user: process.env.RABBITMQ_USER || "admin",
-    password: process.env.RABBITMQ_PASSWORD || "admin",
+    host: process.env.RABBITMQ_HOST ?? "localhost",
+    port: Number(process.env.RABBITMQ_PORT ?? 5672),
+    user: process.env.RABBITMQ_USER ?? "admin",
+    password: process.env.RABBITMQ_PASSWORD ?? "admin",
   },
   game: {
-    url: process.env.GAME_URL || "http://localhost:8080",
-  },
-  http: {
-    enable: String(process.env.HTTP_ENABLE) === "true" || isDevMode,
-    port: Number(process.env.HTTP_PORT) || 8000,
-    host: process.env.HTTP_HOST || "localhost",
+    url: process.env.GAME_URL ?? "http://localhost:8080",
   },
 };
 
 const playerConfig = {
-  name: process.env.PLAYER_NAME || "hackschnitzel",
-  email: process.env.PLAYER_EMAIL || "hack@schnitzel.org",
+  name: process.env.PLAYER_NAME ?? "player-skeleton-typescript-nodejs", // ! TODO: Change this to your player name
+  email:
+    process.env.PLAYER_EMAIL ?? "player-skeleton-typescript-nodejs@example.com", // ! TODO: Change this to your email
 };
 
 export const config = {
   player: playerConfig,
   env: {
-    mode: process.env.NODE_ENV || "development",
+    mode: process.env.NODE_ENV ?? "development",
   },
   logging: {
-    enableVisualization:
-      String(process.env.LOGGING_VISUALIZATION) === "true" || isDevMode,
-    dir: process.env.LOGGING_DIR || "logs",
-    level: process.env.LOGGING_LEVEL || "debug",
+    dir: process.env.LOGGING_DIR ?? "logs",
+    level: process.env.LOGGING_LEVEL ?? "debug",
   },
   net: netConfig,
 };

@@ -1,57 +1,48 @@
-# Player Hackschnitzel
+# Player Skeleton with TypeScript and Node.js
 
-This player is a Proof-of-Concept player.
-It is being developed in a hacky way without following good coding practices, therefore its name.
-In the beginning the player was designed to test specific game functionalities, but it has evolved over time
-to participate at the codefight.
-However, the player didn't get much upfront design, therefore some parts are questionable in design.
-But it works, which is great and hopefully makes the codefight a bit more thrilling.
+This is a player skeleton for the microservice dungeon, which is written in TypeScript using Node.js.
+You can use this player as a basis for your own player.
 
-## Run
+Requirements:
+- Node.js 18
 
-Note that the player has a pre-configured dev-mode which is enabled by default. In this mode
-the player will manage the lifecycle by its own. To disable the dev mode, set a `NODE_ENV`
-variable to something else than `development`.
+## Preparation
 
-```
-# Install necessary dependencies
-npm ci
+To use this skeleton as the base for your player development, you need to accomplish the following steps.
 
-# Set NODE_ENV to production (optional - see above)
-export NODE_ENV=production
+First, fork this repository and create a new repository under the [Player Teams subgroup](https://gitlab.com/the-microservice-dungeon/player-teams) which is named after your desired player name, for example `player-constantine`.
+Now you need to add your player-name to a few files. The required places are marked using TODO comments.
+Update the files in `helm-chart/Chart.yaml`, `src/config.ts` and `.gitlab-ci.yml`. You might also want to update the project name inside `package.json`, although this shouldn't be required.
 
-npm run compile && npm run start
-```
+Now install all required dependencies using `npm ci`.
+
+## Usage
+
+The skeleton comes with multiple scripts that can be used for development.
+| Script  | Description                                                                                                                                                       |
+| ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| start   | simply starts the player. Requires compilation                                                                                                                    |
+| compile | compiles the typescript files                                                                                                                                     |
+| dev     | starts the player in dev mode. This creates and starts a player automatically for you. Also it listens for file changes and will recompile and restart the player |
+| format  | format project files with [prettier](https://prettier.io/)                                                                                                        |
+| lint    | lint project files with [eslint](https://eslint.org/)                                                                                                             |
+| test    | run tests with [mocha](https://mochajs.org/)                                                                                                                      |
+
 
 ## Configuration
 
 The player can be configured using environment variables
 
-| Environment Variable  | Default               |
-| --------------------- | --------------------- |
-| RABBITMQ_HOST         | localhost             |
-| RABBITMQ_PORT         | 5672                  |
-| RABBITMQ_USER         | admin                 |
-| RABBITMQ_PASSWORD     | admin                 |
-| GAME_URL              | http://localhost:8080 |
-| HTTP_ENABLE           | true                  |
-| HTTP_PORT             | 8000                  |
-| HTTP_HOST             | localhost             |
-| PLAYER_NAME           | hackschnitzel         |
-| PLAYER_EMAIL          | hack@schnitzel.org    |
-| NODE_ENV              | development           |
-| LOGGING_VISUALIZATION | true                  |
-| LOGGING_DIR           | logs                  |
-| LOGGING_LEVEL         | debug                 |
+| Environment Variable | Default               |
+| -------------------- | --------------------- |
+| RABBITMQ_HOST        | localhost             |
+| RABBITMQ_PORT        | 5672                  |
+| RABBITMQ_USER        | admin                 |
+| RABBITMQ_PASSWORD    | admin                 |
+| GAME_URL             | http://localhost:8080 |
+| PLAYER_NAME          | hackschnitzel         |
+| PLAYER_EMAIL         | hack@schnitzel.org    |
+| NODE_ENV             | development           |
+| LOGGING_DIR          | logs                  |
+| LOGGING_LEVEL        | debug                 |
 
-## HTTP Routes
-
-| Route    | Description                              |
-| -------- | ---------------------------------------- |
-| /        | Hello World!                             |
-| /fleet   | Get the players fleet as json            |
-| /map     | Get the players map as json              |
-| /map.svg | Get the players map visualization in svg |
-| /map.dot | Get the players map visualization in dot |
-| /radar   | Get the players radar as json            |
-| /health  | Health Endpoint                          |

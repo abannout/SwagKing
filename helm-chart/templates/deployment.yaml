@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: player-hackschnitzel-deployment
-  namespace: player-hackschnitzel
+  name: {{ .Chart.Name }}-deployment
+  namespace: {{ .Chart.Name }}
   labels:
-    app: player-hackschnitzel
+    app: {{ .Chart.Name }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: player-hackschnitzel
+      app: {{ .Chart.Name }}
   template:
     metadata:
       labels:
-        app: player-hackschnitzel
+        app: {{ .Chart.Name }}
     spec:
       containers:
-      - name: player-hackschnitzel
-        image: registry.gitlab.com/the-microservice-dungeon/player-hackschnitzel:latest
+      - name: {{ .Chart.Name }}
+        image: registry.gitlab.com/the-microservice-dungeon/{{ .Chart.Name }}:latest
         imagePullPolicy: Always
         resources:
           requests:
@@ -31,12 +31,8 @@ spec:
           value: http://game-service.game:8080
         - name: RABBITMQ_HOST
           value: rabbitmq-service.rabbitmq
-        - name: LOGGING_VISUALIZATION
-          value: "false"
         - name: LOGGING_LEVEL
           value: info
-        - name: HTTP_HOST
-          value: 0.0.0.0
         volumeMounts:
         - mountPath: /app/logs
           name: logs-volume

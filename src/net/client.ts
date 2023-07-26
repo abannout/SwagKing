@@ -1,5 +1,7 @@
 import axios, { AxiosError } from "axios";
 import type {
+  BaseCommand,
+  BaseCommandObject,
   GameCommand,
   ResCreateGame,
   ResCreatePlayer,
@@ -13,7 +15,7 @@ type ClientDefaults = {
   game: string | null;
 };
 
-axios.defaults.baseURL = process.env.GAME_URL || "http://localhost:8080";
+axios.defaults.baseURL = process.env.GAME_URL ?? "http://localhost:8080";
 axios.defaults.headers.common["Content-Type"] = "application/json";
 axios.defaults.headers.common["Accept"] = "application/json";
 

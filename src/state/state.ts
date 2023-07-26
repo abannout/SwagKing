@@ -1,6 +1,14 @@
-export * as bank from "./bank.js";
-export * as fleet from "./fleet.js";
-export * as map from "./map.js";
-export * as price from "./price.js";
-export * as radar from "./radar.js";
+import * as relay from "../net/relay.js";
+import * as game from "./game.js";
+
 export * as game from "./game.js";
+
+export function setupStateHandlers() {
+  relay.on("round-status", (event, context) => {
+    const { payload } = event;
+
+    if (payload.roundStatus === "started") {
+      game.set(payload.roundNumber, payload.roundId);
+    }
+  });
+}
