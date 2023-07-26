@@ -33,16 +33,16 @@ The skeleton comes with multiple scripts that can be used for development.
 
 The player can be configured using environment variables
 
-| Environment Variable | Default               |
-| -------------------- | --------------------- |
-| RABBITMQ_HOST        | localhost             |
-| RABBITMQ_PORT        | 5672                  |
-| RABBITMQ_USER        | admin                 |
-| RABBITMQ_PASSWORD    | admin                 |
-| GAME_URL             | http://localhost:8080 |
-| PLAYER_NAME          | hackschnitzel         |
-| PLAYER_EMAIL         | hack@schnitzel.org    |
-| NODE_ENV             | development           |
-| LOGGING_DIR          | logs                  |
-| LOGGING_LEVEL        | debug                 |
+| Environment Variable | Default                                       |
+| -------------------- | --------------------------------------------- |
+| RABBITMQ_HOST        | localhost                                     |
+| RABBITMQ_PORT        | 5672                                          |
+| RABBITMQ_USER        | admin                                         |
+| RABBITMQ_PASSWORD    | admin                                         |
+| GAME_URL             | http://localhost:8080                         |
+| PLAYER_NAME          | layer-skeleton-typescript-nodejs              |
+| PLAYER_EMAIL         | player-skeleton-typescript-nodejs@example.com |
+| NODE_ENV             | development                                   |
+| LOGGING_DIR          | logs                                          |
+| LOGGING_LEVEL        | debug                                         |
 
