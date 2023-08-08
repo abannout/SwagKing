@@ -60,6 +60,12 @@ export type CommandType =
   | "selling"
   | "regenerate";
 
+export type GameRegistration = {
+  gameId: string;
+  playerId: string;
+  playerQueue: string;
+};
+
 // -------------------------------
 // Eventing
 // -------------------------------
@@ -106,44 +112,81 @@ export type EventRoundStatusPayload = {
 // -------------------------------
 export type GameCommand = BuyRobotCommand | GameCommand;
 
-type BaseCommand<T extends BaseCommandObject> = {
+export type BaseCommand<K extends CommandType, T extends CommandData> = {
   playerId: string;
+  type: K;
+  data: T;
+};
+type CommandData =
+  | BattleCommandData
+  | BuyTradableCommandData
+  | MineCommandData
+  | MoveCommandData
+  | RegenerateCommandData
+  | SellTradablesCommandData;
+type BattleCommandData = {
+  robotId: string;
+  targetId: string;
+};
+type BattleCommand = BaseCommand<"battle", BattleCommandData>;
+type BuyTradableCommandData = {
   robotId: string | null;
-  commandType: CommandType;
-  commandObject: T;
-};
-
-type BaseCommandObject = {
-  commandType: CommandType;
-  planetId: string | null;
-  targetId: string | null;
-  itemName: Tradable | null;
-  itemQuantity: number | null;
-};
-
-export type BuyRobotCommandObject = Pick<BaseCommandObject, "commandType"> & {
-  itemName: "ROBOT";
+  itemName: string;
   itemQuantity: number;
 };
+type BuyTradableCommand = BaseCommand<"buying", BuyTradableCommandData>;
+type MineCommandData = {
+  robotId: string;
+};
+type MineCommand = BaseCommand<"mining", MineCommandData>;
+type MoveCommandData = {
+  robotId: string;
+  planetId: string;
+};
+type MoveCommand = BaseCommand<"movement", MoveCommandData>;
+type RegenerateCommandData = {
+  robotId: string;
+};
+type RegenerateCommand = BaseCommand<"regenerate", RegenerateCommandData>;
+type SellTradablesCommandData = {
+  robotId: string;
+};
+type SellTradablesCommand = BaseCommand<"selling", SellTradablesCommandData>;
 
-export type BuyRobotCommand = Omit<
-  BaseCommand<BuyRobotCommandObject>,
-  "robotId"
-> & {
-  commandType: "buying";
+export type GameCommand =
+  | BattleCommand
+  | BuyTradableCommand
+  | MineCommand
+  | MoveCommand
+  | RegenerateCommand
+  | SellTradablesCommand;
+
+export type Direction = "NORTH" | "SOUTH" | "EAST" | "WEST";
+export type ResourceType = "COAL" | "IRON" | "GEM" | "GOLD" | "PLATIN";
+export type PlanetNeighbour = {
+  direction?: Direction;
+  id: string;
+};
+export type ResourceDefinition = {
+  resourceType: ResourceType;
+  maxAmount: number;
+  currentAmount: nunmber;
 };
 
-export type BuyCommandObject = Pick<BaseCommandObject, "commandType"> & {
-  itemName: Tradable;
-  itemQuantity: number;
+export type Planet = {
+  planet: string;
+  movementDifficulty: number;
+  neighbours: PlanetNeighbour[];
+  resource: ResourceDefinition | null | undefined;
 };
 
-export type BuyCommand = BaseCommand<BuyCommandObject> & {
-  commandType: "buying";
-};
+export type PlanetDiscovered = Planet;
 
-export type GameRegistration = {
-  gameId: string;
-  playerId: string;
-  playerQueue: string;
+export type CommandFunction = () => Promise<void>;
+export type SpottedRobot = {
+  id: string;
+  alive: boolean;
+  levels: RobotLevels;
+  playerNotion: string;
+  movePath: string[];
 };

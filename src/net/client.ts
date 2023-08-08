@@ -1,7 +1,5 @@
 import axios, { AxiosError } from "axios";
 import type {
-  BaseCommand,
-  BaseCommandObject,
   GameCommand,
   ResCreateGame,
   ResCreatePlayer,
@@ -143,14 +141,17 @@ export async function registerForGame(
 }
 
 export async function sendCommand<T extends GameCommand>(
-  command: Omit<T, "playerId" | "gameId">
+  commandToSend: Omit<T, "playerId">
 ): Promise<void> {
   if (!defaults.player) {
     throw new Error("No player set");
   }
 
-  await axios.post<unknown, unknown, GameCommand>("/commands", {
-    ...command,
+  await axios.post<unknown, unknown, any>("/commands", {
     playerId: defaults.player,
+    type: commandToSend.type,
+    data: {
+      ...commandToSend.data,
+    },
   });
 }
