@@ -10,7 +10,7 @@
     "start": "node --es-module-specifier-resolution=node dist/src/index.js",
     "compile": "tsc --removeComments true",
     "dev": "npm run dev:watch",
-    "dev:watch-node": "nodemon --ignore 'logs/**' --on-change-only --es-module-specifier-resolution=node dist/src/index.js | pino-pretty",
+    "dev:watch-node": "nodemon --on-change-only --es-module-specifier-resolution=node dist/src/index.js | pino-pretty",
     "dev:watch-ts": "tsc -w",
     "dev:watch": "concurrently --kill-others -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run dev:watch-ts\" \"npm run dev:watch-node\"",
     "format": "prettier --config .prettierrc 'src/**/*.ts' 'test/**/*.ts' --write",
@@ -43,5 +43,19 @@
     "pino-pretty": "^9.4.1",
     "prettier": "^2.8.8",
     "ts-node": "^10.9.1"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "**/test/**",
+      "logs/**",
+      ".git/**",
+      "node_modules/**",
+      ".nyc_output/**",
+      "coverage/**",
+      ".vscode/**",
+      ".idea/**",
+      ".github/**"
+    ],
+    "delay": 2500
   }
 }
