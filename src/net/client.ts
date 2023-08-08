@@ -12,7 +12,6 @@ import logger from "../utils/logger.js";
 
 type ClientDefaults = {
   player: string | null;
-  game: string | null;
 };
 
 axios.defaults.baseURL = process.env.GAME_URL ?? "http://localhost:8080";
@@ -51,7 +50,6 @@ axios.interceptors.response.use(
 
 export const defaults: ClientDefaults = {
   player: null,
-  game: null,
 };
 
 export async function registerPlayer(
@@ -150,13 +148,9 @@ export async function sendCommand<T extends GameCommand>(
   if (!defaults.player) {
     throw new Error("No player set");
   }
-  if (!defaults.game) {
-    throw new Error("No game set");
-  }
 
   await axios.post<unknown, unknown, GameCommand>("/commands", {
     ...command,
-    gameId: defaults.game,
     playerId: defaults.player,
   });
 }

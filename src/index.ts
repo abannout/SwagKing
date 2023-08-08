@@ -62,7 +62,6 @@ async function registerForNextAvailableGame(): Promise<GameRegistration> {
   }
 
   logger.info(`Playing in game: ${game.gameId}`);
-  client.defaults.game = game.gameId;
   relay.setupRelay(playerQueue, { playerId: player.playerId });
 
   return {

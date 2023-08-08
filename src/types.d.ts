@@ -107,7 +107,6 @@ export type EventRoundStatusPayload = {
 export type GameCommand = BuyRobotCommand | GameCommand;
 
 type BaseCommand<T extends BaseCommandObject> = {
-  gameId: string;
   playerId: string;
   robotId: string | null;
   commandType: CommandType;
