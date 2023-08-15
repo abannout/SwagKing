@@ -23,7 +23,7 @@ The skeleton comes with multiple scripts that can be used for development.
 | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | start   | simply starts the player. Requires compilation                                                                                                                    |
 | compile | compiles the typescript files                                                                                                                                     |
-| dev     | starts the player in dev mode. This creates and starts a player automatically for you. Also it listens for file changes and will recompile and restart the player |
+| dev     | starts the player in dev mode. This creates and starts a player automatically for you. Also it listens for file changes and will recompile and restart the player **ONLY FOR LOCAL DEVELOPMENT** |
 | format  | format project files with [prettier](https://prettier.io/)                                                                                                        |
 | lint    | lint project files with [eslint](https://eslint.org/)                                                                                                             |
 | test    | run tests with [mocha](https://mochajs.org/)                                                                                                                      |
@@ -46,3 +46,10 @@ The player can be configured using environment variables
 | LOGGING_DIR          | logs                                          |
 | LOGGING_LEVEL        | debug                                         |
 
+## Development Hints
+
+- The player skeleton is kept to a bare minimum
+- All necessary types for our APIs are already defined in `src/types.d.ts`
+- Required Commands can be defined in `src/commands.ts`. An exemplary command is already defined
+- You most likely need to keep a state of your entities. Is it up to you, how you achieve this. There is an example in the `src/state` directory which keeps track over the game round and ID. The corresponding events are handeld in `src/state/state.ts`.
+- Logging is being done using pino in JSON format. You can use [pino-pretty](https://github.com/pinojs/pino-pretty) for pretty printing or customize the logging by yourself.
