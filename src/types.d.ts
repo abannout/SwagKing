@@ -29,17 +29,13 @@ export type ResCreatePlayer = {
   playerId: string;
   name: string;
   email: string;
+  playerExchange: string;
 };
 
 export type ResGetGame = {
   gameId: string;
   gameStatus: GameStatus;
   participatingPlayers: string[];
-};
-
-export type ResRegisterGame = {
-  gameExchange: string;
-  playerQueue: string;
 };
 
 export type ResCreateGame = {
@@ -63,7 +59,7 @@ export type CommandType =
 export type GameRegistration = {
   gameId: string;
   playerId: string;
-  playerQueue: string;
+  playerExchange: string;
 };
 
 // -------------------------------

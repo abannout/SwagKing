@@ -55,19 +55,20 @@ async function registerForNextAvailableGame(): Promise<GameRegistration> {
 
   logger.info(`Registering for game: ${game.gameId}`);
 
-  let playerQueue = `player-${player.playerId}`;
   if (!isParticipating(game)) {
-    const gameRegistration = await registerForGame(game.gameId);
-    playerQueue = gameRegistration.playerQueue;
+    await registerForGame(game.gameId);
   }
 
   logger.info(`Playing in game: ${game.gameId}`);
-  relay.setupRelay(playerQueue, { playerId: player.playerId });
+  relay.setupRelay({
+    playerId: player.playerId,
+    playerExchange: player.playerExchange,
+  });
 
   return {
     gameId: game.gameId,
     playerId: player.playerId,
-    playerQueue,
+    playerExchange: player.playerExchange,
   };
 }
 

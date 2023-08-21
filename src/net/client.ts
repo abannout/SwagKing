@@ -4,7 +4,6 @@ import type {
   ResCreateGame,
   ResCreatePlayer,
   ResGetGame,
-  ResRegisterGame,
 } from "../types";
 import logger from "../utils/logger.js";
 
@@ -132,12 +131,8 @@ export async function getGames(): Promise<ResGetGame[]> {
   return axios.get<ResGetGame[]>("/games").then((res) => res.data);
 }
 
-export async function registerForGame(
-  gameId: string
-): Promise<ResRegisterGame> {
-  return axios
-    .put<ResRegisterGame>(`/games/${gameId}/players/${defaults.player}`)
-    .then((res) => res.data);
+export async function registerForGame(gameId: string): Promise<void> {
+  axios.put<void>(`/games/${gameId}/players/${defaults.player}`);
 }
 
 export async function sendCommand<T extends GameCommand>(

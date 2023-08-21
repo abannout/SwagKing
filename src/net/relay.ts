@@ -8,12 +8,10 @@ const emitter = new EventEmitter();
 
 export type RelayContext = {
   playerId: string;
+  playerExchange: string;
 };
 
-export async function setupRelay(playerQueue: string, context: RelayContext) {
-  if (playerQueue === undefined) {
-    throw Error("Player Queue is undefined");
-  }
+export async function setupRelay(context: RelayContext) {
   const { rabbitMQ } = config.net;
   const conn = await amqplib.connect({
     protocol: "amqp",
@@ -31,11 +29,13 @@ export async function setupRelay(playerQueue: string, context: RelayContext) {
 
   conn.on("close", function () {
     console.error("[AMQP] reconnecting");
-    setupRelay(playerQueue, context);
+    setupRelay(context);
   });
 
   const channel = await conn.createChannel();
+  const playerQueue = `player-${context.playerId}-all`;
   await channel.assertQueue(playerQueue);
+  channel.bindQueue(playerQueue, context.playerExchange, "#");
 
   channel.consume(playerQueue, (msg) => {
     if (msg !== null) {
