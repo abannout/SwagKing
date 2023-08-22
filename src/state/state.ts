@@ -4,7 +4,7 @@ import * as game from "./game.js";
 export * as game from "./game.js";
 
 export function setupStateHandlers() {
-  relay.on("round-status", (event, context) => {
+  relay.on("RoundStatus", (event, context) => {
     const { payload } = event;
 
     if (payload.roundStatus === "started") {

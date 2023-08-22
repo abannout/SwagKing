@@ -65,8 +65,6 @@ export type GameRegistration = {
 // -------------------------------
 // Eventing
 // -------------------------------
-export type GameEventType = "round-status" | "status";
-
 export type ErrorEventType = "error";
 
 export type EventType = keyof ClientEvents; // TODO: I really want to use the union type above as EventType and reflect it into ClientEvents
@@ -84,8 +82,26 @@ export type GameEvent<T> = {
 };
 
 export interface ClientEvents {
-  "round-status": EventRoundStatusPayload;
+  PlanetDiscovered: PlanetDiscovered;
+  RobotInventoryUpdated: RobotInventoryUpdated;
+  GameStatus: EventGameStatusPayload;
+  RoundStatus: EventRoundStatusPayload;
   error: ErrorEvent;
+  RobotAttacked: RobotAttacked;
+  RobotMoved: RobotMoved;
+  RobotRegenerated: RobotRegenerated;
+  RobotResourceMined: RobotResourceMined;
+  RobotResourceRemoved: RobotResourceRemoved;
+  RobotRestoredAttributes: RobotRestoredAttributes;
+  RobotSpawned: RobotSpawned;
+  RobotUpgraded: RobotUpgraded;
+  BankAccountInitialized: BankAccountInitializedEvent;
+  BankAccountCleared: BankAccountClearedEvent;
+  BankAccountTransactionBooked: BankAccountTransactionBookedEvent;
+  TradablePrices: TradablePricesEvent;
+  TradableBought: TradableBoughtEvent;
+  TradableSold: TradableSoldEvent;
+  RobotsRevealed: RevealedRobotsEvent;
 }
 
 export type ErrorEvent = {
@@ -96,12 +112,188 @@ export type ErrorEvent = {
   code: string;
 };
 
+export type TradableType = "UPGRADE" | "RESOURCE";
+export type UpgradeLevel = 1 | 2 | 3 | 4 | 5;
+export type Tradable = Uppercase<
+  | ResourceType
+  | `${UpgradeType}_${UpgradeLevel}`
+  | "ROBOT"
+  | `${RestorationType}_RESTORE`
+>;
+export type TradablePrice = {
+  type: TradableType;
+  price: number;
+  name: Tradable;
+};
+export type TradablePricesEvent = Array<TradablePrice>;
+
+export type TradableSoldEvent = {
+  playerId: string;
+  robotId: string;
+  type: TradableType;
+  name: Tradable;
+  amount: number;
+  pricePerUnit: number;
+  totalPrice: number;
+};
+
+export type TradableBoughtEvent = TradableSoldEvent;
+
+export type BankAccountClearedEvent = {
+  playerId: string;
+  balance: 0;
+};
+
+export type BankAccountInitializedEvent = {
+  playerId: string;
+  balance: number;
+};
+
+export type BankAccountTransactionBookedEvent = {
+  playerId: string;
+  transactionAmount: number;
+  balance: number;
+};
+
 export type EventRoundStatusPayload = {
   gameId: string;
   roundNumber: number;
   roundId: string;
   roundStatus: RoundStatus;
 };
+
+export type EventGameStatusPayload = {
+  gameId: string;
+  status: GameStatus;
+};
+
+export type RobotPlanet = {
+  planetId: string;
+  resourceType: string;
+};
+
+export type Robot = {
+  id: string;
+  alive: boolean;
+  player: string;
+  planet: RobotPlanet;
+  maxHealth: number;
+  maxEnergy: number;
+  energyRegen: number;
+  attackDamage: number;
+  miningSpeed: number;
+  health: number;
+  energy: number;
+  inventory: RobotInventory;
+} & RobotLevels;
+
+export type RobotLevels = {
+  healthLevel: number;
+  damageLevel: number;
+  miningSpeedLevel: number;
+  miningLevel: number;
+  energyLevel: number;
+  energyRegenLevel: number;
+  storageLevel: number;
+};
+
+export type RevealedRobotsEvent = {
+  robots: RevealedRobot[];
+};
+
+export type RevealedRobot = {
+  robotId: string;
+  health: number;
+  energy: number;
+  planetId: string;
+  playerNotion: string;
+  levels: RobotLevels;
+};
+
+export type RobotInventoryUpdated = {
+  robot: string;
+  inventory: RobotInventory;
+};
+
+export type RobotInventory = {
+  storageLevel: number;
+  resources: ResourceInventory;
+  maxStorage: number;
+  usedStorage: number;
+  full: boolean;
+};
+
+export type RobotAttacked = {
+  attacker: RobotAttack;
+  target: RobotAttack;
+};
+
+type RobotAttack = {
+  robotId: string;
+  availableHealth: number;
+  availableEnergy: number;
+  alive: boolean;
+};
+
+export type RobotMoved = {
+  robotId: string;
+  remainingEnergy: number;
+  fromPlanet: Movement;
+  toPlanet: Movement;
+};
+
+type Movement = {
+  id: string;
+  movementDifficulty: number;
+};
+
+export type RobotRegenerated = {
+  robotId: string;
+  availableEnergy: number;
+};
+
+export type RobotResourceMined = {
+  robotId: string;
+  minedAmount: number;
+  minedResource: Resource;
+  resourceInventory: ResourceInventory;
+};
+
+export type RobotResourceRemoved = {
+  robotId: string;
+  removedAmount: number;
+  removedResource: Resource;
+  resourceInventory: ResourceInventory;
+};
+
+export type RobotRestoredAttributes = {
+  restorationType: RestorationType;
+  robotId: string;
+  availableEnergy: number;
+  availableHealth: number;
+};
+
+export type RobotSpawned = {
+  robot: Robot;
+};
+
+export type RobotUpgraded = {
+  robotId: string;
+  level: number;
+  upgrade: UpgradeType;
+  robot: Robot;
+};
+
+export type UpgradeType =
+  | "STORAGE"
+  | "HEALTH"
+  | "DAMAGE"
+  | "MINING_SPEED"
+  | "MINING"
+  | "MAX_ENERGY"
+  | "ENERGY_REGEN";
+export type RestorationType = "HEALTH" | "ENERGY";
+export type ResourceInventory = Record<ResourceType, number>;
 
 // -------------------------------
 // Commands
