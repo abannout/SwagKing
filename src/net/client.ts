@@ -53,6 +53,7 @@ export async function registerPlayer(
   name: string,
   email: string
 ): Promise<ResCreatePlayer> {
+  logger.info("player created: " + name);
   return axios
     .post<ResCreatePlayer>("/players", {
       name,
@@ -81,6 +82,7 @@ export async function fetchOrUpdatePlayer(
 ): Promise<ResCreatePlayer> {
   try {
     const player = await getPlayer(name, email);
+    logger.info("player found: " + name);
     return player;
   } catch (error: unknown) {
     if (axios.isAxiosError(error)) {

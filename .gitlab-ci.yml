@@ -11,7 +11,7 @@ stages:
 
 variables:
   PATH_TO_CHART: "helm-chart"
-  CHART_NAME: "player-skeleton-typescript-nodejs" # ! TODO: Update to your player name
+  CHART_NAME: "player-SwagKingTheThird" # ! TODO: Update to your player name
 
 
 lint:

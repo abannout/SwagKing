@@ -1,3 +1,5 @@
+import { log } from "console";
+import { buyRobots } from "./commands.js";
 import { config } from "./config.js";
 import { initializeGame } from "./dev/initializer.js";
 import * as client from "./net/client.js";
@@ -7,6 +9,7 @@ import { setupStateHandlers } from "./state/state.js";
 import { GameRegistration, ResGetGame } from "./types";
 import logger from "./utils/logger.js";
 import { untilAsync } from "./utils/utils.js";
+import { bankAccountInitialized } from "./usecases/player.js";
 
 // To allow better debugging, we register process event handlers that simply log debugging
 // information to the console
@@ -54,7 +57,7 @@ async function registerForNextAvailableGame(): Promise<GameRegistration> {
   }
 
   logger.info(`Registering for game: ${game.gameId}`);
-
+  logger.info("Mode is: "+ config.env.mode)
   if (!isParticipating(game)) {
     await registerForGame(game.gameId);
   }
@@ -92,7 +95,8 @@ if (isInDevMode) {
 // Handlers
 // -----------------------------
 setupStateHandlers();
-
+bankAccountInitialized()
+// console.log( buyRobots(1))
 // -----------------------------
 // Logging Handlers
 // -----------------------------
