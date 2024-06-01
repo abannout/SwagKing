@@ -1,8 +1,8 @@
 import * as amqplib from "amqplib";
 import EventEmitter from "events";
-import { config } from "../config.js";
-import { Awaitable, ClientEvents, EventHeaders, GameEvent } from "../types";
-import logger from "../utils/logger.js";
+import { config } from "../../config.js";
+import { Awaitable, ClientEvents, EventHeaders, GameEvent } from "../types.js";
+import logger from "../../utils/logger.js";
 
 const emitter = new EventEmitter();
 

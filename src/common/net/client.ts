@@ -5,7 +5,7 @@ import type {
   ResCreatePlayer,
   ResGetGame,
 } from "../types";
-import logger from "../utils/logger.js";
+import logger from "../../utils/logger.js";
 
 type ClientDefaults = {
   player: string | null;
@@ -152,3 +152,18 @@ export async function sendCommand<T extends GameCommand>(
     },
   });
 }
+// export async function sendCommandList<T extends GameCommand>(
+//   commandListToSend: Omit<T, "playerId">[]
+// ): Promise<void> {
+//   if (!defaults.player) {
+//     throw new Error("No player set");
+//   }
+
+//   const commandListWithPlayerId = commandListToSend.map(command => ({
+//     ...command,
+//     playerId: defaults.player,
+//   }));
+
+//   await axios.post<unknown, unknown, any>("/commands", {
+//     commands: commandListWithPlayerId,
+//   });

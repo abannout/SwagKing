@@ -13,7 +13,7 @@
     "dev:watch-node": "nodemon --on-change-only --es-module-specifier-resolution=node dist/src/index.js | pino-pretty",
     "dev:watch-ts": "tsc -w",
     "dev:watch": "concurrently --kill-others -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"npm run dev:watch-ts\" \"npm run dev:watch-node\"",
-    "format": "prettier --config .prettierrc 'src/**/*.ts' 'test/**/*.ts' --write",
+    "format": "prettier --config .prettierrc src/**/*.ts test/**/*.ts --write",
     "lint": "eslint . --ext .ts",
     "test": "mocha"
   },

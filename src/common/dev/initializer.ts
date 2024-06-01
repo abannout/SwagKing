@@ -4,8 +4,8 @@ import {
   getGames,
   setRoundDuration,
 } from "../net/client.js";
-import { ResGetGame } from "../types";
-import logger from "../utils/logger.js";
+import { ResGetGame } from "../types.js";
+import logger from "../../utils/logger.js";
 
 const cRounds = 10_000;
 const cPlayers = 10;
