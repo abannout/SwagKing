@@ -12,8 +12,7 @@ const netConfig = {
 
 const playerConfig = {
   name: process.env.PLAYER_NAME ?? "player-SwagKingTheThird", // ! TODO: Change this to your player name
-  email:
-    process.env.PLAYER_EMAIL ?? "ahmadbannout.ab@gmail.com", // ! TODO: Change this to your email
+  email: process.env.PLAYER_EMAIL ?? "ahmadbannout.ab@gmail.com", // ! TODO: Change this to your email
 };
 
 export const config = {

@@ -185,7 +185,8 @@ export type Robot = {
   health: number;
   energy: number;
   inventory: RobotInventory;
-} & RobotLevels;
+  robotLevels: RobotLevels;
+};
 
 export type RobotLevels = {
   healthLevel: number;

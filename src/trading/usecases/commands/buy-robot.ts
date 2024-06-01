@@ -1,7 +1,6 @@
-import { sendCommand } from "./net/client.js";
-import { BuyTradableCommand } from "./types";
+import { sendCommand } from "../../../common/net/client.js";
+import { BuyTradableCommand } from "../../../common/types.js";
 
-// This is an example problem that shows how commands can be sent.
 export async function buyRobots(amount: number): Promise<void> {
   return sendCommand<BuyTradableCommand>({
     type: "buying",
