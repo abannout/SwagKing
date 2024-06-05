@@ -9,6 +9,7 @@ import logger from "./utils/logger.js";
 import { untilAsync } from "./utils/utils.js";
 import { setupBank } from "./trading/usecases/index.js";
 import { setupRobot } from "./robot/usecases/index.js";
+import { setupPlanet } from "./planet/usecases/index.js";
 
 // To allow better debugging, we register process event handlers that simply log debugging
 // information to the console
@@ -96,6 +97,7 @@ if (isInDevMode) {
 setupStateHandlers();
 setupBank();
 setupRobot();
+setupPlanet();
 // console.log( buyRobots(1))
 // -----------------------------
 // Logging Handlers

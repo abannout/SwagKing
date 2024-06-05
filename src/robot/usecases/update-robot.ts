@@ -1,9 +1,9 @@
-import { Dependencies } from "../dependencies/robot-dependency.js";
+import { RobotDependencies } from "../../common/dependencies/robot-dependency.js";
 import * as relay from "../../common/net/relay.js";
 import logger from "../../utils/logger.js";
 import { makeUpdateInventory } from "../service/mine-resource.js";
 
-export function handleUpdateInventory({ robotRepo }: Dependencies) {
+export function handleUpdateInventory({ robotRepo }: RobotDependencies) {
   return async () => {
     relay.on("RobotResourceMined", async (event, context) => {
       const { payload } = event;

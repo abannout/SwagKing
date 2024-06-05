@@ -1,11 +1,11 @@
+import { RobotDependencies } from "../../common/dependencies/robot-dependency.js";
 import * as relay from "../../common/net/relay.js";
-import { Dependencies } from "../../robot/dependencies/robot-dependency.js";
 import makeSellResources from "../../robot/service/sell-resources.js";
 import { getCurrentRoundNumber } from "../../state/game.js";
 import logger from "../../utils/logger.js";
 import { sellResource } from "./commands/sell-resources.js";
 
-export function handleSellResources({ robotRepo }: Dependencies) {
+export function handleSellResources({ robotRepo }: RobotDependencies) {
   return async () => {
     relay.on("RoundStatus", async (event, context) => {
       const { payload } = event;

@@ -1,6 +1,6 @@
 import Robot from "../entity/robot";
 import RobotRepository from "../repo/robotRepo";
-let robotlist: Robot[] = [];
+const robotlist: Robot[] = [];
 
 export default function robotDataSource(): RobotRepository {
   return {

@@ -1,22 +1,22 @@
+import { RobotDependencies } from "../../common/dependencies/robot-dependency";
 import { RobotResourceMined, RobotResourceRemoved } from "../../common/types";
-import { Dependencies } from "../dependencies/robot-dependency";
 import Robot from "../entity/robot";
 
-export function makeMineResource({ robotRepo }: Dependencies) {
+export function makeMineResource({ robotRepo }: RobotDependencies) {
   return async (): Promise<Robot[]> => {
     const list = await robotRepo.getAllRobots();
     if (list.length == 0) {
       return [];
     }
     const mininglist = list.filter(
-      (robot) => robot.planet.resourceType === "COAL" && !robot.inventory.full
+      (robot) => robot.planet.resourceType !== null && !robot.inventory.full
     );
 
     return mininglist;
   };
 }
 
-export function makeUpdateInventory({ robotRepo }: Dependencies) {
+export function makeUpdateInventory({ robotRepo }: RobotDependencies) {
   return async (
     resourceMined: RobotResourceMined | RobotResourceRemoved
   ): Promise<void> => {

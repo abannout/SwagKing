@@ -1,14 +1,14 @@
 import logger from "../../utils/logger.js";
 import * as relay from "../../common/net/relay.js";
-import { Dependencies } from "../dependencies/robot-dependency.js";
 import { mineResources } from "./command/mine-robot.js";
 import {
   makeMineResource,
   makeUpdateInventory,
 } from "../service/mine-resource.js";
+import { RobotDependencies } from "../../common/dependencies/robot-dependency.js";
 
 //toDo: map the dtos to robotinventory
-export function makeRobotMineResource({ robotRepo }: Dependencies) {
+export function makeRobotMineResource({ robotRepo }: RobotDependencies) {
   return async () => {
     relay.on("RoundStatus", async (event, context) => {
       const { payload } = event;
@@ -30,7 +30,7 @@ export function makeRobotMineResource({ robotRepo }: Dependencies) {
   };
 }
 
-export function makeRobotremoveResource({ robotRepo }: Dependencies) {
+export function makeRobotremoveResource({ robotRepo }: RobotDependencies) {
   return async () => {
     relay.on("RobotResourceRemoved", async (event, context) => {
       const { payload } = event;

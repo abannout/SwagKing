@@ -1,9 +1,10 @@
+import { RobotDependencies } from "../../common/dependencies/robot-dependency";
 import Robot from "../entity/robot";
-import RobotRepository from "../repo/robotRepo";
 
-interface Dependencies {
-  robotRepo: RobotRepository;
+export default function makegetRobot({ robotRepo }: RobotDependencies) {
+  return async (robotId: string) => await robotRepo.getRobot(robotId);
 }
-export default function makegetRobot({ robotRepo }: Dependencies) {
-  return async (robot: Robot) => await robotRepo.getRobot(robot.id);
+
+export function makeGetAllRobots({ robotRepo }: RobotDependencies) {
+  return async () => await robotRepo.getAllRobots();
 }

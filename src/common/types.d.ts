@@ -1,5 +1,8 @@
 // -------------------------------
 // Utils
+
+import Robot from "../robot/entity/robot";
+
 // -------------------------------
 export type Awaitable<T> = T | PromiseLike<T>;
 
@@ -83,6 +86,7 @@ export type GameEvent<T> = {
 
 export interface ClientEvents {
   PlanetDiscovered: PlanetDiscovered;
+  ResourceMined: ResourceMined;
   RobotInventoryUpdated: RobotInventoryUpdated;
   GameStatus: EventGameStatusPayload;
   RoundStatus: EventRoundStatusPayload;
@@ -103,6 +107,12 @@ export interface ClientEvents {
   TradableSold: TradableSoldEvent;
   RobotsRevealed: RevealedRobotsEvent;
 }
+
+export type ResourceMined = {
+  planet: string;
+  minedAmount: number;
+  resource: ResourceDefinition;
+};
 
 export type ErrorEvent = {
   playerId: string;
@@ -357,7 +367,7 @@ export type PlanetNeighbour = {
   id: string;
 };
 export type ResourceDefinition = {
-  resourceType: ResourceType;
+  type: ResourceType;
   maxAmount: number;
   currentAmount: nunmber;
 };

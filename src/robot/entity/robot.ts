@@ -1,4 +1,3 @@
-import { ResourceType } from "./resource";
 import RobotInventory from "./robotInventory";
 import RobotLevels from "./robotLevels";
 import RobotPlanet from "./robotPlanet";
