@@ -12,7 +12,7 @@ export function makeBuyRobots({ bankRepo }: Dependencies) {
     relay.on("RoundStatus", async (event, context) => {
       const { payload } = event;
 
-      if (payload.roundStatus === "started") {
+      if (payload.roundStatus === "started" && payload.roundNumber < 3) {
         const bankBalance = (await bankRepo.getBank()).money.amount;
         logger.info(
           `bank balance is ${bankBalance}  for Round number ${getCurrentRoundNumber()}`
@@ -22,7 +22,7 @@ export function makeBuyRobots({ bankRepo }: Dependencies) {
         logger.info(
           `trying to buy ${canBuyRobots} Robots for Round number ${getCurrentRoundNumber()}`
         );
-        buyRobots(canBuyRobots);
+        console.log((await buyRobots(1)).status);
       }
     });
   };

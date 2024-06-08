@@ -1,7 +1,5 @@
 import logger from "../../utils/logger.js";
 import * as relay from "../../common/net/relay.js";
-import { mineResources } from "./command/mine-robot.js";
-import { makeUpdateInventory } from "../service/mine-resource.js";
 import { RobotDependencies } from "../../common/dependencies/robot-dependency.js";
 import makeRobotsToMove from "../service/robots-to-Move.js";
 import makeMoveToPlanet from "../../planet/service/move-to-planet.js";
@@ -9,6 +7,7 @@ import { PlanetDependencies } from "../../common/dependencies/planet-dependency.
 import { moveRobot } from "./command/move-robot.js";
 import makegetRobot from "../service/get-robot.js";
 import makeGetPlanet from "../../planet/service/get-planet.js";
+import makeUpdateRobot from "../service/update-robot.js";
 
 //toDo: map the dtos to robotinventory
 export function makeRobotMove(
@@ -36,9 +35,6 @@ export function makeRobotMove(
           `Moving robot with id: ${robot.id} to Planet with id: ${planetToMoveTo}`
         );
         moveRobot(robot.id, planetToMoveTo);
-        logger.info(
-          `Moving robot with id: ${robot.id} to Planet with id: ${planetToMoveTo}`
-        );
       });
       robotToMove.length = 0;
     });
@@ -58,6 +54,9 @@ export function handleRobotMoved(
       const getPlanet = makeGetPlanet({ planetRepo });
       const planetResources = await getPlanet(payload.toPlanet.id);
       robot.planet.resourceType = planetResources.resource?.type || null;
+      const updateRobot = makeUpdateRobot({ robotRepo });
+      updateRobot(robot);
+      logger.info("robot placment has been updated!!!");
     });
   };
 }

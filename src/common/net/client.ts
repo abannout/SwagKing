@@ -139,18 +139,19 @@ export async function registerForGame(gameId: string): Promise<void> {
 
 export async function sendCommand<T extends GameCommand>(
   commandToSend: Omit<T, "playerId">
-): Promise<void> {
+): Promise<any> {
   if (!defaults.player) {
     throw new Error("No player set");
   }
 
-  await axios.post<unknown, unknown, any>("/commands", {
+  const response = await axios.post<unknown, unknown, any>("/commands", {
     playerId: defaults.player,
     type: commandToSend.type,
     data: {
       ...commandToSend.data,
     },
   });
+  return response;
 }
 // export async function sendCommandList<T extends GameCommand>(
 //   commandListToSend: Omit<T, "playerId">[]

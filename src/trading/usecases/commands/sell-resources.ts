@@ -9,14 +9,3 @@ export async function sellResource(robotId: string): Promise<void> {
     },
   });
 }
-//fixme()
-// export async function sellResources(robotIds: string[]): Promise<void> {
-//     const commandList: Omit<SellTradablesCommand, "playerId">[] = robotIds.map(robotId => ({
-//       type: "selling",
-//       data: {
-//         robotId: robotId,
-//       },
-//     }));
-
-//     return sendCommandList<SellTradablesCommand>(commandList);
-//   }
