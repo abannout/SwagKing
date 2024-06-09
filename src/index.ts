@@ -7,9 +7,7 @@ import { setupStateHandlers } from "./state/state.js";
 import { GameRegistration, ResGetGame } from "./common/types.js";
 import logger from "./utils/logger.js";
 import { untilAsync } from "./utils/utils.js";
-import { setupBank } from "./trading/usecases/index.js";
-import { setupRobot } from "./robot/usecases/index.js";
-import { setupPlanet } from "./planet/usecases/index.js";
+import strategy from "./strategy.js";
 
 // To allow better debugging, we register process event handlers that simply log debugging
 // information to the console
@@ -95,10 +93,7 @@ if (isInDevMode) {
 // Handlers
 // -----------------------------
 setupStateHandlers();
-setupBank();
-setupRobot();
-setupPlanet();
-// console.log( buyRobots(1))
+strategy();
 // -----------------------------
 // Logging Handlers
 // -----------------------------

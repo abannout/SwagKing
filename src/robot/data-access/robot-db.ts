@@ -1,7 +1,6 @@
 import Robot from "../entity/robot";
 import RobotRepository from "../repo/robotRepo";
 const robotlist: Robot[] = [];
-
 export default function robotDataSource(): RobotRepository {
   return {
     getRobot: async (id: string) => {

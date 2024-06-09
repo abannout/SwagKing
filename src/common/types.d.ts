@@ -334,6 +334,14 @@ type BuyTradableCommandData = {
   itemQuantity: number;
 };
 type BuyTradableCommand = BaseCommand<"buying", BuyTradableCommandData>;
+type BuyUpgradesCommandData = {
+  robotId: string | null;
+  itemName: string;
+  planetId: string;
+  itemQuantity: number;
+};
+type BuyUpgradesCommand = BaseCommand<"buying", BuyUpgradesCommandData>;
+
 type MineCommandData = {
   robotId: string;
 };
@@ -358,7 +366,8 @@ export type GameCommand =
   | MineCommand
   | MoveCommand
   | RegenerateCommand
-  | SellTradablesCommand;
+  | SellTradablesCommand
+  | BuyUpgradesCommand;
 
 export type Direction = "NORTH" | "SOUTH" | "EAST" | "WEST";
 export type ResourceType = "COAL" | "IRON" | "GEM" | "GOLD" | "PLATIN";

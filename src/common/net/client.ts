@@ -153,18 +153,20 @@ export async function sendCommand<T extends GameCommand>(
   });
   return response;
 }
-// export async function sendCommandList<T extends GameCommand>(
-//   commandListToSend: Omit<T, "playerId">[]
-// ): Promise<void> {
+
+// export async function sendCommandToUpdate<T extends GameCommand>(
+//   commandToSend: Omit<T, "playerId">
+// ): Promise<any> {
 //   if (!defaults.player) {
 //     throw new Error("No player set");
 //   }
 
-//   const commandListWithPlayerId = commandListToSend.map(command => ({
-//     ...command,
+//   const response = await axios.post<unknown, unknown, any>("/commands", {
 //     playerId: defaults.player,
-//   }));
-
-//   await axios.post<unknown, unknown, any>("/commands", {
-//     commands: commandListWithPlayerId,
+//     type: commandToSend.type,
+//     data: {
+//       ...commandToSend.data,
+//     },
 //   });
+//   return response;
+// }
