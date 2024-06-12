@@ -8,12 +8,12 @@ const netConfig = {
   game: {
     url: process.env.GAME_URL ?? "http://localhost:8080",
   },
-};
+}
 
 const playerConfig = {
   name: process.env.PLAYER_NAME ?? "player-SwagKingTheThird", // ! TODO: Change this to your player name
   email: process.env.PLAYER_EMAIL ?? "ahmadbannout.ab@gmail.com", // ! TODO: Change this to your email
-};
+}
 
 export const config = {
   player: playerConfig,
@@ -25,4 +25,4 @@ export const config = {
     level: process.env.LOGGING_LEVEL ?? "debug",
   },
   net: netConfig,
-};
+}

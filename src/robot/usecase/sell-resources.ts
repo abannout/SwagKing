@@ -1,15 +1,15 @@
-import { RobotDependencies } from "../../common/dependencies/robot-dependency.js";
-import Robot from "../entity/robot.js";
+import Robot from "../entity/robot.js"
+import robotService from "./index.js"
 
-export default function makeSellResources({ robotRepo }: RobotDependencies) {
-  return async function sellResources(): Promise<Robot[]> {
-    const list = await robotRepo.getAllRobots();
-    if (list.length == 0) {
-      return [];
+export default function makeSellResources() {
+  return async (): Promise<Robot[]> => {
+    const robots = await robotService.getAllRobots()
+    if (robots.length == 0) {
+      return []
     }
-    const robotWithMaxStorage: Robot[] = list.filter(
+    const robotWithMaxStorage: Robot[] = robots.filter(
       (robot: Robot) => robot.inventory.full
-    );
-    return robotWithMaxStorage;
-  };
+    )
+    return robotWithMaxStorage
+  }
 }

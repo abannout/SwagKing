@@ -1,5 +1,5 @@
-import { PlanetDependencies } from "../../common/dependencies/planet-dependency";
+import { PlanetDependencies } from "../../common/dependencies/planet-dependency"
 
 export default function makeGetPlanet({ planetRepo }: PlanetDependencies) {
-  return async (planetId: string) => await planetRepo.getPlanet(planetId);
+  return async (planetId: string) => await planetRepo.getPlanet(planetId)
 }

@@ -1,37 +1,27 @@
-import Robot from "../entity/robot";
-import RobotRepository from "../repo/robotRepo";
-const robotlist: Robot[] = [];
+import Robot from "../entity/robot.js"
+import RobotRepository from "../repo/robotRepo.js"
+const robotlist: Map<string, Robot> = new Map<string, Robot>()
+
 export default function robotDataSource(): RobotRepository {
   return {
     getRobot: async (id: string) => {
-      return findObjectById(robotlist, id);
+      const robot = robotlist.get(id)
+      return robot ? robot : undefined
     },
     updateRobot: async (robot: Robot) => {
-      const index = robotlist.findIndex((r) => r.id === robot.id);
-      if (index === -1) {
-        throw new Error(`Robot with ID ${robot.id} not found`);
+      if (!robotlist.has(robot.id)) {
+        throw new Error(`Robot with ID ${robot.id} not found`)
       }
-      robotlist[index] = robot;
+      robotlist.set(robot.id, robot)
     },
     saveRobot: async (robot) => {
-      return robotlist.push(robot);
+      robotlist.set(robot.id, robot)
     },
     deleteRobot: async (robot) => {
-      const index = robotlist.findIndex((r) => r.id === robot);
-      if (index === -1) {
-        throw new Error(`Robot with ID ${robot} not found`);
-      }
-      robotlist.splice(index, 1);
+      robotlist.delete(robot)
     },
     getAllRobots: async () => {
-      return robotlist;
+      return [...robotlist.values()]
     },
-  };
-}
-const findObjectById = (objects: Robot[], id: string): Robot => {
-  const robot = objects.find((obj) => obj.id === id);
-  if (!robot) {
-    throw new Error(`Robot with ID ${id} not found`);
   }
-  return robot;
-};
+}

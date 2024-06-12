@@ -1,4 +1,4 @@
 export default interface RobotPlanet {
-  planetId: string;
-  resourceType: string | null;
+  planetId: string
+  resourceType: string | null
 }

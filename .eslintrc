@@ -10,6 +10,7 @@
     "prettier"
   ],
   "rules": {
+    "semi": "off",
     "prettier/prettier": [
       "error",
       {

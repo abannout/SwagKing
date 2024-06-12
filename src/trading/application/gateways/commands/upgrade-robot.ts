@@ -1,5 +1,5 @@
-import { sendCommand } from "../../../../common/net/client.js";
-import { BuyUpgradesCommand, UpgradeType } from "../../../../common/types.js";
+import { sendCommand } from "../../../../common/net/client.js"
+import { BuyUpgradesCommand, UpgradeType } from "../../../../common/types.js"
 
 export async function buyUpdates(
   robotId: string,
@@ -14,5 +14,5 @@ export async function buyUpdates(
       itemName: upgradeType,
       itemQuantity: 1,
     },
-  });
+  })
 }

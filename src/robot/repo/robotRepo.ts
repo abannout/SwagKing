@@ -1,9 +1,9 @@
-import Robot from "../entity/robot";
+import Robot from "../entity/robot.js"
 
 export default interface RobotRepository {
-  getRobot(id: string): Promise<Robot>;
-  updateRobot(robot: Robot): Promise<void>;
-  saveRobot(robot: Robot): Promise<number>;
-  deleteRobot(id: string): Promise<void>;
-  getAllRobots(): Promise<Robot[]>;
+  getRobot(id: string): Promise<Robot | undefined>
+  updateRobot(robot: Robot): Promise<void>
+  saveRobot(robot: Robot): Promise<void>
+  deleteRobot(id: string): Promise<void>
+  getAllRobots(): Promise<Robot[]>
 }

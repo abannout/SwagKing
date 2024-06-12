@@ -1,6 +1,6 @@
-import { assert } from "chai";
-import { describe } from "mocha";
+import { assert } from "chai"
+import { describe } from "mocha"
 
 describe("A test", () => {
-  assert.isTrue(true);
-});
+  assert.isTrue(true)
+})

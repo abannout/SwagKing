@@ -1,5 +1,5 @@
 export default interface Money {
-  amount: number;
+  amount: number
 }
 
 // export function canBuyThatManyFor( money:Money) :number{

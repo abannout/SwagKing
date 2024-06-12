@@ -1,5 +1,5 @@
-import { sendCommand } from "../../../../common/net/client.js";
-import { BattleCommand } from "../../../../common/types.js";
+import { sendCommand } from "../../../../common/net/client.js"
+import { BattleCommand } from "../../../../common/types.js"
 
 export async function attackRobot(
   robotId: string,
@@ -11,5 +11,5 @@ export async function attackRobot(
       robotId: robotId,
       targetId: targetId,
     },
-  });
+  })
 }

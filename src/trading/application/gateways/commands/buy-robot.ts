@@ -1,5 +1,5 @@
-import { sendCommand } from "../../../../common/net/client.js";
-import { BuyTradableCommand } from "../../../../common/types.js";
+import { sendCommand } from "../../../../common/net/client.js"
+import { BuyTradableCommand } from "../../../../common/types.js"
 
 export async function buyRobots(amount: number): Promise<any> {
   return sendCommand<BuyTradableCommand>({
@@ -9,5 +9,5 @@ export async function buyRobots(amount: number): Promise<any> {
       itemName: "ROBOT",
       itemQuantity: amount,
     },
-  });
+  })
 }

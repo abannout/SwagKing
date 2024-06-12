@@ -1,6 +1,6 @@
-import { Direction } from "./dircetion";
+import { Direction } from "./dircetion"
 
 export default interface PlanetNeighbour {
-  direction?: Direction;
-  id: string;
+  direction?: Direction
+  id: string
 }

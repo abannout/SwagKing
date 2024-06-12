@@ -1,14 +1,14 @@
-import * as fs from "fs";
-import * as fsp from "fs/promises";
-import * as path from "node:path";
-import pino, { StreamEntry } from "pino";
-import { config } from "../config.js";
+import * as fs from "fs"
+import * as fsp from "fs/promises"
+import * as path from "node:path"
+import pino, { StreamEntry } from "pino"
+import { config } from "../config.js"
 
-const logDirectory = config.logging.dir || "logs";
-const logPath = path.resolve(logDirectory);
+const logDirectory = config.logging.dir || "logs"
+const logPath = path.resolve(logDirectory)
 
 if (!fs.existsSync(logPath)) {
-  fs.mkdirSync(logPath);
+  fs.mkdirSync(logPath)
 }
 
 const streams: StreamEntry[] = [
@@ -22,17 +22,17 @@ const streams: StreamEntry[] = [
       flags: "a",
     }),
   },
-];
+]
 
 const logger = pino(
   {
     level: config.logging.level,
   },
   pino.multistream(streams)
-);
+)
 
 export async function writeToFile(file: string, content: string) {
-  fsp.writeFile(path.resolve(logPath, file), content);
+  fsp.writeFile(path.resolve(logPath, file), content)
 }
 
-export default logger;
+export default logger

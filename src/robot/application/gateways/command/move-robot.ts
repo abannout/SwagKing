@@ -1,5 +1,5 @@
-import { sendCommand } from "../../../../common/net/client.js";
-import { MoveCommand } from "../../../../common/types.js";
+import { sendCommand } from "../../../../common/net/client.js"
+import { MoveCommand } from "../../../../common/types.js"
 
 export async function moveRobot(
   robotId: string,
@@ -11,5 +11,5 @@ export async function moveRobot(
       planetId: planetId,
       robotId: robotId,
     },
-  });
+  })
 }
