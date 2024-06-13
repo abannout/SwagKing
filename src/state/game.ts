@@ -1,15 +1,15 @@
-let currentRoundNumber: number | null = null;
-let currentRoundId: string | null = null;
+let currentRoundNumber: number | null = null
+let currentRoundId: string | null = null
 
 export function getCurrentRoundNumber(): number | null {
-  return currentRoundNumber;
+  return currentRoundNumber
 }
 
 export function getCurrentRoundId(): string | null {
-  return currentRoundId;
+  return currentRoundId
 }
 
 export function set(roundNumber: number, roundId: string): void {
-  currentRoundNumber = roundNumber;
-  currentRoundId = roundId;
+  currentRoundNumber = roundNumber
+  currentRoundId = roundId
 }

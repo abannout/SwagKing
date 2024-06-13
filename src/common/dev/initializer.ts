@@ -3,36 +3,36 @@ import {
   endGame,
   getGames,
   setRoundDuration,
-} from "../net/client.js";
-import { ResGetGame } from "../types.js";
-import logger from "../../utils/logger.js";
+} from "../net/client.js"
+import { ResGetGame } from "../types.js"
+import logger from "../../utils/logger.js"
 
-const cRounds = 10_000;
-const cPlayers = 10;
-const cRoundDuration = 4_000;
+const cRounds = 10_000
+const cPlayers = 10
+const cRoundDuration = 4_000
 
 export async function initializeGame(force = false) {
-  const games: Pick<ResGetGame, "gameId" | "gameStatus">[] = await getGames();
-  const runningGames = games.filter((g) => g.gameStatus === "started");
-  const createdGames = games.filter((g) => g.gameStatus === "created");
+  const games: Pick<ResGetGame, "gameId" | "gameStatus">[] = await getGames()
+  const runningGames = games.filter((g) => g.gameStatus === "started")
+  const createdGames = games.filter((g) => g.gameStatus === "created")
 
   if (runningGames.length > 0) {
     if (!force) {
-      logger.info("A game is already running, skipping initialization");
-      return;
+      logger.info("A game is already running, skipping initialization")
+      return
     }
-    logger.info("At least one game is already running, stopping all");
-    await Promise.all(runningGames.map((g) => endGame(g.gameId)));
+    logger.info("At least one game is already running, stopping all")
+    await Promise.all(runningGames.map((g) => endGame(g.gameId)))
   }
 
-  const gameIds = createdGames.map((g) => g.gameId);
+  const gameIds = createdGames.map((g) => g.gameId)
 
   if (createdGames.length === 0) {
-    logger.info("No game is available, creating a new one");
-    const game = await createGame(cRounds, cPlayers);
-    logger.info(`Game created: ${game.gameId}`);
-    gameIds.push(game.gameId);
+    logger.info("No game is available, creating a new one")
+    const game = await createGame(cRounds, cPlayers)
+    logger.info(`Game created: ${game.gameId}`)
+    gameIds.push(game.gameId)
   }
 
-  await Promise.all(gameIds.map((g) => setRoundDuration(g, cRoundDuration)));
+  await Promise.all(gameIds.map((g) => setRoundDuration(g, cRoundDuration)))
 }

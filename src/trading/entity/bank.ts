@@ -1,6 +1,6 @@
-import Money from "../../common/purchasing/money";
+import Money from "../../common/purchasing/money"
 
 export default interface Bank {
-  playerId: string;
-  money: Money;
+  playerId: string
+  money: Money
 }
